@@ -1,7 +1,7 @@
 """Open a URL the way a UAE phone user would and record what it shows.
 
 Follows shorteners, HTTP, meta-refresh and JavaScript redirects, takes a screenshot and lists form fields
-(types only, never values). Output follows backend/app/contracts.py Evidence, minus enrichment.
+(types only, never values), and links that push remote-access apps or APK installs. Output follows backend/app/contracts.py Evidence, minus enrichment.
 screenshot_path is relative to the artifacts dir, as the API serves it.
 
 Usage: python -m workers.fetcher https://bit.ly/xyz
@@ -9,6 +9,7 @@ Usage: python -m workers.fetcher https://bit.ly/xyz
 import hashlib
 import json
 import os
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -47,6 +48,31 @@ FORM_FIELDS_JS = """
   return {action: root.tagName === 'FORM' ? (root.getAttribute('action') || '') : '', inputs};
 }).filter(f => f.inputs.length)
 """
+
+LINKS_JS = """
+() => [...document.querySelectorAll('a[href], button, [onclick]')].slice(0, 500).map(el => ({
+  href: el.href || el.getAttribute('onclick') || '', text: (el.innerText || '').trim().slice(0, 80)
+}))
+"""
+
+# Scam scripts push victims to install remote-control apps or sideloaded APKs, then log in to their bank.
+REMOTE_ACCESS = re.compile(r"anydesk|teamviewer|rustdesk|quicksupport|airdroid|supremo|ultraviewer|splashtop|"
+                           r"remote\s*(support|desktop|access)", re.I)
+APK = re.compile(r"\.apk(\b|$)|تحميل التطبيق|download (our |the )?app", re.I)
+
+
+def download_signals(links: list[dict], text: str) -> list[dict]:
+    signals = []
+    for link in links:
+        target = f"{link['href']} {link['text']}"
+        if REMOTE_ACCESS.search(target):
+            signals.append({"kind": "remote_access_link", "href": link["href"][:300], "text": link["text"]})
+        elif APK.search(target):
+            signals.append({"kind": "app_download_link", "href": link["href"][:300], "text": link["text"]})
+    if match := REMOTE_ACCESS.search(text):
+        signals.append({"kind": "remote_access_text", "href": None, "text": match.group(0)})
+    return signals[:20]
+
 
 FIELD_KINDS = [
     ("password", ("password", "كلمة المرور", "كلمة السر")),
@@ -98,6 +124,7 @@ def fetch(url: str) -> dict:
         "title": None,
         "text_excerpt": None,
         "forms": [],
+        "download_signals": [],
         "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "status": "ok",
         "fetch_error": None,
@@ -154,6 +181,7 @@ def fetch(url: str) -> dict:
                 title=page.title(),
                 text_excerpt=" ".join(text.split())[:TEXT_LIMIT],
                 forms=summarize_forms(page.evaluate(FORM_FIELDS_JS), page.url),
+                download_signals=download_signals(page.evaluate(LINKS_JS), text),
             )
         except PlaywrightError as exc:
             result.update(status="error", fetch_error=str(exc).splitlines()[0], final_url=page.url if page.url != "about:blank" else None)
