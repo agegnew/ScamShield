@@ -45,6 +45,16 @@ JOB_MAX_ATTEMPTS = int(os.getenv("SCAMSHIELD_JOB_MAX_ATTEMPTS", "3"))
 
 SERPAPI_KEY = os.getenv("SERPAPI_KEY", "")
 
+# Claude's second look at borderline pages (workers/ai_review.py). Needs ANTHROPIC_API_KEY.
+AI_ENABLED = os.getenv("SCAMSHIELD_AI", "1") == "1"
+AI_MODEL = os.getenv("SCAMSHIELD_AI_MODEL", "claude-opus-5-5")
+AI_EFFORT = os.getenv("SCAMSHIELD_AI_EFFORT", "medium")
+# Pages scoring in this range (inclusive) after the page check get a review.
+AI_MIN_SCORE = int(os.getenv("SCAMSHIELD_AI_MIN", "20"))
+AI_MAX_SCORE = int(os.getenv("SCAMSHIELD_AI_MAX", "79"))
+# Reviews per day at most (a cost guard; a review costs about 3-5 US cents).
+AI_DAILY_LIMIT = int(os.getenv("SCAMSHIELD_AI_DAILY_LIMIT", "300"))
+
 # Login (JWT). Without SCAMSHIELD_JWT_SECRET a random secret is made once and
 # kept in backend/.jwt-secret (gitignored), so tokens survive API reloads.
 JWT_SECRET = os.getenv("SCAMSHIELD_JWT_SECRET", "")

@@ -408,6 +408,44 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * AiReview
+         * @description What Claude made of a borderline page (workers/ai_review.py). The engine turns a confident
+         *     answer into one reason: ai_flagged (raises the score) or ai_cleared (lowers it).
+         */
+        AiReview: {
+            /**
+             * Model
+             * @description Model that answered, e.g. claude-opus-5-5
+             */
+            model: string;
+            /**
+             * Verdict
+             * @enum {string}
+             */
+            verdict: "scam" | "legit" | "unsure";
+            /** Confidence */
+            confidence: number;
+            /**
+             * Impersonates
+             * @description Brand id from the registry, if it copies one
+             */
+            impersonates?: string | null;
+            /**
+             * Asks For
+             * @description card, cvv, otp, password, emirates_id, bank_login, payment, ...
+             */
+            asks_for?: string[];
+            /** Explanation En */
+            explanation_en: string;
+            /** Explanation Ar */
+            explanation_ar: string;
+            /**
+             * Reviewed At
+             * Format: date-time
+             */
+            reviewed_at: string;
+        };
         /** BatchItem */
         BatchItem: {
             /** Url */
@@ -791,6 +829,8 @@ export interface components {
              * @description Set when the page could not be loaded; the engine still scores the URL
              */
             fetch_error?: string | null;
+            /** @description Claude's second look at a borderline page (screenshot + text); null when not asked */
+            ai_review?: components["schemas"]["AiReview"] | null;
         };
         /**
          * EvidenceExport

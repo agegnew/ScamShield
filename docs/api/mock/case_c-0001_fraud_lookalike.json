@@ -58,7 +58,8 @@
     "hosting_abuse_email": "abuse@hosting.test",
     "shared_hosting": false,
     "fetched_at": "2026-11-24T10:43:00+04:00",
-    "fetch_error": null
+    "fetch_error": null,
+    "ai_review": null
   },
   "verdict": {
     "url": "https://tamm-fines-pay.test/pay?ref=AD-55120",

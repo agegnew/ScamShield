@@ -14,6 +14,7 @@ os.environ["SCAMSHIELD_ANALYST_PASSWORD"] = "analyst123"
 os.environ["SCAMSHIELD_REQUIRE_LOGIN"] = "0"
 # Never spend real SerpApi searches in tests (load_dotenv does not override a set variable).
 os.environ["SERPAPI_KEY"] = ""
+os.environ["ANTHROPIC_API_KEY"] = ""  # and never call Claude
 
 import pytest  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402

@@ -55,7 +55,8 @@
     "hosting_abuse_email": "abuse@cloud.test",
     "shared_hosting": false,
     "fetched_at": "2026-11-24T09:59:00+04:00",
-    "fetch_error": null
+    "fetch_error": null,
+    "ai_review": null
   },
   "verdict": {
     "url": "https://emiratesnbd-support.test/",

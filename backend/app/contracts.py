@@ -244,6 +244,26 @@ class Evidence(BaseModel):
         default=None,
         description="Set when the page could not be loaded; the engine still scores the URL",
     )
+    ai_review: "AiReview | None" = Field(
+        default=None,
+        description="Claude's second look at a borderline page (screenshot + text); null when not asked",
+    )
+
+
+class AiReview(BaseModel):
+    """What Claude made of a borderline page (workers/ai_review.py). The engine turns a confident
+    answer into one reason: ai_flagged (raises the score) or ai_cleared (lowers it)."""
+
+    model: str = Field(description="Model that answered, e.g. claude-opus-5-5")
+    verdict: Literal["scam", "legit", "unsure"]
+    confidence: float = Field(ge=0, le=1)
+    impersonates: str | None = Field(default=None, description="Brand id from the registry, if it copies one")
+    asks_for: list[str] = Field(
+        default_factory=list, description="card, cvv, otp, password, emirates_id, bank_login, payment, ..."
+    )
+    explanation_en: str
+    explanation_ar: str
+    reviewed_at: datetime
 
 
 class Reason(BaseModel):
@@ -264,3 +284,7 @@ class Verdict(BaseModel):
     reasons: list[Reason]
     model_version: str
     scored_at: datetime
+
+
+# Evidence refers to AiReview, defined after it.
+Evidence.model_rebuild()

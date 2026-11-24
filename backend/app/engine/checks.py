@@ -599,6 +599,40 @@ def helpline(ctx: Ctx) -> list[Reason]:
     return []
 
 
+AI_STRONG = 0.85  # confidence for the full weight
+AI_SOME = 0.6  # below this the answer is ignored
+
+
+def ai_review(ctx: Ctx) -> list[Reason]:
+    """Claude's second look at a borderline page, when the worker asked for one (workers/ai_review.py).
+    Only a confident answer counts; combine() lets hard evidence overrule a clearing answer."""
+    ai = ctx.evidence.ai_review if ctx.evidence else None
+    if ai is None or ai.verdict == "unsure" or ai.confidence < AI_SOME:
+        return []
+    strong = ai.confidence >= AI_STRONG
+    if ai.verdict == "scam":
+        if ai.impersonates and not ctx.brand_target and any(b.id == ai.impersonates for b in ctx.brands):
+            ctx.brand_target = ai.impersonates
+        return [
+            _r(
+                "ai_flagged",
+                30 if strong else 15,
+                f"AI review ({round(ai.confidence * 100)}% sure): {ai.explanation_en}",
+                f"مراجعة الذكاء الاصطناعي (بثقة {round(ai.confidence * 100)}٪): {ai.explanation_ar}",
+                "screenshot",
+            )
+        ]
+    return [
+        _r(
+            "ai_cleared",
+            -30 if strong else -15,
+            f"AI review ({round(ai.confidence * 100)}% sure it is legitimate): {ai.explanation_en}",
+            f"مراجعة الذكاء الاصطناعي (بثقة {round(ai.confidence * 100)}٪ أنه سليم): {ai.explanation_ar}",
+            "screenshot",
+        )
+    ]
+
+
 CHECKS = (
     top_site,
     threat_feed,
@@ -610,6 +644,7 @@ CHECKS = (
     government_network,
     domain_age,
     helpline,
+    ai_review,
 )
 
 
@@ -624,8 +659,10 @@ OFFICIAL_CLAIM = re.compile(r"\bofficial\b|\bgovernment\b|\bministry\b|رسمي|
 ACTIVE_SCAM = PAGE_IMPERSONATION | {"credential_form", "remote_access", "app_download", "cloaking"}
 # Anything that points to a scam; a live page with none of them is probably an unrelated business.
 SCAM_SIGNS = ACTIVE_SCAM | {
-    "threat_feed", "scam_theme_page", "new_domain", "helpline_mismatch", "cross_domain_redirect",
+    "threat_feed", "scam_theme_page", "new_domain", "helpline_mismatch", "cross_domain_redirect", "ai_flagged",
 }
+# Hard evidence an AI "looks legitimate" answer may not outweigh.
+AI_CANNOT_CLEAR = {"threat_feed", "cloaking", "visual_match", "remote_access", "app_download"}
 # The domain is held but shows no site of its own. There is nothing to take down yet, so it is
 # watched (SUSPICIOUS) instead of reported, unless a phishing feed already lists it.
 HOLDING_PAGES = {
@@ -641,6 +678,16 @@ HOLDING_PAGE_CAP = 60
 def combine(ctx: Ctx, reasons: list[Reason]) -> list[Reason]:
     """Rules that read several checks at once. Weights stay additive: the score is their sum."""
     codes = {r.code for r in reasons}
+
+    if codes & AI_CANNOT_CLEAR:
+        # A phishing-feed hit, cloaking, a copied official template or a pushed app outweighs an
+        # AI answer that the page looks legitimate.
+        reasons = [r for r in reasons if r.code != "ai_cleared"]
+        codes.discard("ai_cleared")
+    if "ai_cleared" in codes and not ctx.notes.get("domain_brand"):
+        # The brand came only from the page's words (a news article about an Abu Dhabi Police
+        # fine discount) and the AI found no impersonation: don't tag the site with that brand.
+        ctx.brand_target = None
 
     if codes & PAGE_IMPERSONATION or ctx.notes.get("feed_kind") == "url":
         # The page itself pretends to be the brand, or this exact URL is a reported phishing page.

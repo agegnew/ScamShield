@@ -4,11 +4,11 @@ import logging
 
 from sqlalchemy.orm import Session
 
-from .. import engine as detection
 from .. import jobs, radar_runs
 from ..brands import load_registry
 from ..engine import feeds
 from ..repo import CaseRepo
+from . import ai_review
 from . import evidence as collector
 from .radar import SOURCES
 
@@ -28,7 +28,8 @@ def run_fetch(session: Session, url: str) -> None:
         return
 
     evidence = collector.collect(url)
-    verdict = detection.score(url, evidence=evidence, candidate=case.candidate)
+    # Borderline pages also get Claude's look (ai_review.py); off without ANTHROPIC_API_KEY.
+    evidence, verdict = ai_review.score_with_review(url, evidence, case.candidate)
     repo.save_analysis(case.id, evidence, verdict)
     log.info("scored %s -> %s %s", url, verdict.verdict.value, verdict.score)
 

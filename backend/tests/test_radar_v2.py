@@ -298,6 +298,7 @@ def test_new_brands_no_false_typos_and_longest_token_wins():
     assert all(r.code != "typosquat" for r in engine.score("https://parking.ae/").reasons)  # parkin.ae
     assert all(r.code != "typosquat" for r in engine.score("https://more.com/").reasons)  # mohre
     assert match_brand("dubaicustoms-uae.com") == "dubaicustoms"  # not adcustoms' "customs-uae"
+    assert match_brand("www.tammservices.com") == "tamm" and match_brand("www.tamm.abudhabi") is None
     assert match_brand("parking-dubai.com") is None and match_brand("parkin-pay.com") == "parkin"
     assert match_brand("afternoon-tea.ae") is None and match_brand("noon-uae.shop") == "noon"
     assert match_brand("emirates247.com") is None and match_brand("emirates-airline-gift.com") == "emiratesairline"

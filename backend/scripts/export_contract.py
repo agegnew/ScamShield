@@ -22,6 +22,7 @@ os.environ["SCAMSHIELD_JWT_SECRET"] = "export-only-secret-never-used-by-a-real-a
 os.environ["SCAMSHIELD_REQUIRE_LOGIN"] = "0"
 # Samples must not depend on (or spend) a real SerpApi key.
 os.environ["SERPAPI_KEY"] = ""
+os.environ["ANTHROPIC_API_KEY"] = ""
 
 from fastapi.testclient import TestClient  # noqa: E402
 

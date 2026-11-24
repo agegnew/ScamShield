@@ -96,7 +96,13 @@ def judge(raw: str, mode: str, use_feeds: bool) -> dict:
         evidence = evidence_for(url, mode)
     except Exception as exc:  # one bad site must not stop the batch; fall back to the URL alone
         evidence, error = None, f"{mode} lookup failed ({type(exc).__name__}); scored from the URL only"
-    verdict: Verdict = engine.score(url, evidence=evidence, use_feeds=use_feeds)
+    if mode == "full" and evidence is not None:
+        # Borderline pages also get Claude's look (app/workers/ai_review.py); off without ANTHROPIC_API_KEY.
+        from app.workers import ai_review
+
+        evidence, verdict = ai_review.score_with_review(url, evidence, use_feeds=use_feeds)
+    else:
+        verdict: Verdict = engine.score(url, evidence=evidence, use_feeds=use_feeds)
     final_url = evidence.final_url if evidence and evidence.final_url else ""
     if evidence and evidence.fetch_error and mode == "full" and not error:
         error = evidence.fetch_error

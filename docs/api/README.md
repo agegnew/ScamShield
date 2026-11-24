@@ -39,6 +39,7 @@ The engine, radar and worker are real. The API still starts in **mock mode** by 
 - **Verdicts:** `FRAUD` (score ≥ 70), `SUSPICIOUS` (30–69), `LEGIT` (< 30). The citizen checker can also return `UNKNOWN` (an unknown phone number), with `score: null`.
 - **Score:** 0–100, higher = riskier.
 - **Bilingual text:** every user-facing string comes as a pair, `*_en` and `*_ar` (reasons, headlines, advice, takedown body). Pick by the UI language; never machine-translate in the UI.
+- **AI review:** `evidence.ai_review` = `{model, verdict: scam|legit|unsure, confidence, impersonates, asks_for, explanation_en, explanation_ar, reviewed_at}` when Claude looked at a borderline page (null otherwise). It also appears as a reason: `ai_flagged` (+15/+30) or `ai_cleared` (−15/−30). Show it like any other reason; an "AI review" badge on the case page is optional.
 - **Reasons:** list of `{code, weight, text_en, text_ar, evidence_ref}`. Positive weight raises risk, negative lowers it. `evidence_ref` tells you which evidence block to highlight (`screenshot`, `rdap.created`, `forms`, `redirect_chain`, `candidate.extra.phone`, ...).
 - **Screenshots:** `evidence.screenshot_path` is relative; load it from `<API>/artifacts/<screenshot_path>`. Mock cases point at a grey placeholder.
 - **Times:** ISO 8601 with offset. Show them in UAE time.

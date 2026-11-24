@@ -5,3 +5,4 @@ requests>=2.31
 phonenumbers>=8.13
 dnstwist>=20240116
 pillow>=10.0
+anthropic>=2.14,<3  # Claude review of borderline pages (app/workers/ai_review.py)

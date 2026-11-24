@@ -45,8 +45,10 @@ def analyse(case_id: str, url: str) -> str:
     with SessionLocal() as session:
         repo = CaseRepo(session)
         case = repo.get(case_id)
+        from app.workers import ai_review
+
         evidence = collector.collect(url)
-        verdict = engine.score(url, evidence=evidence, candidate=case.candidate if case else None)
+        evidence, verdict = ai_review.score_with_review(url, evidence, case.candidate if case else None)
         repo.save_analysis(case_id, evidence, verdict)
         # The worker would otherwise fetch the same URL again.
         for job in session.scalars(

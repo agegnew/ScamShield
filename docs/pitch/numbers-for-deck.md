@@ -29,6 +29,13 @@ Final engine numbers (24 Nov 2026, evening). Copy them into the `[__]` placehold
 | Phishing kits planted on hacked `.ae` business websites | **FRAUD** |
 | `tamm.abudhabi`, `rta.ae`, `emiratesnbd.com`, `adpolice.gov.ae`, `adpolice.ae` | **LEGIT 0** |
 
+## AI slide (25 Nov, night)
+
+- Borderline pages get a second look from **Claude (Opus 5.5)**: it reads the phone screenshot and the page like an analyst and adds one reason in Arabic and English.
+- First real run: it recognised `adamex.online` as a **Russian baby-stroller shop** (our rules said SUSPICIOUS 54 as an Aramex lookalike → now LEGIT 24) and `uaetamm.com` as a **real-estate agency called Tamm** (55 → 40), and said "unsure" on empty placeholder pages instead of guessing.
+- Safety rails: it never clears a phishing-feed hit, cloaking or a copied official template; it costs a few cents per page and only runs on pages the rules can't decide.
+- Coverage now: **53 UAE brands in 9 sectors** (banks, police and fines, parking, delivery, shopping offers, airlines, ...), radar runs daily at 03:00 or on a button.
+
 ## One-liners
 
 - "Every verdict comes with its reasons in Arabic and English, and a one-click PDF evidence report for police."

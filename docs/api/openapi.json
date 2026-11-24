@@ -1135,6 +1135,74 @@
   },
   "components": {
     "schemas": {
+      "AiReview": {
+        "properties": {
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "Model that answered, e.g. claude-opus-5-5"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "scam",
+              "legit",
+              "unsure"
+            ],
+            "title": "Verdict"
+          },
+          "confidence": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence"
+          },
+          "impersonates": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Impersonates",
+            "description": "Brand id from the registry, if it copies one"
+          },
+          "asks_for": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Asks For",
+            "description": "card, cvv, otp, password, emirates_id, bank_login, payment, ..."
+          },
+          "explanation_en": {
+            "type": "string",
+            "title": "Explanation En"
+          },
+          "explanation_ar": {
+            "type": "string",
+            "title": "Explanation Ar"
+          },
+          "reviewed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Reviewed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "model",
+          "verdict",
+          "confidence",
+          "explanation_en",
+          "explanation_ar",
+          "reviewed_at"
+        ],
+        "title": "AiReview",
+        "description": "What Claude made of a borderline page (workers/ai_review.py). The engine turns a confident\nanswer into one reason: ai_flagged (raises the score) or ai_cleared (lowers it)."
+      },
       "BatchItem": {
         "properties": {
           "url": {
@@ -2185,6 +2253,17 @@
             ],
             "title": "Fetch Error",
             "description": "Set when the page could not be loaded; the engine still scores the URL"
+          },
+          "ai_review": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AiReview"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Claude's second look at a borderline page (screenshot + text); null when not asked"
           }
         },
         "type": "object",
