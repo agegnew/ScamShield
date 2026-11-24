@@ -118,6 +118,7 @@ def threat_feed(ctx: Ctx) -> list[Reason]:
         hit = feeds.lookup(url, host, bool(ctx.platform))
         if hit:
             kind, feed = hit
+            ctx.notes["feed_kind"] = kind
             return [
                 _r(
                     "threat_feed",
@@ -576,6 +577,8 @@ CHECKS = (
 # ---- Combination rules (run once, after every check) -----------------------
 
 PAGE_IMPERSONATION = {"brand_on_wrong_domain", "visual_match"}
+# Reasons that lower risk because a site looks ordinary or established.
+TRUST_DISCOUNTS = {"url_model", "old_domain"}
 # Signs of an active scam: a page showing them is not a mere placeholder, whatever it says.
 ACTIVE_SCAM = PAGE_IMPERSONATION | {"credential_form", "remote_access", "app_download", "cloaking"}
 # The domain is held but shows no site of its own. There is nothing to take down yet, so it is
@@ -594,10 +597,12 @@ def combine(ctx: Ctx, reasons: list[Reason]) -> list[Reason]:
     """Rules that read several checks at once. Weights stay additive: the score is their sum."""
     codes = {r.code for r in reasons}
 
+    if codes & PAGE_IMPERSONATION or ctx.notes.get("feed_kind") == "url":
+        # The page itself pretends to be the brand, or this exact URL is a reported phishing page.
+        # A normal-looking URL and an old domain are how such pages hide (phishing kits are often
+        # planted on hacked, years-old business sites), so they no longer count in the site's favour.
+        reasons = [r for r in reasons if r.code not in TRUST_DISCOUNTS or r.weight >= 0]
     if codes & PAGE_IMPERSONATION:
-        # The page itself pretends to be the brand. A normal-looking URL is what a careful
-        # scammer picks, so it no longer counts in the site's favour.
-        reasons = [r for r in reasons if not (r.code == "url_model" and r.weight < 0)]
         domain_brand = ctx.notes.get("domain_brand")
         brand = next((b for b in ctx.brands if b.id == domain_brand), None)
         if brand and domain_brand in ctx.notes.get("page_brands", set()):

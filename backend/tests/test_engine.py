@@ -253,3 +253,19 @@ def test_placeholder_label_does_not_hide_a_credential_form(monkeypatch):
     v = engine.score("https://tamm-service.site/", evidence=ev)
     assert "holding_page" not in codes(v)
     assert v.verdict == Label.FRAUD
+
+
+def test_reported_phishing_url_on_an_old_hacked_site_is_fraud(monkeypatch):
+    # rallysteelworks.ae/fonts/: a phishing kit on a years-old business site, listed by PhishTank.
+    monkeypatch.setattr(model, "phishing_probability", lambda url: 0.37)
+    monkeypatch.setattr(feeds, "load", lambda: feeds.FeedIndex(urls={"https://rallysteelworks.ae/fonts": "PhishTank"}))
+    ev = page("https://rallysteelworks.ae/fonts/", rdap=Rdap(created=NOW - timedelta(days=9 * 365)))
+    v = engine.score("https://rallysteelworks.ae/fonts/", evidence=ev, use_feeds=True)
+    assert "threat_feed" in codes(v) and not {"url_model", "old_domain"} & codes(v)
+    assert v.verdict == Label.FRAUD
+
+
+def test_old_domain_still_counts_without_strong_evidence(monkeypatch):
+    monkeypatch.setattr(model, "phishing_probability", lambda url: 0.37)
+    ev = page("https://rallysteelworks.ae/about/", rdap=Rdap(created=NOW - timedelta(days=9 * 365)))
+    assert {"url_model", "old_domain"} <= codes(engine.score("https://rallysteelworks.ae/about/", evidence=ev))
