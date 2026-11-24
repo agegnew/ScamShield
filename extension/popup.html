@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ScamShield</title>
+  <link rel="stylesheet" href="ui.css">
+  <style>
+    body { width: 360px; padding: 14px; }
+    .site { margin: 12px 0 4px; font-weight: 700; word-break: break-all; }
+    .verdict { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
+    .score { font-size: 13px; }
+    h1 { font-size: 17px; margin: 8px 0 4px; }
+    .reasons li { margin: 4px 0; }
+    section { border-top: 1px solid var(--line); margin-top: 10px; padding-top: 8px; }
+    footer { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="icons/icon-32.png" alt="">
+    <span class="name">ScamShield</span>
+    <button id="lang" type="button">العربية</button>
+  </header>
+  <p class="site ltr" id="site"></p>
+  <div id="result" aria-live="polite"><p class="muted" id="status">Checking…</p></div>
+  <footer>
+    <button id="recheck" type="button">Check again</button>
+    <a class="button" id="report" href="https://www.adpolice.gov.ae/" target="_blank" rel="noreferrer">Report: Aman 8002626</a>
+    <a class="button" href="options.html" target="_blank">Settings</a>
+  </footer>
+  <script src="popup.js"></script>
+</body>
+</html>

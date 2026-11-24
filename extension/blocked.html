@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Blocked by ScamShield</title>
+  <link rel="stylesheet" href="ui.css">
+  <style>
+    body { min-height: 100vh; display: grid; place-items: center; background: #fdeaea; padding: 24px; }
+    main { max-width: 620px; background: #fff; border: 2px solid var(--fraud); border-radius: 20px; padding: 32px; }
+    h1 { color: var(--fraud); font-size: 26px; margin: 14px 0 6px; }
+    .domain { font-size: 18px; font-weight: 700; word-break: break-all; }
+    .ar { direction: rtl; text-align: right; border-top: 1px solid var(--line); margin-top: 18px; padding-top: 14px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+    .continue { background: transparent; border: 0; color: var(--muted); text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <main role="alert">
+    <header><img src="icons/icon-48.png" alt="" width="40" height="40"><span class="name">ScamShield</span></header>
+    <h1>This website was blocked: it is a confirmed scam</h1>
+    <p class="domain ltr" id="domain"></p>
+    <p id="detail">ScamShield analysts confirmed it imitates an official UAE service to steal payment or login details. Nothing was loaded from it.</p>
+    <div class="ar">
+      <h1>تم حظر هذا الموقع: موقع احتيالي مؤكد</h1>
+      <p id="detail-ar">أكّد محللو ScamShield أنه ينتحل خدمة رسمية في الإمارات لسرقة بيانات الدفع أو الدخول. لم يتم تحميل أي شيء منه.</p>
+    </div>
+    <div class="actions">
+      <a class="button primary" id="official" hidden></a>
+      <button type="button" id="back">Go back · رجوع</button>
+      <button type="button" class="continue" id="continue">Continue anyway (not recommended) · المتابعة على مسؤوليتي</button>
+    </div>
+  </main>
+  <script src="blocked.js"></script>
+</body>
+</html>

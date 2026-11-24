@@ -1,0 +1,57 @@
+:root {
+  --bg: #fafaff;
+  --ink: #1e1b2e;
+  --muted: #6f6b86;
+  --line: #e6e3f0;
+  --primary: #6d28d9;
+  --fraud: #c81e1e;
+  --review: #b45309;
+  --safe: #15803d;
+  --unknown: #57534e;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+}
+
+[dir="rtl"] body, body[dir="rtl"] { text-align: right; }
+
+header { display: flex; align-items: center; gap: 8px; }
+header img { width: 24px; height: 24px; }
+header .name { font-weight: 800; flex: 1; }
+
+button, .button {
+  font: 600 13px system-ui, sans-serif;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+button.primary, .button.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+button:focus-visible, .button:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
+
+.chip {
+  display: inline-block;
+  font-weight: 800;
+  font-size: 13px;
+  border-radius: 999px;
+  padding: 4px 12px;
+  color: #fff;
+}
+.FRAUD { background: var(--fraud); }
+.SUSPICIOUS { background: var(--review); }
+.LEGIT { background: var(--safe); }
+.UNKNOWN { background: var(--unknown); }
+
+.muted { color: var(--muted); }
+.ltr { direction: ltr; unicode-bidi: isolate; }
+ul { padding-inline-start: 18px; margin: 6px 0; }
