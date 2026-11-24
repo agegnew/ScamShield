@@ -58,6 +58,8 @@ services:
       <<: *backend-env
       SCAMSHIELD_WORKER_JOBS: scan,fetch,feeds
       SCAMSHIELD_WORKER_SCHEDULE: "0"
+      # Demo laptop only (see demo-pages/README.md); from .env or the shell, empty by default.
+      SCAMSHIELD_DEMO_HOSTS: ${SCAMSHIELD_DEMO_HOSTS:-}
     volumes:
       - ./backend/app:/app/app
       - ./data:/data  # writable: hourly phishing-feed refresh
