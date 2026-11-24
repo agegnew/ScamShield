@@ -105,3 +105,6 @@ ul, ol { padding-inline-start: 18px; margin: 6px 0; }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+
+/* Keep the hidden attribute working even on styled buttons */
+[hidden] { display: none !important; }
