@@ -5,8 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from .auth import seed_users
-from .config import ARTIFACTS_DIR, CORS_ORIGINS, MODE, SEED_MOCK, VERSION
+from .config import ARTIFACTS_DIR, CORS_ORIGINS, DEMO_DATA_DIR, MODE, SEED_DEMO, SEED_MOCK, VERSION
 from .db import SessionLocal, init_db
+from .demo_data import load_snapshot
 from .mock.data import build_cases
 from .repo import CaseRepo
 from .routes import cases, citizen, scan, system, users
@@ -21,6 +22,8 @@ async def lifespan(_app: FastAPI):
             repo = CaseRepo(session)
             if repo.is_empty():
                 repo.seed(build_cases())
+    if SEED_DEMO:
+        load_snapshot(DEMO_DATA_DIR)  # real pre-scanned cases; skips URLs already stored
     yield
 
 

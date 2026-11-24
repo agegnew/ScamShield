@@ -6,6 +6,7 @@ x-backend-env: &backend-env
   SCAMSHIELD_THEMES: /data/scam_themes.json
   SCAMSHIELD_FEEDS: /data/datasets/raw
   SCAMSHIELD_CACHE: /data/cache
+  SCAMSHIELD_DEMO_DATA: /data/demo
   SCAMSHIELD_ARTIFACTS: /artifacts
 
 services:

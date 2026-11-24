@@ -32,6 +32,9 @@ DATABASE_URL = os.getenv(
 )
 # Load the demo cases into an empty database (on by default in mock mode).
 SEED_MOCK = os.getenv("SCAMSHIELD_SEED_MOCK", "1" if MODE == "mock" else "0") == "1"
+# Real cases scanned ahead of time (scripts/seed_demo.py export), loaded on start when set to 1.
+SEED_DEMO = os.getenv("SCAMSHIELD_SEED_DEMO", "0") == "1"
+DEMO_DATA_DIR = Path(os.getenv("SCAMSHIELD_DEMO_DATA", str(REPO_DIR / "data" / "demo")))
 
 WORKER_POLL_SECONDS = float(os.getenv("SCAMSHIELD_WORKER_POLL", "2"))
 # Radar caches (crt.sh answers, daily new-domain lists, saved SerpApi answers).

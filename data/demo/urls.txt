@@ -1,0 +1,22 @@
+# Demo cases scanned ahead of time: python -m scripts.seed_demo scan ../data/demo/urls.txt (from backend/)
+# Format: URL [source]. The radar's own finds are added with `seed_demo fetch` after a radar run.
+
+# Lookalikes Simon's radar found
+https://moi-portal.com/                lookalike   # fake Ministry of Interior portal -> FRAUD
+https://tamm-service.site/             lookalike   # parked lookalike, nothing live yet -> SUSPICIOUS
+
+# Official sites: must stay LEGIT (false-positive check)
+https://www.tamm.abudhabi/             search
+https://www.rta.ae/                    search
+https://www.emiratesnbd.com/           search
+https://www.adpolice.gov.ae/           search
+
+# Phishing hosted on hacked UAE (.ae) websites, from PhishTank (24 Nov 2026)
+https://sunnysoldesign.ae/calkie/ors/index.html?email=   citizen
+https://rallysteelworks.ae/fonts/                         citizen
+https://accounts-meine-dkbs-kreditdeutshe.baitalarablaundry.ae//logs/dkbs   citizen
+https://uaebillaccouae.hosted.phplist.com/lists/?p=subscribe&id=18          citizen
+
+# Short links from phishing feeds: the fetcher follows them to the real page
+https://2h.ae/pPGKr                    citizen
+https://bit.ly/4hDruaE                 citizen
