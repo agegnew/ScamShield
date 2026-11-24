@@ -1,0 +1,532 @@
+{
+  "version": "v1 — 10 themes from UAE police, TDRA and news warnings (Samri, 24 Nov 2026)",
+  "themes": [
+    {
+      "id": "traffic_fines",
+      "name_en": "Traffic fines and fine discounts",
+      "name_ar": "المخالفات المرورية وخصومات المخالفات",
+      "keywords_en": [
+        "traffic fine",
+        "fine discount",
+        "90% discount",
+        "70% discount",
+        "50% discount",
+        "pay your fine",
+        "unpaid violation",
+        "outstanding fine",
+        "black points",
+        "remove black points",
+        "vehicle impound",
+        "cancel vehicle seizure",
+        "fine settlement",
+        "last day to pay",
+        "violation notice"
+      ],
+      "keywords_ar": [
+        "مخالفة مرورية",
+        "مخالفات مرورية",
+        "خصم المخالفات",
+        "خصم 90%",
+        "خصم 50%",
+        "سداد المخالفة",
+        "مخالفة غير مدفوعة",
+        "النقاط السوداء",
+        "إزالة النقاط السوداء",
+        "حجز المركبة",
+        "إلغاء حجز المركبة",
+        "تسوية المخالفات",
+        "آخر يوم للسداد"
+      ],
+      "search_queries_en": [
+        "pay traffic fine abu dhabi",
+        "traffic fine discount uae",
+        "dubai traffic fine 50% discount",
+        "remove black points uae",
+        "check traffic fines uae online"
+      ],
+      "search_queries_ar": [
+        "دفع المخالفات المرورية",
+        "خصم المخالفات المرورية الإمارات",
+        "الاستعلام عن المخالفات المرورية",
+        "إزالة النقاط السوداء"
+      ],
+      "sources": [
+        "https://gulfnews.com/uae/90-traffic-fine-discount-in-uae-it-could-be-a-fake-account-1.500145072",
+        "https://gulfnews.com/uae/crime/scam-alert-abu-dhabi-police-warn-against-traffic-fine-suspicious-link-1.500243502",
+        "https://www.thenationalnews.com/news/uae/2025/08/06/dubai-police-foil-scam-offering-70-per-cent-discounts-on-traffic-fines",
+        "https://gulfnews.com/uae/crime/fraudsters-arrested-in-dubai-for-offering-fake-traffic-fine-discounts-1.500224475",
+        "https://www.khaleejtimes.com/uae/dubai-scam-fake-social-media-discount-police-warn"
+      ]
+    },
+    {
+      "id": "delivery_fees",
+      "name_en": "Parcel delivery and customs fees",
+      "name_ar": "رسوم توصيل الطرود والرسوم الجمركية",
+      "keywords_en": [
+        "delivery fee",
+        "parcel on hold",
+        "your package",
+        "redelivery",
+        "reschedule delivery",
+        "incorrect address",
+        "update your address",
+        "returned to warehouse",
+        "customs fee",
+        "customs clearance",
+        "shipping fee",
+        "pay aed 3",
+        "pay dh3",
+        "pay dh4",
+        "tracking number"
+      ],
+      "keywords_ar": [
+        "رسوم التوصيل",
+        "شحنتك معلقة",
+        "طردك",
+        "إعادة التوصيل",
+        "إعادة جدولة التوصيل",
+        "عنوان غير صحيح",
+        "تحديث العنوان",
+        "أعيدت إلى المستودع",
+        "رسوم جمركية",
+        "التخليص الجمركي",
+        "رسوم الشحن",
+        "رقم التتبع"
+      ],
+      "search_queries_en": [
+        "parcel delivery fee uae",
+        "emirates post track parcel pay fee",
+        "aramex redelivery fee uae",
+        "customs fee parcel uae pay online"
+      ],
+      "search_queries_ar": [
+        "تتبع شحنة بريد الإمارات",
+        "دفع رسوم الشحنة",
+        "رسوم جمركية على طرد الإمارات"
+      ],
+      "sources": [
+        "https://gulfnews.com/uae/crime/dh3-delivery-scam-abu-dhabi-police-alert-uae-residents-of-fake-messages-1.500272577",
+        "https://khaleejtimes.com/life-and-living/uae-scam-alert-residents-warned-against-fake-delivery-messages-from-emirates-post",
+        "https://www.khaleejtimes.com/uae/crime/uae-new-sms-scam-asks-residents-to-pay-dh4-to-claim-parcel",
+        "https://thenationalnews.com/uae/2023/01/05/uae-authority-warns-public-over-phishing-links-posing-as-major-courier-companies",
+        "https://www.khaleejtimes.com/business/fake-shipment-tracking-scams-surge-in-uae-and-region-heres-how-to-protect-yourself"
+      ]
+    },
+    {
+      "id": "visa_residency",
+      "name_en": "Visa, residency and domestic workers",
+      "name_ar": "التأشيرات والإقامة والعمالة المنزلية",
+      "keywords_en": [
+        "visa renewal",
+        "work visa",
+        "visit visa",
+        "golden visa",
+        "residency",
+        "entry permit",
+        "visa fee",
+        "visa processing",
+        "domestic worker",
+        "housemaid",
+        "maid available",
+        "nanny available",
+        "recruitment office",
+        "visa guaranteed",
+        "emirates id renewal"
+      ],
+      "keywords_ar": [
+        "تجديد التأشيرة",
+        "تأشيرة عمل",
+        "تأشيرة زيارة",
+        "الإقامة الذهبية",
+        "الإقامة",
+        "تصريح دخول",
+        "رسوم التأشيرة",
+        "عاملة منزلية",
+        "خادمة",
+        "مربية",
+        "مكتب استقدام",
+        "تأشيرة مضمونة",
+        "تجديد الهوية"
+      ],
+      "search_queries_en": [
+        "uae visa renewal online",
+        "uae work visa fast processing",
+        "housemaid for hire dubai",
+        "golden visa uae apply",
+        "emirates id renewal online"
+      ],
+      "search_queries_ar": [
+        "تجديد الإقامة الإمارات",
+        "استقدام عاملة منزلية الإمارات",
+        "تأشيرة عمل الإمارات",
+        "تجديد الهوية الإماراتية"
+      ],
+      "sources": [
+        "https://gulfnews.com/uae/uae-warns-against-fake-domestic-worker-recruitment-accounts-1.500752571",
+        "https://www.thenationalnews.com/news/uae/2026/01/24/woman-loses-dh10000-in-fake-domestic-worker-job-scam",
+        "https://www.thenationalnews.com/news/uae/2026/08/25/dubai-police-fake-visa-job-offer-warning/",
+        "https://gulfnews.com/uae/people/dubai-police-warn-against-fake-work-visa-scams-1.500397970",
+        "https://gulfnews.com/uae/government/uae-warns-against-phone-scams-fake-websites-impersonating-icp-logo-1.500524560"
+      ]
+    },
+    {
+      "id": "jobs",
+      "name_en": "Fake job offers",
+      "name_ar": "عروض عمل وهمية",
+      "keywords_en": [
+        "job offer",
+        "work from home",
+        "part-time job",
+        "no experience needed",
+        "flexible schedule",
+        "earn daily",
+        "earn aed",
+        "simple tasks",
+        "like and earn",
+        "daily commission",
+        "task-based job",
+        "registration fee",
+        "pay for visa",
+        "hr manager whatsapp",
+        "instant hiring"
+      ],
+      "keywords_ar": [
+        "عرض عمل",
+        "العمل من المنزل",
+        "وظيفة بدوام جزئي",
+        "لا تشترط خبرة",
+        "دوام مرن",
+        "ربح يومي",
+        "مهام بسيطة",
+        "عمولة يومية",
+        "رسوم تسجيل",
+        "توظيف فوري",
+        "وظائف شاغرة"
+      ],
+      "search_queries_en": [
+        "part time job dubai work from home",
+        "online job uae earn daily",
+        "jobs in uae with visa",
+        "urgent hiring dubai no experience"
+      ],
+      "search_queries_ar": [
+        "وظائف في الإمارات",
+        "عمل من المنزل الإمارات",
+        "وظائف دبي بدوام جزئي"
+      ],
+      "sources": [
+        "https://gulfnews.com/uae/crime/fake-part-time-job-scams-dubai-police-warns-residents-of-bank-account-fraud-1.500631558",
+        "https://khaleejtimes.com/uae/crime/dubai-police-warn-fake-part-time-job-offers",
+        "https://www.thenationalnews.com/news/uae/2026/01/20/how-dubai-police-are-cracking-down-on-scams-involving-real-company-names-but-fake-jobs/",
+        "https://www.khaleejtimes.com/jobs/uae-warn-fake-offers-recruitment-scams",
+        "https://www.adpolice.gov.ae/en/Media-Center/News/2021/07/01/Abu-Dhabi-Police-warn-job-seekers-against-fake-employment-offers"
+      ]
+    },
+    {
+      "id": "property",
+      "name_en": "Fake property listings",
+      "name_ar": "إعلانات عقارية وهمية",
+      "keywords_en": [
+        "apartment for rent",
+        "studio for rent",
+        "holiday home",
+        "chalet for rent",
+        "booking deposit",
+        "pay deposit to view",
+        "refundable insurance",
+        "documentation fee",
+        "below market price",
+        "owner abroad",
+        "keys will be couriered",
+        "reserve now",
+        "no agent fee"
+      ],
+      "keywords_ar": [
+        "شقة للإيجار",
+        "استوديو للإيجار",
+        "بيت عطلات",
+        "شاليه للإيجار",
+        "عربون",
+        "دفعة حجز",
+        "تأمين مسترد",
+        "رسوم توثيق",
+        "سعر أقل من السوق",
+        "المالك خارج الدولة",
+        "احجز الآن"
+      ],
+      "search_queries_en": [
+        "cheap apartment for rent dubai",
+        "studio for rent abu dhabi monthly",
+        "chalet for rent uae weekend",
+        "holiday home dubai booking"
+      ],
+      "search_queries_ar": [
+        "شقة للإيجار دبي",
+        "شاليه للإيجار الإمارات",
+        "استوديو للإيجار أبوظبي"
+      ],
+      "sources": [
+        "https://www.khaleejtimes.com/uae/dubai-resident-lose-dh8000-fake-chalet-rental-scam-police-issue-warning",
+        "https://www.khaleejtimes.com/uae/crime/dubai-police-arrest-fake-agent-scam-apartment-deals",
+        "https://www.thenationalnews.com/news/uae/2025/06/29/dubai-police-detains-scammer-over-fake-rental-adverts",
+        "https://gulfnews.com/uae/searching-for-a-home-dubai-police-alert-residents-to-new-rental-scam-online-1.500461271",
+        "https://www.khaleejtimes.com/business/property/dubai-rental-scam-agents-deposits-disappear"
+      ]
+    },
+    {
+      "id": "investment_salary",
+      "name_en": "Investment and salary-day offers",
+      "name_ar": "عروض الاستثمار ويوم الراتب",
+      "keywords_en": [
+        "guaranteed return",
+        "guaranteed profit",
+        "fixed monthly return",
+        "10% monthly",
+        "double your money",
+        "risk-free",
+        "crypto trading",
+        "forex signals",
+        "trading platform",
+        "invest now",
+        "limited slots",
+        "salary bonus",
+        "salary day offer",
+        "withdraw anytime",
+        "vip investment plan"
+      ],
+      "keywords_ar": [
+        "عائد مضمون",
+        "ربح مضمون",
+        "عائد شهري ثابت",
+        "ضاعف أموالك",
+        "بدون مخاطر",
+        "تداول العملات الرقمية",
+        "منصة تداول",
+        "استثمر الآن",
+        "أماكن محدودة",
+        "مكافأة الراتب",
+        "عرض يوم الراتب",
+        "استثمار"
+      ],
+      "search_queries_en": [
+        "best investment uae guaranteed return",
+        "crypto trading platform uae",
+        "invest 1000 aed monthly profit",
+        "forex trading dubai signals"
+      ],
+      "search_queries_ar": [
+        "استثمار مضمون الإمارات",
+        "منصة تداول موثوقة الإمارات",
+        "ربح شهري ثابت"
+      ],
+      "sources": [
+        "https://www.khaleejtimes.com/uae/crime/dubai-police-warn-residents-fake-investment-trading-scams",
+        "https://gulfnews.com/uae/crime/uae-warns-public-over-investment-fraud-promising-quick-guaranteed-returns-2-1.500605212",
+        "https://www.khaleejtimes.com/uae/uae-warns-residents-investment-scams-urges-verify-first",
+        "https://www.khaleejtimes.com/police-warn-residents-against-scammers-online-fraud",
+        "https://www.gulftoday.ae/news/2026/04/26/dubai-warns-residents-against-falling-victim-to-fraudulent-investment-trading-schemes"
+      ]
+    },
+    {
+      "id": "tickets_deals",
+      "name_en": "Event tickets and shop deals",
+      "name_ar": "تذاكر الفعاليات وعروض المتاجر",
+      "keywords_en": [
+        "tickets",
+        "vip tickets",
+        "sold out",
+        "last tickets",
+        "limited offer",
+        "90% off",
+        "80% off",
+        "clearance sale",
+        "flash sale",
+        "national day sale",
+        "free gift",
+        "pay via bank transfer",
+        "concert tickets",
+        "flight deal",
+        "hotel deal"
+      ],
+      "keywords_ar": [
+        "تذاكر",
+        "تذاكر vip",
+        "نفدت التذاكر",
+        "آخر التذاكر",
+        "عرض محدود",
+        "خصم 90%",
+        "تخفيضات",
+        "عرض اليوم الوطني",
+        "هدية مجانية",
+        "تحويل بنكي",
+        "تذاكر حفلة",
+        "عروض الطيران",
+        "عروض الفنادق"
+      ],
+      "search_queries_en": [
+        "concert tickets dubai cheap",
+        "global village vip pack",
+        "abu dhabi grand prix tickets discount",
+        "uae national day sale 90% off"
+      ],
+      "search_queries_ar": [
+        "تذاكر حفلات دبي",
+        "عروض اليوم الوطني",
+        "تذاكر القرية العالمية"
+      ],
+      "sources": [
+        "https://gulfnews.com/uae/crime/dubai-police-warn-of-online-scams-involving-fake-tickets-1.500389578",
+        "https://www.thenationalnews.com/news/uae/2025/12/03/fake-taylor-swift-dubai-concert-scam",
+        "https://gulfnews.com/uae/crime/uae-authorities-warn-against-fake-holiday-tickets-and-event-scams-this-christmas-and-new-year-1.500389752",
+        "https://www.arabianbusiness.com/culture-society/dubai-police-global-village-vip-ticket-scam",
+        "https://gulfnews.com/uae/crime/warning-over-low-priced-tickets-for-fake-events-in-uae-1.98530268"
+      ]
+    },
+    {
+      "id": "consumer_complaints",
+      "name_en": "Fake consumer protection and refunds",
+      "name_ar": "حماية المستهلك واسترداد المبالغ الوهمية",
+      "keywords_en": [
+        "consumer protection",
+        "file a complaint",
+        "submit complaint",
+        "refund",
+        "refund request",
+        "get your money back",
+        "chargeback",
+        "complaint fee",
+        "case number",
+        "complaint officer will call",
+        "recover lost money"
+      ],
+      "keywords_ar": [
+        "حماية المستهلك",
+        "تقديم شكوى",
+        "شكوى مستهلك",
+        "استرداد المبلغ",
+        "طلب استرداد",
+        "استرجاع أموالك",
+        "رسوم الشكوى",
+        "رقم الشكوى",
+        "استرداد الأموال المفقودة"
+      ],
+      "search_queries_en": [
+        "consumer protection complaint abu dhabi",
+        "consumer protection dubai file complaint",
+        "uae consumer complaint refund online",
+        "how to get refund scam uae"
+      ],
+      "search_queries_ar": [
+        "حماية المستهلك تقديم شكوى",
+        "شكوى حماية المستهلك دبي",
+        "استرداد المبلغ حماية المستهلك"
+      ],
+      "sources": [
+        "https://www.khaleejtimes.com/uae/dubai-police-fake-consumer-protection-links-banking-scam-warning",
+        "https://gulfnews.com/uae/crime/dubai-police-warn-of-fake-consumer-protection-scam-websites-1.500599691",
+        "https://gulfnews.com/uae/crime/emirates-society-for-consumer-protection-warns-of-fake-platforms-charging-consumers-to-resolve-complaints-1.500245415",
+        "https://www.gulftoday.ae/news/2026/07/07/dubai-police-warn-residents-against-fake-consumer-protection-websites-used-in-bank-fraud"
+      ]
+    },
+    {
+      "id": "account_verification",
+      "name_en": "Account verification and OTP requests",
+      "name_ar": "طلبات تحديث الحساب ورمز التحقق",
+      "keywords_en": [
+        "verify your account",
+        "account suspended",
+        "account blocked",
+        "card blocked",
+        "update your details",
+        "update emirates id",
+        "reactivate",
+        "confirm your identity",
+        "otp",
+        "one-time password",
+        "verification code",
+        "approve login request",
+        "enter your pin",
+        "card number",
+        "cvv"
+      ],
+      "keywords_ar": [
+        "تحديث بياناتك",
+        "تم إيقاف حسابك",
+        "تم حظر حسابك",
+        "تم إيقاف بطاقتك",
+        "تحديث الهوية",
+        "إعادة تفعيل",
+        "تأكيد هويتك",
+        "رمز التحقق",
+        "كلمة المرور لمرة واحدة",
+        "الرقم السري",
+        "رقم البطاقة"
+      ],
+      "search_queries_en": [
+        "uae pass login",
+        "update emirates id bank online",
+        "emirates nbd account blocked",
+        "reactivate uae pass"
+      ],
+      "search_queries_ar": [
+        "تسجيل الدخول الهوية الرقمية",
+        "تحديث بيانات الهوية في البنك",
+        "إعادة تفعيل الحساب البنكي"
+      ],
+      "sources": [
+        "https://gulfnews.com/uae/uae-pass-security-alert-tdra-issues-advisory-amid-fraud-attempts-1.500459682",
+        "https://gulfnews.com/uae/crime/dubai-police-caution-residents-against-fake-calls-seeking-uae-pass-details-1.500460239",
+        "https://www.gccbusinessnews.com/digital-dubai-tdra-warn-pass-phishing-scam/",
+        "https://www.gulftoday.ae/news/2026/04/11/dubai-police-warn-public-against-scams-involving-fake-phone-calls-and-sms",
+        "https://www.khaleejtimes.com/uae/crime/uae-never-disclose-banking-info-to-callers-on-the-phone-police-urge-as-cases-increase"
+      ]
+    },
+    {
+      "id": "remote_access",
+      "name_en": "Remote-access app installs",
+      "name_ar": "طلب تثبيت تطبيقات التحكم عن بعد",
+      "keywords_en": [
+        "anydesk",
+        "teamviewer",
+        "quicksupport",
+        "rustdesk",
+        "screen share",
+        "remote support",
+        "download the app",
+        "install the app",
+        "security app",
+        "fraud prevention app",
+        ".apk",
+        "download apk",
+        "allow unknown sources",
+        "accessibility permission"
+      ],
+      "keywords_ar": [
+        "حمّل التطبيق",
+        "تحميل التطبيق",
+        "ثبّت التطبيق",
+        "مشاركة الشاشة",
+        "الدعم عن بعد",
+        "تطبيق الحماية",
+        "مصادر غير معروفة",
+        "التحكم عن بعد"
+      ],
+      "search_queries_en": [
+        "bank security app download uae",
+        "consumer protection app download",
+        "uae police app apk"
+      ],
+      "search_queries_ar": [
+        "تحميل تطبيق البنك apk",
+        "تطبيق حماية المستهلك تحميل",
+        "تطبيق الدعم الفني عن بعد البنك"
+      ],
+      "sources": [
+        "https://www.khaleejtimes.com/uae/abu-dhabi-police-warn-residents-of-remote-access-apps-used-in-scams",
+        "https://gulfnews.com/uae/emergencies/abu-dhabi-police-warn-this-common-app-could-let-scammers-empty-your-bank-account-1.500502845",
+        "https://www.gulftoday.ae/news/2026/04/10/abu-dhabi-police-warn-against-remote-control-app-scams",
+        "https://gulfnews.com/uae/crime/dubai-man-loses-dh800000-bank-loan-cash-in-fake-banking-app-scam-1.500569862"
+      ]
+    }
+  ]
+}

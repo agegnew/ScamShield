@@ -6,7 +6,8 @@ from .brands import brand_by_id
 
 def build_takedown(case: Case) -> Takedown:
     ev = case.evidence
-    rdap = ev.rdap if ev else None
+    # On a shared platform the domain's registrar is the platform's; report to the host only.
+    rdap = ev.rdap if ev and not ev.shared_hosting else None
     brand = brand_by_id(case.verdict.brand_target)
     brand_en = brand.name_en if brand else "a UAE organisation"
     brand_ar = brand.name_ar if brand else "جهة إماراتية"

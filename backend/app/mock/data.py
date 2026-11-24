@@ -514,39 +514,6 @@ def build_cases() -> list[Case]:
     return cases
 
 
-def placeholder_verdict(url: str) -> Verdict:
-    """Stand-in until the real engine is wired in. Clearly labelled as mock."""
-    host = hostname(url)
-    brand = official_brand_for_domain(host)
-    now = datetime.now(UAE)
-    if brand:
-        return Verdict(
-            url=url,
-            verdict=Label.LEGIT,
-            score=0,
-            brand_target=None,
-            reasons=[official_domain_reason(brand, host)],
-            model_version=MODEL,
-            scored_at=now,
-        )
-    return Verdict(
-        url=url,
-        verdict=Label.SUSPICIOUS,
-        score=50,
-        brand_target=None,
-        reasons=[
-            _r(
-                "mock_placeholder",
-                0,
-                "Mock result: the real engine is not connected yet",
-                "نتيجة تجريبية: المحرك الحقيقي غير متصل بعد",
-            )
-        ],
-        model_version=MODEL,
-        scored_at=now,
-    )
-
-
 MOCK_METRICS = Metrics(
     mode="mock",
     dataset="mock — sample numbers for UI layout only, not a measurement",

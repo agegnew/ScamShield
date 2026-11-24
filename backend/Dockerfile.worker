@@ -1,0 +1,21 @@
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+
+# Playwright's bundled Node needs libatomic1; .ae domains are looked up with the whois tool.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libatomic1 whois \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt requirements-worker.txt ./
+RUN pip install -r requirements-worker.txt \
+    && python -m playwright install --with-deps chromium
+
+COPY app ./app
+COPY models ./models
+
+CMD ["python", "-m", "app.workers.runner"]

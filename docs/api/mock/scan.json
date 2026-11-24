@@ -1,21 +1,21 @@
 {
-  "case_id": "c-0009",
-  "status": "done",
+  "case_id": "c-bf0f49ba",
+  "status": "queued",
   "verdict": {
     "url": "https://new-site.test/login",
     "verdict": "SUSPICIOUS",
-    "score": 50,
+    "score": 61,
     "brand_target": null,
     "reasons": [
       {
-        "code": "mock_placeholder",
-        "weight": 0,
-        "text_en": "Mock result: the real engine is not connected yet",
-        "text_ar": "نتيجة تجريبية: المحرك الحقيقي غير متصل بعد",
-        "evidence_ref": null
+        "code": "url_model",
+        "weight": 61,
+        "text_en": "URL pattern looks like phishing (94% by our URL model)",
+        "text_ar": "نمط الرابط يشبه روابط التصيّد (94٪ حسب نموذج الروابط)",
+        "evidence_ref": "url"
       }
     ],
-    "model_version": "mock-0",
-    "scored_at": "2026-11-24T12:45:31.086725+04:00"
+    "model_version": "engine-1/url-model",
+    "scored_at": "2026-11-24T11:14:28.396825Z"
   }
 }

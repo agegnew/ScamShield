@@ -10,15 +10,19 @@
     "extra": {
       "listing_name": null,
       "phone": null,
-      "address": null
+      "address": null,
+      "brand": null,
+      "details": {}
     }
   },
   "evidence": {
     "url": "https://tamm-fines-pay.test/pay?ref=AD-55120",
+    "profile": "mobile_ae",
     "final_url": "https://tamm-fines-pay.test/pay?ref=AD-55120",
     "redirect_chain": [],
     "http_status": 200,
     "screenshot_path": "mock/screenshot.svg",
+    "screenshot_sha256": null,
     "title": "TAMM | Pay Traffic Fines",
     "text_excerpt": "Your traffic fine of AED 1,250 is overdue. Pay now to avoid a 50% penalty and vehicle impound. Enter your card details to settle the fine.",
     "forms": [
@@ -34,9 +38,14 @@
           "expiry",
           "cvv",
           "otp"
-        ]
+        ],
+        "sensitive": []
       }
     ],
+    "download_signals": [],
+    "fingerprints": null,
+    "visual_match": null,
+    "cloaking": null,
     "rdap": {
       "created": "2026-11-21T12:00:00Z",
       "registrar": "Example Registrar Inc.",
@@ -46,6 +55,7 @@
     "asn": 64500,
     "hosting_org": "Example Hosting Ltd.",
     "hosting_abuse_email": "abuse@hosting.test",
+    "shared_hosting": false,
     "fetched_at": "2026-11-24T10:43:00+04:00",
     "fetch_error": null
   },
@@ -99,7 +109,7 @@
       "action": "confirm",
       "reason": "Clear TAMM impersonation asking for card and OTP",
       "by": "analyst",
-      "at": "2026-11-24T10:55:00+04:00"
+      "at": "2026-11-24T06:55:00Z"
     }
   ]
 }

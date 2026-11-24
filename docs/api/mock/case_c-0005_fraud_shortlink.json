@@ -10,11 +10,14 @@
     "extra": {
       "listing_name": null,
       "phone": null,
-      "address": null
+      "address": null,
+      "brand": null,
+      "details": {}
     }
   },
   "evidence": {
     "url": "https://s.test/x7Kp2",
+    "profile": "mobile_ae",
     "final_url": "https://tamm-violations.test/pay",
     "redirect_chain": [
       {
@@ -28,6 +31,7 @@
     ],
     "http_status": 200,
     "screenshot_path": "mock/screenshot.svg",
+    "screenshot_sha256": null,
     "title": "TAMM - Traffic Violations Payment",
     "text_excerpt": "You have 2 unpaid traffic violations. Pay within 24 hours to avoid black points. Enter card details and the code sent by SMS.",
     "forms": [
@@ -42,9 +46,14 @@
           "card number",
           "cvv",
           "otp"
-        ]
+        ],
+        "sensitive": []
       }
     ],
+    "download_signals": [],
+    "fingerprints": null,
+    "visual_match": null,
+    "cloaking": null,
     "rdap": {
       "created": "2026-11-21T16:00:00Z",
       "registrar": "Example Registrar Inc.",
@@ -54,6 +63,7 @@
     "asn": 64500,
     "hosting_org": "Example Hosting Ltd.",
     "hosting_abuse_email": "abuse@hosting.test",
+    "shared_hosting": false,
     "fetched_at": "2026-11-24T09:13:00+04:00",
     "fetch_error": null
   },

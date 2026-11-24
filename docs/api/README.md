@@ -2,8 +2,9 @@
 
 The API runs in **mock mode** until the real engine lands (Gate 2, 17:00). Shapes stay the same when it switches to live data, so build against this now.
 
-- **Live server:** run the backend (see `backend/README.md`), then open http://127.0.0.1:8000/docs for every endpoint with "Try it out".
+- **Live server:** `docker compose up` from the repo root (or see `backend/README.md`), then open http://localhost:8000/docs for every endpoint with "Try it out".
 - **No Python?** Every response is saved in [`mock/`](mock/) and the full schema in [`openapi.json`](openapi.json).
+- **TypeScript types:** [`scamshield-api.d.ts`](scamshield-api.d.ts), generated from the schema. Use `components["schemas"]["Case"]` etc.
 - **Mode:** every response has the header `X-ScamShield-Mode: mock | live`. Show a small "Demo data" badge when it says `mock`.
 
 ## Endpoints
@@ -20,20 +21,20 @@ The API runs in **mock mode** until the real engine lands (Gate 2, 17:00). Shape
 | GET | `/api/cases/{id}/report.pdf` | "Export PDF" button — returns **501** until 19:00 | — |
 | GET | `/api/graph` | Network graph: nodes = risky cases, edges = shared infrastructure | `graph.json` |
 | GET | `/api/metrics` | Accuracy page | `metrics.json` |
-| POST | `/api/scan` `{url}` | "Scan a URL" box | `scan.json` |
+| POST | `/api/scan` `{url}` | "Scan a URL" box. Returns `status: queued` with a quick URL-only verdict; poll `GET /api/cases/{case_id}` every 2 s until `evidence` is filled | `scan.json` |
 | POST | `/api/batch` `{urls: [...]}` (`?format=csv` for a file) | Batch upload | `batch.json` |
 | POST | `/api/check` `{input}` | **Public citizen checker** — link or phone number | `check_*.json` |
 | POST | `/api/auth/login` `{username, password}` | Login | `login.json` |
 
 ## Conventions
 
-- **Verdicts:** `FRAUD`, `SUSPICIOUS`, `LEGIT`. The citizen checker can also return `UNKNOWN` (an unknown phone number), with `score: null`.
+- **Verdicts:** `FRAUD`, `SUSPICIOUS`, `LEGIT`. The citizen checker can also return `UNKNOWN` (an unknown phone number), with `score: null`. Until the engine is built, new URLs come back `SUSPICIOUS` 50 with reason code `engine_incomplete` — show it like any other reason.
 - **Score:** 0–100, higher = riskier.
 - **Bilingual text:** every user-facing string comes as a pair, `*_en` and `*_ar` (reasons, headlines, advice, takedown body). Pick by the UI language; never machine-translate in the UI.
 - **Reasons:** list of `{code, weight, text_en, text_ar, evidence_ref}`. Positive weight raises risk, negative lowers it. `evidence_ref` tells you which evidence block to highlight (`screenshot`, `rdap.created`, `forms`, `redirect_chain`, `candidate.extra.phone`, ...).
 - **Screenshots:** `evidence.screenshot_path` is relative; load it from `<API>/artifacts/<screenshot_path>`. Mock cases point at a grey placeholder.
 - **Times:** ISO 8601 with offset. Show them in UAE time.
-- **Sources:** `lookalike`, `ct` (new certificate), `search`, `search_ad`, `maps`, `manual`, `citizen`, `batch`.
+- **Sources:** `lookalike`, `ct` (new certificate), `nrd` (newly registered domain), `search`, `search_ad`, `maps`, `manual`, `citizen`, `batch`.
 - **Case status:** `new`, `confirmed`, `dismissed`.
 - **Auth (mock):** log in as `admin` or `analyst` with any password; send `Authorization: Bearer <access_token>`. Real login with roles arrives at 14:00, same endpoint.
 

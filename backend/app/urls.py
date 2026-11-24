@@ -1,4 +1,10 @@
+from functools import lru_cache
 from urllib.parse import urlsplit
+
+import tldextract
+
+# Bundled public-suffix snapshot: offline and the same result on every machine.
+_extract = tldextract.TLDExtract(suffix_list_urls=())
 
 
 class InvalidURL(ValueError):
@@ -21,4 +27,21 @@ def normalize_url(raw: str) -> str:
 
 
 def hostname(url: str) -> str:
-    return (urlsplit(url).hostname or "").lower().rstrip(".")
+    try:
+        return (urlsplit(url).hostname or "").lower().rstrip(".")
+    except ValueError:
+        return ""
+
+
+@lru_cache(maxsize=65536)
+def registrable_domain(host: str) -> str:
+    """'login.tamm-pay.co.uk' -> 'tamm-pay.co.uk'. Falls back to the host itself (IPs)."""
+    parts = _extract(host)
+    if parts.domain and parts.suffix:
+        return f"{parts.domain}.{parts.suffix}"
+    return host
+
+
+def domain_label(host: str) -> str:
+    """The name part of the registrable domain: 'tamm-pay.co.uk' -> 'tamm-pay'."""
+    return _extract(host).domain or host

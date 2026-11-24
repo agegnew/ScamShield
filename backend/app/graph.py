@@ -29,16 +29,34 @@ def build_graph(cases: list[Case]) -> Graph:
         ev = case.evidence
         if ev is None:
             continue
-        if ev.ip:
+        # A parked, for-sale or blocked page belongs to the registrar or marketplace: its IP, final
+        # host and fingerprints would link every domain parked there. Registration day still counts.
+        placeholder = ev.page_kind not in (None, "content", "empty")
+        # On a shared platform the IP and WHOIS belong to the platform, so they
+        # would link unrelated sites. Only the final host still says something.
+        if ev.ip and not ev.shared_hosting and not placeholder:
             groups[("same_ip", f"Same IP address {ev.ip}")].append(case.id)
-        if ev.rdap and ev.rdap.created and ev.rdap.registrar:
+        if ev.rdap and ev.rdap.created and ev.rdap.registrar and not ev.shared_hosting:
             day = ev.rdap.created.date().isoformat()
             detail = f"Registered on {day} at {ev.rdap.registrar}"
             groups[("same_registration_day", detail)].append(case.id)
-        if ev.final_url:
+        if ev.final_url and not placeholder:
             groups[("same_final_host", f"Same final host {hostname(ev.final_url)}")].append(
                 case.id
             )
+        fp = ev.fingerprints
+        if fp is None or placeholder:
+            continue
+        # Fingerprints from Simon's fetcher: the same favicon, page template, tracker account
+        # or contact across domains points to one operator (a hypothesis, not proof).
+        if fp.favicon_mmh3 is not None:
+            groups[("same_favicon", f"Same favicon (Shodan hash {fp.favicon_mmh3})")].append(case.id)
+        if fp.dom_hash:
+            groups[("same_template", f"Same page template {fp.dom_hash}")].append(case.id)
+        for tracker in fp.tracking_ids:
+            groups[("same_tracker", f"Same tracking ID {tracker}")].append(case.id)
+        for handle in fp.contacts.whatsapp + fp.contacts.telegram:
+            groups[("same_contact", f"Same contact {handle}")].append(case.id)
 
     edges = [
         GraphEdge(source=a, target=b, type=edge_type, detail=detail)

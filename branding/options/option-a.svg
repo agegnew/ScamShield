@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 72" role="img" aria-label="SafeTap">
+  <!-- Option A: fingertip tapping a heart-shaped shield, coral + teal -->
+  <path d="M36 6 L62 15 V34 C62 50 50 62 36 67 C22 62 10 50 10 34 V15 Z" fill="#FF6B6B"/>
+  <circle cx="36" cy="36" r="13" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="4 4"/>
+  <circle cx="36" cy="36" r="6" fill="#FFFFFF"/>
+  <text x="76" y="48" font-family="Nunito, 'Arial Rounded MT Bold', Arial, sans-serif" font-size="36" font-weight="800" fill="#0F766E">safe<tspan fill="#E5484D">tap</tspan></text>
+</svg>

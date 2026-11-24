@@ -3,7 +3,7 @@
   "info": {
     "title": "ScamShield API",
     "description": "Finds and scores UAE-brand scam sites. Every response carries the header X-ScamShield-Mode: mock | live.",
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "paths": {
     "/api/health": {
@@ -58,7 +58,7 @@
           "system"
         ],
         "summary": "Metrics",
-        "description": "Accuracy on the held-out test set. In mock mode the numbers are layout samples.",
+        "description": "Accuracy on the held-out test set (scripts/evaluate.py --save).\nFalls back to clearly-labelled sample numbers if no evaluation has been saved.",
         "operationId": "metrics_api_metrics_get",
         "responses": {
           "200": {
@@ -121,7 +121,7 @@
           "cases"
         ],
         "summary": "Radar Feed",
-        "description": "Newest auto-discovered URLs first (manual and batch submissions excluded).",
+        "description": "Newest auto-discovered URLs first (manual, citizen and batch excluded).",
         "operationId": "radar_feed_api_radar_feed_get",
         "parameters": [
           {
@@ -523,6 +523,7 @@
           "scan"
         ],
         "summary": "Scan",
+        "description": "Create (or reuse) a case for the URL. Returns a URL-only verdict now and\nqueues a full fetch; poll GET /api/cases/{case_id} for the final result.",
         "operationId": "scan_api_scan_post",
         "requestBody": {
           "content": {
@@ -564,7 +565,7 @@
           "scan"
         ],
         "summary": "Batch",
-        "description": "Score many URLs at once. `?format=csv` returns a CSV file.",
+        "description": "Score many URLs at once without storing them. `?format=csv` returns a file.",
         "operationId": "batch_api_batch_post",
         "parameters": [
           {
@@ -818,6 +819,14 @@
             "type": "array",
             "title": "Keywords Ar"
           },
+          "domain_tokens": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Domain Tokens",
+            "description": "Strings that betray this brand inside a scam domain, e.g. 'enbd'. 4+ chars"
+          },
           "logo": {
             "anyOf": [
               {
@@ -914,6 +923,24 @@
               }
             ],
             "title": "Address"
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand",
+            "description": "Brand.id the radar matched, if any"
+          },
+          "details": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Details",
+            "description": "Radar metadata, e.g. lookalike variant, certificate issuer, search position, Maps flags. details.replayed=true means it came from a saved SerpApi answer"
           }
         },
         "type": "object",
@@ -1173,6 +1200,65 @@
         ],
         "title": "CheckResponse"
       },
+      "CloakingCheck": {
+        "properties": {
+          "signals": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Signals",
+            "description": "desktop_blocked | different_destination | forms_hidden_from_desktop | different_page"
+          },
+          "desktop": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DesktopVisit"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "CloakingCheck",
+        "description": "Second visit as a foreign desktop browser, compared with the UAE phone visit."
+      },
+      "Contacts": {
+        "properties": {
+          "phones": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Phones"
+          },
+          "whatsapp": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Whatsapp"
+          },
+          "telegram": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Telegram"
+          },
+          "emails": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Emails"
+          }
+        },
+        "type": "object",
+        "title": "Contacts"
+      },
       "Decision": {
         "properties": {
           "action": {
@@ -1230,11 +1316,115 @@
         ],
         "title": "DecisionRequest"
       },
+      "DesktopVisit": {
+        "properties": {
+          "final_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Final Url"
+          },
+          "http_status": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Http Status"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "screenshot_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Screenshot Path"
+          },
+          "fetch_error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fetch Error"
+          }
+        },
+        "type": "object",
+        "title": "DesktopVisit"
+      },
+      "DownloadSignal": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "title": "Kind",
+            "description": "remote_access_link | remote_access_text | app_download_link"
+          },
+          "href": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Href"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind"
+        ],
+        "title": "DownloadSignal",
+        "description": "A link or text pushing a remote-access app or an APK install."
+      },
       "Evidence": {
         "properties": {
           "url": {
             "type": "string",
             "title": "Url"
+          },
+          "profile": {
+            "type": "string",
+            "title": "Profile",
+            "description": "Browser profile used for the visit",
+            "default": "mobile_ae"
           },
           "final_url": {
             "anyOf": [
@@ -1277,6 +1467,18 @@
             "title": "Screenshot Path",
             "description": "Relative to the artifacts dir; served at /artifacts/<path>"
           },
+          "screenshot_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Screenshot Sha256",
+            "description": "Hash of the screenshot file, for the evidence chain"
+          },
           "title": {
             "anyOf": [
               {
@@ -1306,6 +1508,43 @@
             },
             "type": "array",
             "title": "Forms"
+          },
+          "download_signals": {
+            "items": {
+              "$ref": "#/components/schemas/DownloadSignal"
+            },
+            "type": "array",
+            "title": "Download Signals"
+          },
+          "fingerprints": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Fingerprints"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "visual_match": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VisualMatch"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cloaking": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CloakingCheck"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "rdap": {
             "anyOf": [
@@ -1361,6 +1600,12 @@
             ],
             "title": "Hosting Abuse Email"
           },
+          "shared_hosting": {
+            "type": "boolean",
+            "title": "Shared Hosting",
+            "description": "Site lives on a free/shared platform (e.g. *.vercel.app). WHOIS age, registrar and IP then belong to the platform, not the scammer: never read them as trust",
+            "default": false
+          },
           "fetched_at": {
             "type": "string",
             "format": "date-time",
@@ -1386,6 +1631,71 @@
         ],
         "title": "Evidence",
         "description": "What the fetcher and enrichment saw for one URL."
+      },
+      "Fingerprints": {
+        "properties": {
+          "favicon_mmh3": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Favicon Mmh3",
+            "description": "Shodan favicon hash: search http.favicon.hash:<value>"
+          },
+          "favicon_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Favicon Sha256"
+          },
+          "dom_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dom Hash",
+            "description": "Page template (tag structure) hash"
+          },
+          "screenshot_dhash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Screenshot Dhash",
+            "description": "64-bit look-alike hash of the page"
+          },
+          "tracking_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tracking Ids",
+            "description": "e.g. google_analytics:G-AB12"
+          },
+          "contacts": {
+            "$ref": "#/components/schemas/Contacts"
+          }
+        },
+        "type": "object",
+        "title": "Fingerprints",
+        "description": "Traits that link sites run by the same people (scam network)."
       },
       "FormInfo": {
         "properties": {
@@ -1415,6 +1725,14 @@
             "type": "array",
             "title": "Field Hints",
             "description": "Lower-cased name/label/placeholder words, e.g. ['card number', 'cvv', 'otp']"
+          },
+          "sensitive": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Sensitive",
+            "description": "Sensitive data asked for: password, card, otp, emirates_id, phone, email"
           }
         },
         "type": "object",
@@ -1460,7 +1778,11 @@
             "enum": [
               "same_ip",
               "same_registration_day",
-              "same_final_host"
+              "same_final_host",
+              "same_favicon",
+              "same_template",
+              "same_tracker",
+              "same_contact"
             ],
             "title": "Type"
           },
@@ -1670,6 +1992,23 @@
             "type": "string",
             "format": "date-time",
             "title": "Evaluated At"
+          },
+          "by_source": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "additionalProperties": {
+                    "type": "integer"
+                  },
+                  "type": "object"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "By Source"
           }
         },
         "type": "object",
@@ -1873,6 +2212,7 @@
         "enum": [
           "lookalike",
           "ct",
+          "nrd",
           "search",
           "search_ad",
           "maps",
@@ -2092,6 +2432,51 @@
           "scored_at"
         ],
         "title": "Verdict"
+      },
+      "VisualMatch": {
+        "properties": {
+          "brand": {
+            "type": "string",
+            "title": "Brand"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "same_favicon",
+              "same_template"
+            ],
+            "title": "Kind"
+          },
+          "reference_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Url"
+          },
+          "reference_screenshot": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Screenshot"
+          }
+        },
+        "type": "object",
+        "required": [
+          "brand",
+          "kind"
+        ],
+        "title": "VisualMatch",
+        "description": "The page reuses an official brand site's favicon or template on a non-official host."
       }
     }
   }

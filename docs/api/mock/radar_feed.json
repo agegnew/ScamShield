@@ -88,6 +88,7 @@
   "counts_by_source": {
     "lookalike": 2,
     "ct": 1,
+    "nrd": 0,
     "search": 2,
     "search_ad": 1,
     "maps": 1,

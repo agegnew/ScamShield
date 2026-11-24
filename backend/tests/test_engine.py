@@ -1,0 +1,207 @@
+from datetime import datetime, timedelta, timezone
+
+import pytest
+
+from app import engine
+from app.contracts import Candidate, CandidateExtra, Evidence, FormInfo, Label, Rdap, Source
+from app.engine import feeds, model
+
+NOW = datetime.now(timezone.utc)
+
+
+@pytest.fixture(autouse=True)
+def no_model(monkeypatch):
+    """Rule checks are tested on their own; the URL model has its own evaluation."""
+    monkeypatch.setattr(model, "phishing_probability", lambda url: None)
+
+
+def codes(verdict):
+    return {r.code for r in verdict.reasons}
+
+
+def page(url, **kwargs):
+    return Evidence(url=url, fetched_at=NOW, **{"final_url": url, **kwargs})
+
+
+def test_official_domain_is_legit():
+    v = engine.score("https://www.tamm.abudhabi/en/fines")
+    assert (v.verdict, v.score) == (Label.LEGIT, 0)
+
+
+def test_redirect_to_official_domain_is_legit():
+    v = engine.score("https://bit.ly/x", evidence=page("https://bit.ly/x", final_url="https://rta.ae/"))
+    assert v.verdict == Label.LEGIT
+
+
+def test_uae_brand_in_domain_is_lookalike():
+    v = engine.score("https://tamm-fines-pay.xyz/pay")
+    assert "lookalike_domain" in codes(v)
+    assert v.brand_target == "tamm"
+    assert v.verdict != Label.LEGIT
+
+
+def test_short_brand_token_needs_word_boundary():
+    assert "lookalike_domain" not in codes(engine.score("https://portal-shop.example/"))
+    assert "lookalike_domain" in codes(engine.score("https://rta-fines.example/"))
+
+
+def test_typosquat_of_official_domain():
+    v = engine.score("https://emiratesnbb.com/login")
+    assert "typosquat" in codes(v)
+    assert v.brand_target == "emiratesnbd"
+
+
+def test_global_brand_in_unrelated_domain():
+    assert "lookalike_domain" in codes(engine.score("https://paypal-secure-login.xyz/"))
+    assert "lookalike_domain" not in codes(engine.score("https://www.paypal.com/signin"))
+
+
+def test_brand_name_on_free_platform():
+    v = engine.score("https://tamm-fines.vercel.app/")
+    assert {"free_platform"} <= codes(v)
+    assert v.brand_target == "tamm"
+
+
+def test_old_platform_whois_is_not_trusted_when_shared_hosting():
+    old = Rdap(created=NOW - timedelta(days=4000), registrar="Platform")
+    shared = engine.score(
+        "https://pay.example/", evidence=page("https://pay.example/", rdap=old, shared_hosting=True)
+    )
+    own = engine.score("https://pay.example/", evidence=page("https://pay.example/", rdap=old))
+    assert "old_domain" not in codes(shared)
+    assert "old_domain" in codes(own)
+
+
+def test_new_domain_raises_risk():
+    fresh = Rdap(created=NOW - timedelta(days=3))
+    v = engine.score("https://pay.example/", evidence=page("https://pay.example/", rdap=fresh))
+    assert "new_domain" in codes(v)
+
+
+def test_page_asking_for_card_and_otp_on_brand_lookalike_is_fraud():
+    ev = page(
+        "https://tamm-violations.example/pay",
+        title="TAMM - Traffic fine payment",
+        text_excerpt="Pay your traffic fine now to avoid black points",
+        forms=[FormInfo(input_types=["text", "password"], field_hints=["card number", "cvv", "otp"])],
+        rdap=Rdap(created=NOW - timedelta(days=2)),
+    )
+    v = engine.score("https://tamm-violations.example/pay", evidence=ev)
+    assert {"credential_form", "brand_on_wrong_domain", "scam_theme_page", "new_domain"} <= codes(v)
+    assert v.verdict == Label.FRAUD
+
+
+def test_remote_access_request_is_flagged():
+    ev = page("https://help.example/", text_excerpt="To get your refund, download AnyDesk and share the code")
+    assert "remote_access" in codes(engine.score("https://help.example/", evidence=ev))
+
+
+def test_maps_listing_with_fake_helpline():
+    cand = Candidate(
+        url="https://enbd-help.example/",
+        source=Source.MAPS,
+        discovered_at=NOW,
+        extra=CandidateExtra(listing_name="Emirates NBD Customer Care", phone="04 555 0199"),
+    )
+    v = engine.score(cand.url, candidate=cand)
+    assert "helpline_mismatch" in codes(v)
+
+
+def test_official_helpline_on_listing_is_not_flagged():
+    cand = Candidate(
+        url="https://branch-info.example/",
+        source=Source.MAPS,
+        discovered_at=NOW,
+        extra=CandidateExtra(listing_name="Emirates NBD Branch", phone="600 54 0000"),
+    )
+    assert "helpline_mismatch" not in codes(engine.score(cand.url, candidate=cand))
+
+
+def test_feed_match_only_when_feeds_enabled(monkeypatch):
+    index = feeds.FeedIndex(urls={"https://bad.example/login": "PhishTank"})
+    monkeypatch.setattr(feeds, "load", lambda: index)
+    assert "threat_feed" in codes(engine.score("https://bad.example/login", use_feeds=True))
+    assert "threat_feed" not in codes(engine.score("https://bad.example/login", use_feeds=False))
+
+
+def test_maps_listing_link_is_judged_on_its_phone_not_on_google():
+    cand = Candidate(
+        url="https://www.google.com/maps/place/?q=place_id:abc",
+        source=Source.MAPS,
+        discovered_at=NOW,
+        extra=CandidateExtra(
+            listing_name="Emirates NBD Customer Service", phone="+97145550199", brand="emiratesnbd"
+        ),
+    )
+    v = engine.score(cand.url, candidate=cand)
+    assert codes(v) == {"helpline_mismatch"}
+    assert v.verdict == Label.SUSPICIOUS
+    assert v.brand_target == "emiratesnbd"
+
+
+def test_download_signals_and_emirates_id_field():
+    from app.contracts import DownloadSignal
+
+    ev = page(
+        "https://help.example/",
+        download_signals=[DownloadSignal(kind="remote_access_link", href="https://anydesk.com", text="AnyDesk")],
+        forms=[FormInfo(input_types=["text"], sensitive=["emirates_id"])],
+    )
+    v = engine.score("https://help.example/", evidence=ev)
+    assert {"remote_access", "credential_form"} <= codes(v)
+    assert any("Emirates ID" in r.text_en for r in v.reasons)
+
+
+def test_mentioning_a_brand_is_not_impersonating_it():
+    blog = page("https://driverguide.example/", title="Gulf Driver Guide",
+                text_excerpt="How to pay a TAMM traffic fine on the official site")
+    assert "brand_on_wrong_domain" not in codes(engine.score("https://driverguide.example/", evidence=blog))
+    phish = page("https://pay.example/", title="Pay fines",
+                 text_excerpt="TAMM payment", forms=[FormInfo(sensitive=["card"])])
+    assert "brand_on_wrong_domain" in codes(engine.score("https://pay.example/", evidence=phish))
+
+
+def test_one_generic_theme_word_is_not_enough():
+    # 'tickets' alone is on every airline and cinema site; a scam phrase or two keywords is needed.
+    plain = page("https://cinema.example/", text_excerpt="Buy tickets for tonight's show")
+    assert "scam_theme_page" not in codes(engine.score("https://cinema.example/", evidence=plain))
+    scammy = page("https://deal.example/", text_excerpt="VIP tickets, last tickets, sold out soon")
+    assert "scam_theme_page" in codes(engine.score("https://deal.example/", evidence=scammy))
+    phrase = page("https://fine.example/", text_excerpt="Get a 90% discount on your fine today")
+    assert "scam_theme_page" in codes(engine.score("https://fine.example/", evidence=phrase))
+
+
+def test_theme_words_match_whole_words_only():
+    # 'otp' must not match inside 'footprint'; form-field words count only through credential_form.
+    ev = page("https://eco.example/", text_excerpt="Reduce your carbon footprint and reactivate savings")
+    assert "scam_theme_page" not in codes(engine.score("https://eco.example/", evidence=ev))
+
+
+def test_common_arabic_word_is_not_taken_for_a_brand_name():
+    # 'تم' is TAMM's Arabic name but also the everyday word 'was / done'.
+    ev = page("https://news.example/", text_excerpt="تم افتتاح المتجر الجديد اليوم")
+    assert "brand_on_wrong_domain" not in codes(engine.score("https://news.example/", evidence=ev))
+
+
+def test_visual_match_and_cloaking_raise_risk():
+    from app.contracts import CloakingCheck, VisualMatch
+
+    ev = page(
+        "https://pay-portal.example/",
+        visual_match=VisualMatch(brand="tamm", kind="same_favicon"),
+        cloaking=CloakingCheck(signals=["different_destination"]),
+    )
+    v = engine.score("https://pay-portal.example/", evidence=ev)
+    assert {"visual_match", "cloaking"} <= codes(v)
+    assert v.brand_target == "tamm"
+
+
+def test_every_reason_has_both_languages():
+    ev = page(
+        "https://tamm-violations.example/pay",
+        title="TAMM",
+        forms=[FormInfo(input_types=["password"])],
+        rdap=Rdap(created=NOW - timedelta(days=2)),
+    )
+    for reason in engine.score("https://tamm-violations.example/pay", evidence=ev).reasons:
+        assert reason.text_en and reason.text_ar

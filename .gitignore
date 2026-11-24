@@ -7,12 +7,15 @@ venv/
 
 backend/artifacts/*
 !backend/artifacts/mock/
+backend/scamshield.db*
 
 node_modules/
 .next/
 
 kickoff/
 
-data/*
-!data/brands.json
-!data/logos/
+# Downloaded or generated data (rebuilt by scripts / the worker)
+data/datasets/raw/
+data/datasets/train.csv
+data/cache/
+data/*.db
