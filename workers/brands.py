@@ -4,7 +4,7 @@ import re
 from functools import lru_cache
 from pathlib import Path
 
-BRANDS_PATH = Path(__file__).resolve().parent.parent / "brands.json"
+BRANDS_PATH = Path(__file__).resolve().parent.parent / "data" / "brands.json"
 
 
 @lru_cache(maxsize=1)

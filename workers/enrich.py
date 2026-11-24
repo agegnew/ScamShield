@@ -14,6 +14,7 @@ import requests
 import tldextract
 
 RDAP_URL = "https://rdap.org/domain/{}"
+RDAP_IP_URL = "https://rdap.org/ip/{}"
 TIMEOUT = 10
 # .ae and a few other ccTLDs have no RDAP; their registry WHOIS is queried directly.
 WHOIS_SERVERS = {"ae": "whois.aeda.net.ae"}
@@ -96,6 +97,24 @@ def registration(domain: str) -> dict:
     return {**info, "registered": True, "age_days": age_days}
 
 
+def _find_abuse_email(entities: list[dict]) -> str | None:
+    for entity in entities:
+        if "abuse" in entity.get("roles", []) and (email := _vcard(entity, "email")):
+            return email
+        if found := _find_abuse_email(entity.get("entities", [])):
+            return found
+    return None
+
+
+def hosting_abuse_email(ip: str) -> str | None:
+    """Abuse contact of the network that hosts the IP, for takedown requests."""
+    try:
+        resp = requests.get(RDAP_IP_URL.format(ip), timeout=TIMEOUT, headers={"Accept": "application/rdap+json"})
+        return _find_abuse_email(resp.json().get("entities", [])) if resp.status_code == 200 else None
+    except (requests.RequestException, ValueError):
+        return None
+
+
 def _records(name: str, rtype: str) -> list[str]:
     try:
         return sorted(r.to_text().strip('"') for r in dns.resolver.resolve(name, rtype, lifetime=TIMEOUT))
@@ -136,6 +155,7 @@ def enrich(url: str) -> dict:
         "asn": hosting["asn"],
         "hosting_org": hosting["asn_org"],
         "hosting_country": hosting["country"],
+        "hosting_abuse_email": hosting_abuse_email(ips[0]) if ips else None,
         "enriched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
     }
 

@@ -25,7 +25,7 @@ def work_one() -> bool:
     try:
         evidence = collect(job["url"])
         store.finish_job(conn, job["id"], job["candidate_id"], evidence,
-                         error=evidence["error"] if evidence["status"] == "blocked" else None)
+                         error=evidence["fetch_error"] if evidence["status"] == "blocked" else None)
         log.info("%s %s -> %s", evidence["status"], job["url"], evidence.get("final_url"))
     except Exception as exc:
         store.finish_job(conn, job["id"], job["candidate_id"], None, error=f"{type(exc).__name__}: {exc}")

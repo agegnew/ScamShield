@@ -1,4 +1,5 @@
-"""Build one Evidence record per URL: what the page showed (fetcher) plus who owns and hosts it (enrichment).
+"""Build one Evidence record per URL (backend/app/contracts.py Evidence plus extra fields the engine may use):
+what the page showed (fetcher) and who owns and hosts it (enrichment).
 
 Enrichment runs even when the page is offline, so dead scam links still carry domain evidence.
 """
@@ -26,6 +27,7 @@ def collect(url: str) -> dict:
         "asn": infra["asn"],
         "hosting_org": infra["hosting_org"],
         "hosting_country": infra["hosting_country"],
+        "hosting_abuse_email": infra["hosting_abuse_email"],
     }
     if urlsplit(target).hostname != urlsplit(url).hostname:
         origin = enrich(url)
