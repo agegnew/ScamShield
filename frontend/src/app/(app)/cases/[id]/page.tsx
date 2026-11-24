@@ -120,6 +120,7 @@ export default function CasePage() {
                 <p className="mt-2 text-sm text-muted">
                   {t("riskScore")} <span className="ltr font-bold text-ink tabular-nums">{v.score}</span> {t("outOf100")} · {t("scoredBy", { m: v.model_version })} · <time dateTime={v.scored_at}>{fmtTime(v.scored_at, lang)}</time>
                 </p>
+                <p className="mt-1 text-xs text-muted">{t("scoreRule")}</p>
               </div>
               <div className="w-full sm:w-auto">
                 <ExportButtons c={c} onTakedown={() => setTakedownOpen(true)} />

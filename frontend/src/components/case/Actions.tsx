@@ -234,7 +234,7 @@ export function TakedownDialog({ caseId, open, onClose }: { caseId: string; open
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
-            <a href={mailto} className="inline-flex h-11 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-primary-ink hover:bg-[#5b21b6]">
+            <a href={mailto} className="inline-flex h-11 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-primary-ink hover:brightness-110">
               <Mail aria-hidden className="size-4" />
               {t("openMail")}
             </a>

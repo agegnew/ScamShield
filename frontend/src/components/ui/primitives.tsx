@@ -18,11 +18,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLBut
         size === "sm" && "h-9 px-3.5 text-sm",
         size === "md" && "h-11 px-5 text-sm",
         size === "lg" && "h-14 px-7 text-base",
-        variant === "primary" && "bg-primary text-primary-ink hover:bg-[#5b21b6] shadow-[0_6px_16px_-8px_rgba(109,40,217,0.6)]",
+        variant === "primary" && "bg-primary text-primary-ink hover:brightness-110 shadow-[0_6px_20px_-8px_var(--glow)]",
         variant === "secondary" && "bg-primary-soft text-primary hover:bg-primary-soft-2",
         variant === "outline" && "border border-line-2 bg-surface text-ink hover:bg-surface-2",
         variant === "ghost" && "text-ink-2 hover:bg-surface-2",
-        variant === "danger" && "bg-fraud text-white hover:bg-[#a51818]",
+        variant === "danger" && "bg-fraud text-danger-ink hover:brightness-110",
         className,
       )}
       {...props}
@@ -74,7 +74,7 @@ export function Select({ className, children, ...props }: React.SelectHTMLAttrib
 
 export function Panel({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <section className={cn("rounded-[16px] border border-line bg-surface", className)} {...props}>
+    <section className={cn("ops-panel rounded-[16px] border border-line bg-surface", className)} {...props}>
       {children}
     </section>
   );

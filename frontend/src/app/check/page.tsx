@@ -14,6 +14,20 @@ import { LangToggle, TextSizeToggle } from "@/components/shell/AppShell";
 /* Public citizen checker. One input, one big answer, three lines of what to do.
    Mobile first: the result panel fills the phone screen in the verdict colour. */
 
+/** Turn UAE service numbers in advice text (Aman 8002626, 999, 2828…) into tap-to-call links. */
+function withPhoneLinks(text: string) {
+  const parts = text.split(/(\b(?:800\s?\d{3,5}|600\s?\d{2}\s?\d{4}|999|901|2828)\b)/);
+  return parts.map((p, i) =>
+    i % 2 === 1 ? (
+      <a key={i} href={`tel:${p.replace(/\s/g, "")}`} className="ltr font-extrabold text-primary underline">
+        {p}
+      </a>
+    ) : (
+      p
+    ),
+  );
+}
+
 const EXAMPLES = ["https://tamm-fines-pay.test/pay?ref=AD-55120", "600 54 0000", "https://www.tamm.abudhabi/"];
 
 export default function CheckPage() {
@@ -156,6 +170,10 @@ export default function CheckPage() {
               <tone.Icon aria-hidden className={cn("mx-auto size-16", tone.fg)} strokeWidth={2.25} />
               <p className={cn("mt-3 text-sm font-bold uppercase tracking-wide", tone.fg)}>{t(verdict)}</p>
               <h1 className={cn("mt-1 text-3xl font-extrabold leading-tight tracking-tight", tone.fg)}>{pick(result as unknown as Record<string, unknown>, "headline")}</h1>
+              {/* When the answer is reassuring, say why up front ("This is an official Emirates NBD helpline"). */}
+              {verdict === "LEGIT" && result.reasons?.find((r) => r.weight < 0) && (
+                <p className={cn("mx-auto mt-2 max-w-sm text-base font-bold", tone.fg)}>{pick(result.reasons.find((r) => r.weight < 0) as unknown as Record<string, unknown>, "text")}</p>
+              )}
               <p className="mt-4 text-sm text-ink-2">
                 {t("checkedInput")} <span className="ltr font-bold text-ink break-all">{result.input}</span>
               </p>
@@ -169,7 +187,7 @@ export default function CheckPage() {
                     <span aria-hidden className={cn("mt-0.5 grid size-6 shrink-0 place-items-center rounded-full text-xs font-extrabold text-white", verdict === "FRAUD" ? "bg-fraud" : verdict === "SUSPICIOUS" ? "bg-review" : "bg-primary")}>
                       {i + 1}
                     </span>
-                    {a}
+                    <span>{withPhoneLinks(a)}</span>
                   </li>
                 ))}
               </ol>
@@ -214,9 +232,14 @@ export default function CheckPage() {
 
       <footer className="mx-auto w-full max-w-xl px-4 pb-8 text-center text-xs text-muted">
         <p>{t("checkFooter")}</p>
-        <Link href="/login" className="mt-2 inline-block font-bold text-primary underline">
-          {t("analystConsole")}
-        </Link>
+        <div className="mt-2 flex justify-center gap-4">
+          <Link href="/extension" className="font-bold text-primary underline">
+            {t("navExtension")}
+          </Link>
+          <Link href="/login" className="font-bold text-primary underline">
+            {t("analystConsole")}
+          </Link>
+        </div>
       </footer>
     </div>
   );

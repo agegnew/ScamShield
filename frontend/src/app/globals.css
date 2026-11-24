@@ -33,10 +33,73 @@
   --unknown: #57534e;
   --unknown-soft: #efedea;
   --unknown-line: #d4d0ca;
+  --danger-ink: #ffffff;
 
   --radius-card: 16px;
   --radius-pill: 999px;
   --shadow-card: 0 1px 2px rgba(30, 27, 46, 0.04), 0 8px 24px -12px rgba(109, 40, 217, 0.18);
+  --glow: rgba(109, 40, 217, 0.45);
+}
+
+/* Analyst console: "ops" theme — deep green-black, neon mint, glowing panels.
+   The public citizen checker and login keep the light, friendly theme above.
+   Every pair checked for WCAG AA (6:1 to 16:1). */
+html[data-console="ops"] {
+  --bg: #070d0b;
+  --surface: #0d1714;
+  --surface-2: #12201b;
+  --ink: #e3f2ec;
+  --ink-2: #a9c2b8;
+  --muted: #86a096;
+  --line: #1a2b25;
+  --line-2: #26402f;
+
+  --primary: #2ee59d;
+  --primary-ink: #04130d;
+  --primary-soft: #0f2a20;
+  --primary-soft-2: #16402f;
+
+  --accent: #f97316;
+  --accent-text: #fb923c;
+  --accent-soft: #2a1a0e;
+
+  --fraud: #ff7a7a;
+  --fraud-soft: #2a1013;
+  --fraud-line: #5a2329;
+  --review: #fbbf24;
+  --review-soft: #2a2110;
+  --review-line: #5a4517;
+  --safe: #86efac;
+  --safe-soft: #0f2a1a;
+  --safe-line: #1f4d33;
+  --unknown: #b7b2ad;
+  --unknown-soft: #1e1f1e;
+  --unknown-line: #3a3a38;
+  --danger-ink: #1a0507;
+
+  --shadow-card: 0 0 0 1px rgba(46, 229, 157, 0.04), 0 18px 40px -24px rgba(0, 0, 0, 0.8);
+  --glow: rgba(46, 229, 157, 0.35);
+  color-scheme: dark;
+}
+html[data-console="ops"] body {
+  background:
+    radial-gradient(900px 500px at 75% -10%, rgba(46, 229, 157, 0.10), transparent 70%),
+    radial-gradient(700px 420px at 0% 100%, rgba(46, 229, 157, 0.06), transparent 70%),
+    linear-gradient(rgba(46, 229, 157, 0.035) 1px, transparent 1px) 0 0 / 44px 44px,
+    linear-gradient(90deg, rgba(46, 229, 157, 0.035) 1px, transparent 1px) 0 0 / 44px 44px,
+    var(--bg);
+  background-attachment: fixed;
+}
+/* Panels: a faint top highlight and a mint edge that brightens on hover — glass, not glare. */
+html[data-console="ops"] .ops-panel {
+  background: linear-gradient(180deg, rgba(46, 229, 157, 0.045), rgba(46, 229, 157, 0) 38%), var(--surface);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), var(--shadow-card);
+}
+html[data-console="ops"] .ops-glow {
+  box-shadow: 0 0 0 1px rgba(46, 229, 157, 0.35), 0 0 28px -6px var(--glow);
+}
+html[data-console="ops"] .ops-num {
+  text-shadow: 0 0 18px var(--glow);
 }
 
 @theme inline {
@@ -67,6 +130,7 @@
   --color-unknown: var(--unknown);
   --color-unknown-soft: var(--unknown-soft);
   --color-unknown-line: var(--unknown-line);
+  --color-danger-ink: var(--danger-ink);
 
   --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
   --font-arabic: var(--font-tajawal), var(--font-nunito), system-ui, sans-serif;

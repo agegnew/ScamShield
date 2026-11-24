@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ALargeSmall, ClipboardList, FolderOpen, LayoutDashboard, Languages, LogOut, Radar, ScanSearch, Share2, Smartphone, Target, UsersRound } from "lucide-react";
+import { ALargeSmall, ClipboardList, FolderOpen, LayoutDashboard, Languages, LogOut, Puzzle, Radar, ScanSearch, Share2, Smartphone, Target, UsersRound } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { apiMode, me, onMode, useHealth } from "@/lib/api";
 import { clearSession, getToken, getUser, setSession, type User } from "@/lib/auth";
@@ -124,6 +124,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     if (user === null) router.replace(`/login?next=${encodeURIComponent(pathname)}`);
   }, [user, pathname, router]);
 
+  // The analyst console uses the dark "ops" theme; the public checker and login stay light.
+  useEffect(() => {
+    document.documentElement.dataset.console = "ops";
+    return () => {
+      delete document.documentElement.dataset.console;
+    };
+  }, []);
+
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
   return (
@@ -168,6 +176,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Link href="/check" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink">
               <Smartphone aria-hidden className="size-5" strokeWidth={2.25} />
               {t("navChecker")}
+            </Link>
+          </li>
+          <li>
+            <Link href="/extension" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink">
+              <Puzzle aria-hidden className="size-5" strokeWidth={2.25} />
+              {t("navExtension")}
             </Link>
           </li>
           {user?.role === "admin" && (

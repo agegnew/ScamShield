@@ -17,9 +17,9 @@ import { ErrorState, Panel, Skeleton } from "@/components/ui/primitives";
 const RADAR_SOURCES = ["lookalike", "ct", "nrd", "search", "search_ad", "maps"];
 // Chart series for verdicts: separated by lightness as well as hue, validated for colour-blind readers.
 const SERIES = [
-  { key: "FRAUD", color: "#b91c1c", Icon: Ban },
-  { key: "SUSPICIOUS", color: "#e0a030", Icon: TriangleAlert },
-  { key: "LEGIT", color: "#15803d", Icon: ShieldCheck },
+  { key: "FRAUD", color: "#ff6b6b", Icon: Ban },
+  { key: "SUSPICIOUS", color: "#f5b93f", Icon: TriangleAlert },
+  { key: "LEGIT", color: "#34d399", Icon: ShieldCheck },
 ] as const;
 type SeriesKey = (typeof SERIES)[number]["key"];
 
@@ -80,25 +80,25 @@ export default function OverviewPage() {
   return (
     <div className="mx-auto max-w-6xl">
       {/* Headline band: the one bold moment on the page */}
-      <section className="relative mt-2 overflow-hidden rounded-[20px] bg-[#1e1b2e] px-5 py-6 text-white sm:px-8 sm:py-8">
+      <section className="ops-panel ops-glow relative mt-2 overflow-hidden rounded-[20px] border border-line bg-surface px-5 py-6 text-ink sm:px-8 sm:py-8">
         <RadarRings />
         <div className="relative max-w-2xl">
-          <p className="inline-flex items-center gap-2 text-sm font-bold text-white/70">
+          <p className="inline-flex items-center gap-2 text-sm font-bold text-ink-2">
             <span aria-hidden className="radar-dot inline-block size-2 rounded-full bg-accent" />
             {t("ovKicker")}
           </p>
           {loading ? (
             <div className="mt-3 flex flex-col gap-2">
-              <div className="h-9 w-3/4 animate-pulse rounded-lg bg-white/10" />
-              <div className="h-9 w-2/3 animate-pulse rounded-lg bg-white/10" />
+              <div className="h-9 w-3/4 animate-pulse rounded-lg bg-surface-2" />
+              <div className="h-9 w-2/3 animate-pulse rounded-lg bg-surface-2" />
             </div>
           ) : (
             <h1 className="mt-2 text-[28px] font-extrabold leading-[1.15] tracking-tight sm:text-[40px]">
-              <Link href="/cases?verdict=FRAUD" className="text-[#ff8a8a] underline-offset-[6px] hover:underline">
+              <Link href="/cases?verdict=FRAUD" className="ops-num text-fraud underline-offset-[6px] hover:underline">
                 {t("ovHeadline", { f: s.fraud.length })}
               </Link>{" "}
               {s.review.length > 0 ? (
-                <Link href="/cases?status=new&risky=1" className="text-white underline-offset-[6px] hover:underline">
+                <Link href="/cases?status=new&risky=1" className="text-ink underline-offset-[6px] hover:underline">
                   {t("ovHeadline2", { r: s.review.length })}
                 </Link>
               ) : (
@@ -106,15 +106,15 @@ export default function OverviewPage() {
               )}
             </h1>
           )}
-          <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-white/70">{t("ovSub")}</p>
+          <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-ink-2">{t("ovSub")}</p>
           <dl className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm">
             <div className="flex gap-2">
-              <dt className="text-white/55">{t("ovLastFind")}</dt>
+              <dt className="text-muted">{t("ovLastFind")}</dt>
               <dd className="font-bold">{s.lastRadar ? fmtAgo(s.lastRadar, lang) : "—"}</dd>
             </div>
             {metrics && (
               <div className="flex gap-2">
-                <dt className="text-white/55">{t("ovEngine")}</dt>
+                <dt className="text-muted">{t("ovEngine")}</dt>
                 <dd className="ltr font-bold">{metrics.model_version}</dd>
               </div>
             )}
@@ -310,19 +310,19 @@ function RadarRings() {
     <svg aria-hidden viewBox="0 0 400 400" className="pointer-events-none absolute -end-24 -top-20 size-[420px] opacity-60 sm:-end-10 sm:-top-28 sm:size-[520px] rtl:-scale-x-100">
       <defs>
         <radialGradient id="ov-glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#6d28d9" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="#6d28d9" stopOpacity="0" />
+          <stop offset="0%" stopColor="#2ee59d" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#2ee59d" stopOpacity="0" />
         </radialGradient>
       </defs>
       <circle cx="200" cy="200" r="200" fill="url(#ov-glow)" />
       {[180, 135, 90, 45].map((r) => (
-        <circle key={r} cx="200" cy="200" r={r} fill="none" stroke="#b79cff" strokeOpacity="0.28" strokeWidth="1" />
+        <circle key={r} cx="200" cy="200" r={r} fill="none" stroke="#2ee59d" strokeOpacity="0.28" strokeWidth="1" />
       ))}
-      <line x1="20" y1="200" x2="380" y2="200" stroke="#b79cff" strokeOpacity="0.18" />
-      <line x1="200" y1="20" x2="200" y2="380" stroke="#b79cff" strokeOpacity="0.18" />
+      <line x1="20" y1="200" x2="380" y2="200" stroke="#2ee59d" strokeOpacity="0.18" />
+      <line x1="200" y1="20" x2="200" y2="380" stroke="#2ee59d" strokeOpacity="0.18" />
       <circle cx="200" cy="200" r="5" fill="#f97316" />
-      <circle cx="262" cy="120" r="4" fill="#ff8a8a" />
-      <circle cx="128" cy="260" r="4" fill="#ff8a8a" />
+      <circle cx="262" cy="120" r="4" fill="#ff6b6b" />
+      <circle cx="128" cy="260" r="4" fill="#ff6b6b" />
       <circle cx="300" cy="238" r="4" fill="#fbbf24" />
     </svg>
   );
@@ -350,7 +350,7 @@ function Kpi({
   return (
     <Link
       href={href}
-      className="rise-in group flex min-h-[124px] flex-col rounded-[16px] border border-line bg-surface p-4 transition-[border-color,box-shadow] hover:border-primary-soft-2 hover:shadow-[0_8px_24px_-14px_rgba(109,40,217,0.45)]"
+      className="rise-in group flex min-h-[124px] flex-col rounded-[16px] border border-line bg-surface p-4 transition-[border-color,box-shadow] ops-panel hover:border-primary/40 hover:shadow-[0_0_30px_-10px_var(--glow)]"
       style={{ animationDelay: `${i * 60}ms` }}
     >
       <span className={cn("inline-flex items-center gap-1.5 text-[13px] font-bold", tone === "fraud" ? "text-fraud" : "text-ink-2")}>
@@ -360,7 +360,7 @@ function Kpi({
       {loading ? (
         <span className="mt-2 h-9 w-14 animate-pulse rounded-lg bg-surface-2" />
       ) : (
-        <span className={cn("ltr mt-1 text-[34px] font-extrabold leading-none tracking-tight tabular-nums", tone === "fraud" ? "text-fraud" : "text-ink")}>{value}</span>
+        <span className={cn("ltr mt-1 text-[34px] font-extrabold leading-none tracking-tight tabular-nums ops-num", tone === "fraud" ? "text-fraud" : "text-ink")}>{value}</span>
       )}
       <span className="mt-auto flex items-end justify-between gap-2 pt-2 text-xs leading-snug text-muted">
         {hint}
@@ -460,7 +460,7 @@ function StackedBars({ rows, series, hrefFor }: { rows: BarRow[]; series: Series
                   >
                     <span
                       role="tooltip"
-                      className="pointer-events-none absolute bottom-full start-1/2 z-10 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-2.5 py-1.5 text-xs font-bold text-white shadow-lg group-hover/seg:block group-focus-visible/seg:block rtl:translate-x-1/2"
+                      className="pointer-events-none absolute bottom-full start-1/2 z-10 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-lg border border-line-2 bg-surface-2 px-2.5 py-1.5 text-xs font-bold text-ink shadow-lg group-hover/seg:block group-focus-visible/seg:block rtl:translate-x-1/2"
                     >
                       {t(k)}: <span className="ltr tabular-nums">{row.values[k]}</span>
                     </span>

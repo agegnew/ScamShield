@@ -364,7 +364,7 @@ function RunButton({ disabled, onRun, sourcesInfo }: { disabled: boolean; onRun:
   const needsKey = (n: string) => sourcesInfo?.find((s) => s.name === n)?.needs_key ?? (n === "search" || n === "maps" ? "SERPAPI_KEY" : null);
   return (
     <div ref={ref} className="relative" title={disabled ? tr("signInToRun") : undefined}>
-      <div className="inline-flex overflow-hidden rounded-full shadow-[0_6px_16px_-8px_rgba(109,40,217,0.6)]">
+      <div className="inline-flex overflow-hidden rounded-full shadow-[0_6px_20px_-8px_var(--glow)]">
         <Button disabled={disabled} onClick={() => onRun()} className="rounded-none rounded-s-full">
           <Play aria-hidden className="size-4" />
           {tr("run")}
@@ -432,7 +432,7 @@ function Scope({ run, preview, items, onClose, onShowFraud }: { run: RadarRun; p
   }, [found, run.verdicts.FRAUD, lang]);
 
   return (
-    <section aria-label={tr("scopeTitle")} className="relative mt-4 overflow-hidden rounded-[20px] bg-[#15121f] p-4 text-white sm:p-6">
+    <section aria-label={tr("scopeTitle")} className="relative mt-4 overflow-hidden rounded-[20px] ops-glow border border-line bg-[#050a08] p-4 text-white sm:p-6">
       <p className="sr-only" aria-live="polite">
         {announce}
       </p>
@@ -459,16 +459,16 @@ function Scope({ run, preview, items, onClose, onShowFraud }: { run: RadarRun; p
 
       <div className="mt-4 grid items-center gap-6 md:grid-cols-[280px_1fr]">
         {/* Scope */}
-        <div aria-hidden className="relative mx-auto aspect-square w-full max-w-[280px] rounded-full bg-[radial-gradient(circle,#2a1f4d_0%,#15121f_70%)] ring-1 ring-[#b79cff]/30">
+        <div aria-hidden className="relative mx-auto aspect-square w-full max-w-[280px] rounded-full bg-[radial-gradient(circle,#0c2a20_0%,#050a08_70%)] ring-1 ring-[#2ee59d]/30">
           {[0.25, 0.5, 0.75].map((s) => (
-            <div key={s} className="absolute rounded-full border border-[#b79cff]/20" style={{ inset: `${(1 - s) * 50}%` }} />
+            <div key={s} className="absolute rounded-full border border-[#2ee59d]/20" style={{ inset: `${(1 - s) * 50}%` }} />
           ))}
-          <div className="absolute inset-x-0 top-1/2 h-px bg-[#b79cff]/15" />
-          <div className="absolute inset-y-0 start-1/2 w-px bg-[#b79cff]/15" />
+          <div className="absolute inset-x-0 top-1/2 h-px bg-[#2ee59d]/15" />
+          <div className="absolute inset-y-0 start-1/2 w-px bg-[#2ee59d]/15" />
           {/* Always sweeping: fast and bright during a run, slow and faint while it watches. */}
           <div
             className={cn("radar-sweep absolute inset-0 rounded-full", !live && "radar-sweep-idle")}
-            style={{ background: "conic-gradient(from 0deg, rgba(249,115,22,0.55), rgba(249,115,22,0) 70deg, transparent 360deg)" }}
+            style={{ background: "conic-gradient(from 0deg, rgba(46,229,157,0.55), rgba(46,229,157,0) 70deg, transparent 360deg)" }}
           />
           {blips.map((b, i) => (
             <span
@@ -503,7 +503,7 @@ function Scope({ run, preview, items, onClose, onShowFraud }: { run: RadarRun; p
                     <span className="flex items-center gap-3">
                       <span className="h-2 flex-1 overflow-hidden rounded-full bg-white/10">
                         <span
-                          className={cn("block h-full rounded-full", s.status === "failed" ? "bg-[#ff6b6b]" : s.status === "done" ? "bg-[#b79cff]" : "bg-accent", ratio === null && s.status === "running" && "animate-pulse")}
+                          className={cn("block h-full rounded-full", s.status === "failed" ? "bg-[#ff6b6b]" : s.status === "done" ? "bg-primary" : "bg-accent", ratio === null && s.status === "running" && "animate-pulse")}
                           style={{ width: `${ratio === null ? (s.status === "running" ? 40 : 100) : ratio * 100}%` }}
                         />
                       </span>
