@@ -11,6 +11,7 @@ import { cn, fmtAgo, fmtTime } from "@/lib/utils";
 import { useSession } from "@/components/shell/AppShell";
 import { shortBrand, StatusTag, VerdictChip } from "@/components/ui/verdict";
 import { Button, ErrorState, Input, Select, Skeleton } from "@/components/ui/primitives";
+import { RadarScope } from "@/components/radar/RadarScope";
 
 /* Radar v2 — docs/radar-ui.md. Tabs = how a site was found, chips = who it imitates.
    All filters live in the URL so a view can be shared or reloaded. */
@@ -193,7 +194,7 @@ function RadarInner() {
 
       {/* Radar scope */}
       {showScope && status?.run ? (
-        <Scope run={status.run} preview={statusData?.preview ?? false} items={all} onClose={() => setScopeOpen(false)} onShowFraud={() => setParams({ tab: "all", verdict: "FRAUD" })} />
+        <Scope run={status.run} preview={statusData?.preview ?? false} items={all} categoryOf={catOf} brandName={brandName} onClose={() => setScopeOpen(false)} onShowFraud={() => setParams({ tab: "all", verdict: "FRAUD" })} />
       ) : (
         <button type="button" onClick={() => setScopeOpen(true)} className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-primary hover:underline">
           <span aria-hidden className="radar-dot inline-block size-2 rounded-full bg-accent" />
@@ -267,7 +268,7 @@ function RadarInner() {
             </button>
           ))}
         </div>
-        <Select aria-label={tr("brandAll")} value={brand} onChange={(e) => setParams({ brand: e.target.value })}>
+        <Select aria-label={tr("brandAll")} value={brand} onChange={(e) => setParams({ brand: e.target.value })} className="w-full min-w-0 sm:w-auto sm:max-w-[16rem]">
           <option value="">{tr("brandAll")}</option>
           {(brands ?? []).map((b) => (
             <option key={b.id} value={b.id}>
@@ -405,21 +406,13 @@ function RunButton({ disabled, onRun, sourcesInfo }: { disabled: boolean; onRun:
 
 /* ---- the radar scope: the demo moment ---- */
 
-function hash(s: string) {
-  let h = 2166136261;
-  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
-  return (h >>> 0) / 4294967295;
-}
-const BLIP: Record<string, string> = { FRAUD: "#ff6b6b", SUSPICIOUS: "#f5b93f", LEGIT: "#4ade80" };
 
-function Scope({ run, preview, items, onClose, onShowFraud }: { run: RadarRun; preview: boolean; items: RadarItem[]; onClose: () => void; onShowFraud: () => void }) {
+function Scope({ run, preview, items, categoryOf, brandName, onClose, onShowFraud }: { run: RadarRun; preview: boolean; items: RadarItem[]; categoryOf: (it: RadarItem) => string; brandName: (id: string | null) => string | null; onClose: () => void; onShowFraud: () => void }) {
   const { lang } = useLang();
   const tr = (k: keyof typeof T) => L(T[k], lang);
   const live = run.status === "running";
   const found = run.sources.reduce((n, s) => n + (s.new ?? 0), 0);
   const minutes = run.finished_at ? Math.max(1, Math.round((new Date(run.finished_at).getTime() - new Date(run.started_at).getTime()) / 60000)) : 0;
-  // Blips: newest finds, placed by a hash of their id so they stay put between refreshes.
-  const blips = items.slice(0, 28).map((it) => ({ id: it.id, a: hash(it.id) * Math.PI * 2, r: 0.18 + hash(it.id + "r") * 0.74, color: BLIP[it.verdict] ?? "#a8a29e", domain: it.domain }));
 
   // Polite announcement at most every 10 s.
   const [announce, setAnnounce] = useState("");
@@ -457,34 +450,9 @@ function Scope({ run, preview, items, onClose, onShowFraud }: { run: RadarRun; p
         </p>
       )}
 
-      <div className="mt-4 grid items-center gap-6 md:grid-cols-[280px_1fr]">
-        {/* Scope */}
-        <div aria-hidden className="relative mx-auto aspect-square w-full max-w-[280px] rounded-full bg-[radial-gradient(circle,#0c2a20_0%,#050a08_70%)] ring-1 ring-[#2ee59d]/30">
-          {[0.25, 0.5, 0.75].map((s) => (
-            <div key={s} className="absolute rounded-full border border-[#2ee59d]/20" style={{ inset: `${(1 - s) * 50}%` }} />
-          ))}
-          <div className="absolute inset-x-0 top-1/2 h-px bg-[#2ee59d]/15" />
-          <div className="absolute inset-y-0 start-1/2 w-px bg-[#2ee59d]/15" />
-          {/* Always sweeping: fast and bright during a run, slow and faint while it watches. */}
-          <div
-            className={cn("radar-sweep absolute inset-0 rounded-full", !live && "radar-sweep-idle")}
-            style={{ background: "conic-gradient(from 0deg, rgba(46,229,157,0.55), rgba(46,229,157,0) 70deg, transparent 360deg)" }}
-          />
-          {blips.map((b, i) => (
-            <span
-              key={b.id}
-              className="radar-blip absolute size-2.5 rounded-full"
-              style={{
-                left: `${50 + Math.cos(b.a) * b.r * 46}%`,
-                top: `${50 + Math.sin(b.a) * b.r * 46}%`,
-                background: b.color,
-                boxShadow: `0 0 10px ${b.color}`,
-                animationDelay: `${i * 60}ms`,
-              }}
-            />
-          ))}
-          <span className="absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent shadow-[0_0_16px_#f97316]" />
-        </div>
+      <div className="mt-4 grid items-center gap-6 lg:grid-cols-[420px_1fr]">
+        {/* Scope: hover a dot for the site, click to open the case */}
+        <RadarScope items={items} categoryOf={categoryOf} brandName={brandName} live={live} className="max-w-[420px]" />
 
         {/* Progress */}
         <div className="min-w-0">
