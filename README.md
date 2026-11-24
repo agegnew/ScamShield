@@ -110,7 +110,7 @@ Everyone works on mock data until 17:00 so nobody waits on anyone.
 
 - [ ] **11:45** — Agree screens and API shapes with Agegnew (see Shared contracts)
 - [ ] **13:00** — App shell: Next.js + Tailwind + shadcn/ui, EN/AR switch with full RTL, navigation, login page
-- [ ] **15:00** — Radar feed: live list of auto-discovered URLs, source badge (Lookalike / New cert / Search / Ad / Maps), verdict chip, brand targeted
+- [ ] **15:00** — Radar feed: live list of auto-discovered URLs, source badge (Lookalike / New cert / New domain / Search / Ad / Maps), verdict chip, brand targeted
 - [ ] **17:00** — Case page: verdict + score, reasons in EN/AR, screenshot, redirect timeline, WHOIS + hosting, confirm/dismiss, Export PDF and takedown
 - [ ] **19:00** — Citizen checker (public, mobile-first): paste a link or phone number → big plain-language verdict + what to do next
 - [ ] **20:00** — Cases list (filter by verdict, source, brand) + accuracy page (precision, recall, confusion matrix)
@@ -171,8 +171,8 @@ Fixed in the first hour so all four lanes build in parallel. Change one only aft
 | --- | --- | --- |
 | `brands.json` | Samri → everyone | id, name_en, name_ar, category, official_domains[], helplines[], keywords_en[], keywords_ar[], logo |
 | `scam_themes.json` | Samri → engine, search radar | id, name_en, name_ar, keywords_en[], keywords_ar[], search_queries_en[], search_queries_ar[], sources[] |
-| Candidate | Simon → DB | url, source (lookalike, ct, search, search_ad, maps, manual, citizen, batch), query, discovered_at, extra {listing_name, phone, address} |
-| Evidence | Simon → engine | url, final_url, redirect_chain[{url, status}], http_status, screenshot_path, title, text_excerpt, forms[{action, input_types[], field_hints[]}], rdap {created, registrar, abuse_email}, ip, asn, hosting_org, hosting_abuse_email, fetched_at, fetch_error |
+| Candidate | Simon → DB | url, source (lookalike, ct, nrd, search, search_ad, maps, manual, citizen, batch), query, discovered_at, extra {listing_name, phone, address} |
+| Evidence | Simon → engine | url, final_url, redirect_chain[{url, status}], http_status, screenshot_path, title, text_excerpt, forms[{action, input_types[], field_hints[]}], rdap {created, registrar, abuse_email}, ip, asn, hosting_org, hosting_abuse_email, shared_hosting, fetched_at, fetch_error |
 | Verdict | Engine → API/UI | url, verdict, score, brand_target, reasons[{code, weight, text_en, text_ar, evidence_ref}], model_version, scored_at |
 | API | Agegnew → Nati | See [`docs/api/README.md`](docs/api/README.md) — 14 endpoints, mock data live now |
 

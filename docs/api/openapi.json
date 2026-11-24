@@ -1362,6 +1362,12 @@
             ],
             "title": "Hosting Abuse Email"
           },
+          "shared_hosting": {
+            "type": "boolean",
+            "title": "Shared Hosting",
+            "description": "Site lives on a free/shared platform (e.g. *.vercel.app). WHOIS age, registrar and IP then belong to the platform, not the scammer: never read them as trust",
+            "default": false
+          },
           "fetched_at": {
             "type": "string",
             "format": "date-time",
@@ -1874,6 +1880,7 @@
         "enum": [
           "lookalike",
           "ct",
+          "nrd",
           "search",
           "search_ad",
           "maps",

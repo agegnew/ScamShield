@@ -21,6 +21,7 @@ class Source(str, Enum):
 
     LOOKALIKE = "lookalike"  # generated typo/brand variant that turned out to be registered
     CT = "ct"  # new TLS certificate seen in Certificate Transparency (crt.sh)
+    NRD = "nrd"  # newly registered domain from the daily public list
     SEARCH = "search"  # organic Google result
     SEARCH_AD = "search_ad"  # paid Google ad
     MAPS = "maps"  # Google Maps listing website
@@ -145,6 +146,13 @@ class Evidence(BaseModel):
     asn: int | None = None
     hosting_org: str | None = None
     hosting_abuse_email: str | None = None
+    shared_hosting: bool = Field(
+        default=False,
+        description=(
+            "Site lives on a free/shared platform (e.g. *.vercel.app). WHOIS age, registrar "
+            "and IP then belong to the platform, not the scammer: never read them as trust"
+        ),
+    )
     fetched_at: datetime
     fetch_error: str | None = Field(
         default=None,

@@ -54,6 +54,7 @@
     "asn": 64500,
     "hosting_org": "Example Hosting Ltd.",
     "hosting_abuse_email": "abuse@hosting.test",
+    "shared_hosting": false,
     "fetched_at": "2026-11-24T09:13:00+04:00",
     "fetch_error": null
   },

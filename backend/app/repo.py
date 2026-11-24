@@ -14,7 +14,14 @@ from .contracts import Candidate, Evidence, Source, Verdict
 from .db import CaseRow, DecisionRow, utcnow
 from .urls import hostname
 
-RADAR_SOURCES = (Source.LOOKALIKE, Source.CT, Source.SEARCH, Source.SEARCH_AD, Source.MAPS)
+RADAR_SOURCES = (
+    Source.LOOKALIKE,
+    Source.CT,
+    Source.NRD,
+    Source.SEARCH,
+    Source.SEARCH_AD,
+    Source.MAPS,
+)
 
 
 def _utc(dt: datetime) -> datetime:

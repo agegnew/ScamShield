@@ -29,9 +29,11 @@ def build_graph(cases: list[Case]) -> Graph:
         ev = case.evidence
         if ev is None:
             continue
-        if ev.ip:
+        # On a shared platform the IP and WHOIS belong to the platform, so they
+        # would link unrelated sites. Only the final host still says something.
+        if ev.ip and not ev.shared_hosting:
             groups[("same_ip", f"Same IP address {ev.ip}")].append(case.id)
-        if ev.rdap and ev.rdap.created and ev.rdap.registrar:
+        if ev.rdap and ev.rdap.created and ev.rdap.registrar and not ev.shared_hosting:
             day = ev.rdap.created.date().isoformat()
             detail = f"Registered on {day} at {ev.rdap.registrar}"
             groups[("same_registration_day", detail)].append(case.id)

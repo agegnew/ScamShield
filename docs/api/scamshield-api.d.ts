@@ -505,6 +505,12 @@ export interface components {
             /** Hosting Abuse Email */
             hosting_abuse_email?: string | null;
             /**
+             * Shared Hosting
+             * @description Site lives on a free/shared platform (e.g. *.vercel.app). WHOIS age, registrar and IP then belong to the platform, not the scammer: never read them as trust
+             * @default false
+             */
+            shared_hosting: boolean;
+            /**
              * Fetched At
              * Format: date-time
              */
@@ -715,7 +721,7 @@ export interface components {
          * @description Where a URL came from.
          * @enum {string}
          */
-        Source: "lookalike" | "ct" | "search" | "search_ad" | "maps" | "manual" | "citizen" | "batch";
+        Source: "lookalike" | "ct" | "nrd" | "search" | "search_ad" | "maps" | "manual" | "citizen" | "batch";
         /** Takedown */
         Takedown: {
             /** Case Id */

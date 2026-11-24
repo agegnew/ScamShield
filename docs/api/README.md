@@ -34,7 +34,7 @@ The API runs in **mock mode** until the real engine lands (Gate 2, 17:00). Shape
 - **Reasons:** list of `{code, weight, text_en, text_ar, evidence_ref}`. Positive weight raises risk, negative lowers it. `evidence_ref` tells you which evidence block to highlight (`screenshot`, `rdap.created`, `forms`, `redirect_chain`, `candidate.extra.phone`, ...).
 - **Screenshots:** `evidence.screenshot_path` is relative; load it from `<API>/artifacts/<screenshot_path>`. Mock cases point at a grey placeholder.
 - **Times:** ISO 8601 with offset. Show them in UAE time.
-- **Sources:** `lookalike`, `ct` (new certificate), `search`, `search_ad`, `maps`, `manual`, `citizen`, `batch`.
+- **Sources:** `lookalike`, `ct` (new certificate), `nrd` (newly registered domain), `search`, `search_ad`, `maps`, `manual`, `citizen`, `batch`.
 - **Case status:** `new`, `confirmed`, `dismissed`.
 - **Auth (mock):** log in as `admin` or `analyst` with any password; send `Authorization: Bearer <access_token>`. Real login with roles arrives at 14:00, same endpoint.
 
