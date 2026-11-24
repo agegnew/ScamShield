@@ -89,7 +89,8 @@ function RadarInner() {
   const brand = sp.get("brand") ?? "";
   const q = sp.get("q") ?? "";
   const [qDraft, setQDraft] = useState(q);
-  const [scopeOpen, setScopeOpen] = useState(false);
+  // The scope is the page's centrepiece: shown by default (last run when idle), hideable.
+  const [scopeOpen, setScopeOpen] = useState(true);
   const [runMsg, setRunMsg] = useState<string | null>(null);
 
   const setParams = useCallback(
@@ -427,7 +428,7 @@ function Scope({ run, preview, items, onClose, onShowFraud }: { run: RadarRun; p
     const now = Date.now();
     if (now - last.current < 10000) return;
     last.current = now;
-    setAnnounce(L(T.announce, lang).replace("{n}", String(found)).replace("{f}", String(run.verdicts.FRAUD)));
+    setAnnounce(L(T.announce, lang).replace("{n}", String(found)).replace("{f}", String(run.verdicts.FRAUD ?? 0)));
   }, [found, run.verdicts.FRAUD, lang]);
 
   return (
@@ -464,12 +465,11 @@ function Scope({ run, preview, items, onClose, onShowFraud }: { run: RadarRun; p
           ))}
           <div className="absolute inset-x-0 top-1/2 h-px bg-[#b79cff]/15" />
           <div className="absolute inset-y-0 start-1/2 w-px bg-[#b79cff]/15" />
-          {live && (
-            <div
-              className="radar-sweep absolute inset-0 rounded-full"
-              style={{ background: "conic-gradient(from 0deg, rgba(249,115,22,0.55), rgba(249,115,22,0) 70deg, transparent 360deg)" }}
-            />
-          )}
+          {/* Always sweeping: fast and bright during a run, slow and faint while it watches. */}
+          <div
+            className={cn("radar-sweep absolute inset-0 rounded-full", !live && "radar-sweep-idle")}
+            style={{ background: "conic-gradient(from 0deg, rgba(249,115,22,0.55), rgba(249,115,22,0) 70deg, transparent 360deg)" }}
+          />
           {blips.map((b, i) => (
             <span
               key={b.id}
@@ -541,10 +541,10 @@ function Scope({ run, preview, items, onClose, onShowFraud }: { run: RadarRun; p
           </ul>
           <p className="mt-4 text-base font-bold">
             {tr("foundSoFar")}: <span className="ltr tabular-nums">{found}</span> · <span className="text-[#ff8a8a]">
-              <span className="ltr tabular-nums">{run.verdicts.FRAUD}</span> {tr("fraud")}
+              <span className="ltr tabular-nums">{run.verdicts.FRAUD ?? 0}</span> {tr("fraud")}
             </span>{" "}
             · <span className="text-[#f5b93f]">
-              <span className="ltr tabular-nums">{run.verdicts.SUSPICIOUS}</span> {tr("suspicious")}
+              <span className="ltr tabular-nums">{run.verdicts.SUSPICIOUS ?? 0}</span> {tr("suspicious")}
             </span>
           </p>
           {run.status === "done" && (
@@ -553,8 +553,8 @@ function Scope({ run, preview, items, onClose, onShowFraud }: { run: RadarRun; p
                 {L(T.finished, lang)
                   .replace("{m}", String(minutes))
                   .replace("{n}", String(found))
-                  .replace("{f}", String(run.verdicts.FRAUD))
-                  .replace("{s}", String(run.verdicts.SUSPICIOUS))}
+                  .replace("{f}", String(run.verdicts.FRAUD ?? 0))
+                  .replace("{s}", String(run.verdicts.SUSPICIOUS ?? 0))}
               </p>
               <Button variant="danger" size="sm" onClick={onShowFraud}>
                 {tr("showFraud")}

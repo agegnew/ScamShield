@@ -154,6 +154,11 @@ a {
 .radar-sweep {
   animation: radar-sweep 4s linear infinite;
 }
+/* Between runs the radar keeps watching: a slower, fainter sweep. */
+.radar-sweep-idle {
+  animation-duration: 9s;
+  opacity: 0.5;
+}
 @keyframes blip-in {
   from { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
   to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
