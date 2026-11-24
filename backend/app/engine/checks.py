@@ -153,7 +153,7 @@ def brand_lookalike(ctx: Ctx) -> list[Reason]:
         if hit and hit[0] in by_id:
             brand, token = by_id[hit[0]], hit[1]
             official = brand.official_domains[0]
-            ctx.brand_target = brand.id
+            ctx.brand_target = ctx.notes["domain_brand"] = brand.id
             return [
                 _r(
                     "lookalike_domain",
@@ -176,7 +176,7 @@ def brand_lookalike(ctx: Ctx) -> list[Reason]:
                     folded = folded.replace(a, b)
                 dist = _levenshtein(label, off_label)
                 if folded == off_label or 0 < dist <= (1 if len(off_label) < 7 else 2):
-                    ctx.brand_target = brand.id
+                    ctx.brand_target = ctx.notes["domain_brand"] = brand.id
                     return [
                         _r(
                             "typosquat",
@@ -203,7 +203,7 @@ def brand_lookalike(ctx: Ctx) -> list[Reason]:
         for brand in ctx.brands:
             for token in _brand_tokens(brand):
                 if len(token) >= 4 and token in text:
-                    ctx.brand_target = brand.id
+                    ctx.brand_target = ctx.notes["domain_brand"] = brand.id
                     return [
                         _r(
                             "brand_on_free_platform",
@@ -441,6 +441,7 @@ def page_signals(ctx: Ctx) -> list[Reason]:
             hit = next((n for n in names if _name_in_page(n, text, raw_text)), None)
         if hit:
             ctx.brand_target = ctx.brand_target or brand.id
+            ctx.notes.setdefault("page_brands", set()).add(brand.id)
             reasons.append(
                 _r(
                     "brand_on_wrong_domain",
@@ -456,7 +457,8 @@ def page_signals(ctx: Ctx) -> list[Reason]:
         brand = next((b for b in ctx.brands if b.id == ev.visual_match.brand), None)
         if brand:
             ctx.brand_target = ctx.brand_target or brand.id
-            what_en = "favicon" if ev.visual_match.kind == "same_favicon" else "page template"
+            ctx.notes.setdefault("page_brands", set()).add(brand.id)
+            what_en ="favicon" if ev.visual_match.kind == "same_favicon" else "page template"
             what_ar = "أيقونة" if ev.visual_match.kind == "same_favicon" else "قالب صفحة"
             reasons.append(
                 _r(
@@ -569,3 +571,62 @@ CHECKS = (
     domain_age,
     helpline,
 )
+
+
+# ---- Combination rules (run once, after every check) -----------------------
+
+PAGE_IMPERSONATION = {"brand_on_wrong_domain", "visual_match"}
+# Signs of an active scam: a page showing them is not a mere placeholder, whatever it says.
+ACTIVE_SCAM = PAGE_IMPERSONATION | {"credential_form", "remote_access", "app_download", "cloaking"}
+# The domain is held but shows no site of its own. There is nothing to take down yet, so it is
+# watched (SUSPICIOUS) instead of reported, unless a phishing feed already lists it.
+HOLDING_PAGES = {
+    "parked": ("parked-domain", "صفحة نطاق محجوز"),
+    "for_sale": ("domain-for-sale", "صفحة بيع النطاق"),
+    "expired": ("expired-domain", "صفحة نطاق منتهي الصلاحية"),
+    "coming_soon": ("coming-soon", "صفحة «قريبًا»"),
+    "default_host_page": ("default hosting", "صفحة الاستضافة الافتراضية"),
+}
+HOLDING_PAGE_CAP = 60
+
+
+def combine(ctx: Ctx, reasons: list[Reason]) -> list[Reason]:
+    """Rules that read several checks at once. Weights stay additive: the score is their sum."""
+    codes = {r.code for r in reasons}
+
+    if codes & PAGE_IMPERSONATION:
+        # The page itself pretends to be the brand. A normal-looking URL is what a careful
+        # scammer picks, so it no longer counts in the site's favour.
+        reasons = [r for r in reasons if not (r.code == "url_model" and r.weight < 0)]
+        domain_brand = ctx.notes.get("domain_brand")
+        brand = next((b for b in ctx.brands if b.id == domain_brand), None)
+        if brand and domain_brand in ctx.notes.get("page_brands", set()):
+            reasons.append(
+                _r(
+                    "impersonation_confirmed",
+                    20,
+                    f"Both the domain name and the page claim to be {brand.name_en}, "
+                    "on a domain it does not own",
+                    f"اسم النطاق ومحتوى الصفحة ينتحلان معًا صفة {brand.name_ar} على نطاق لا تملكه",
+                    "screenshot",
+                )
+            )
+
+    ev = ctx.evidence
+    holding = HOLDING_PAGES.get(ev.page_kind or "") if ev and not ev.fetch_error else None
+    if holding and "threat_feed" not in codes and not codes & ACTIVE_SCAM:
+        total = sum(r.weight for r in reasons)
+        if total > HOLDING_PAGE_CAP:
+            kind_en, kind_ar = holding
+            reasons.append(
+                _r(
+                    "holding_page",
+                    HOLDING_PAGE_CAP - total,
+                    f"Shows only a {kind_en} page: the domain is registered but not used yet, "
+                    "so it is watched rather than reported",
+                    f"تعرض {kind_ar} فقط: النطاق مسجّل لكنه غير مستخدم بعد، "
+                    "لذا يبقى تحت المراقبة بدل الإبلاغ عنه",
+                    "screenshot",
+                )
+            )
+    return reasons

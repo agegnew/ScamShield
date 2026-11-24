@@ -7,6 +7,8 @@ Layers, cheapest first (app/engine/checks.py):
   official domain (short-circuit) -> popular site -> phishing feeds -> URL model
   -> brand lookalike / typosquat -> URL shape -> scam themes in URL
   -> page signals -> domain age -> Maps helpline check
+then combine(): a page impersonating the brand outweighs a normal-looking URL, and a parked
+or for-sale page is capped at SUSPICIOUS (nothing to take down yet).
 
 Domain age: when evidence.shared_hosting is true (e.g. *.vercel.app) the WHOIS
 date is the platform's — never treat it as "old domain = safer";
@@ -22,7 +24,7 @@ from ..messages import official_domain_reason
 from ..themes import load_themes
 from ..urls import hostname, registrable_domain
 from . import model
-from .checks import CHECKS, Ctx, helpline, is_maps_listing_link
+from .checks import CHECKS, Ctx, combine, helpline, is_maps_listing_link
 from .lists import platform_of
 
 FRAUD_AT = 70
@@ -103,7 +105,7 @@ def score(
         # The URL is only the Google Maps page of a listing without a website: judging
         # google.com would say nothing; the listing's phone is the evidence.
         checks = (helpline,)
-    reasons = [reason for check in checks for reason in check(ctx)]
+    reasons = combine(ctx, [reason for check in checks for reason in check(ctx)])
     points = max(0, min(100, sum(r.weight for r in reasons)))
     reasons.sort(key=lambda r: abs(r.weight), reverse=True)
     return Verdict(

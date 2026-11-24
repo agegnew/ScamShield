@@ -205,3 +205,51 @@ def test_every_reason_has_both_languages():
     )
     for reason in engine.score("https://tamm-violations.example/pay", evidence=ev).reasons:
         assert reason.text_en and reason.text_ar
+
+
+def test_domain_and_page_both_claiming_the_brand_is_fraud_despite_a_normal_url(monkeypatch):
+    # moi-portal.com: the URL model rates the address as normal (38%), the page says it is the MOI.
+    monkeypatch.setattr(model, "phishing_probability", lambda url: 0.38)
+    ev = page("https://moi-portal.com/", title="Ministry of Interior — Official Verification Portal")
+    v = engine.score("https://moi-portal.com/", evidence=ev)
+    assert {"lookalike_domain", "brand_on_wrong_domain", "impersonation_confirmed"} <= codes(v)
+    assert "url_model" not in codes(v)
+    assert v.verdict == Label.FRAUD
+
+
+def test_normal_url_still_lowers_risk_when_the_page_does_not_impersonate(monkeypatch):
+    monkeypatch.setattr(model, "phishing_probability", lambda url: 0.38)
+    ev = page("https://moi-portal.com/", title="Portal for car parts")
+    v = engine.score("https://moi-portal.com/", evidence=ev)
+    assert "url_model" in codes(v) and "impersonation_confirmed" not in codes(v)
+
+
+def test_parked_lookalike_is_watched_not_reported(monkeypatch):
+    # tamm-service.site: an empty Hostinger parking page on a lookalike name.
+    monkeypatch.setattr(model, "phishing_probability", lambda url: 0.93)
+    ev = page("https://tamm-service.site/", title="Parked Domain name on Hostinger DNS system", page_kind="parked")
+    v = engine.score("https://tamm-service.site/", evidence=ev)
+    assert "holding_page" in codes(v)
+    assert (v.verdict, v.score) == (Label.SUSPICIOUS, 60)
+    assert v.score == sum(r.weight for r in v.reasons)
+
+
+def test_parked_page_listed_by_a_feed_stays_fraud(monkeypatch):
+    monkeypatch.setattr(model, "phishing_probability", lambda url: 0.93)
+    monkeypatch.setattr(feeds, "load", lambda: feeds.FeedIndex(urls={"https://tamm-service.site": "OpenPhish"}))
+    ev = page("https://tamm-service.site/", page_kind="parked")
+    v = engine.score("https://tamm-service.site/", evidence=ev, use_feeds=True)
+    assert "holding_page" not in codes(v)
+    assert v.verdict == Label.FRAUD
+
+
+def test_placeholder_label_does_not_hide_a_credential_form(monkeypatch):
+    monkeypatch.setattr(model, "phishing_probability", lambda url: 0.93)
+    ev = page(
+        "https://tamm-service.site/",
+        page_kind="coming_soon",
+        forms=[FormInfo(input_types=["password"], field_hints=["card number"])],
+    )
+    v = engine.score("https://tamm-service.site/", evidence=ev)
+    assert "holding_page" not in codes(v)
+    assert v.verdict == Label.FRAUD
