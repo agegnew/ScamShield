@@ -1,0 +1,3737 @@
+[
+ {
+  "id": "c-40fe0cb6",
+  "domain": "adamex.online",
+  "status": "new",
+  "candidate": {
+   "url": "http://adamex.online/",
+   "source": "lookalike",
+   "query": "aramex",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "aramex",
+    "details": {
+     "variant": "typo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://adamex.online/",
+   "profile": "mobile_ae",
+   "final_url": "https://adamex.online/",
+   "redirect_chain": [
+    {
+     "url": "http://adamex.online/",
+     "status": 301
+    },
+    {
+     "url": "https://adamex.online/",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T140513Z_432764b51c83.png",
+   "screenshot_sha256": "10790002063c110fa1febe45f8813595015439c9c622ac876f184d6e80fc11b6",
+   "title": "Купить коляску Adamex — официальный дилер в Москве",
+   "text_excerpt": "К основному контенту 0 КОЛЯСКИ 2 В 1 КОЛЯСКИ 3 В 1 АВТОКРЕСЛА ДОСТАВКА И ОПЛАТА МАГАЗИН В МОСКВЕ КОНТАКТЫ ГАРАНТИЯ ОБМЕН / ВОЗВРАТ СЕРВИСНЫЙ ЦЕНТР ПОЛЕЗНЫЕ СТАТЬИ ОТЗЫВЫ ОПТОВЫМ КЛИЕНТАМ +7 (495) 120-07-34 ЧЁРНАЯ ПЯТНИЦА В ADAMEX СКИДКА 10% НА КОЛЯСКИ ЗА ПОКУПКАМИ ADAMEX CHANTAL – РОСКОШНЫЙ ДИЗАЙН И ПЕРЕДОВЫЕ ТЕХНОЛОГИИ! УЗНАТЬ ПОДРОБНЕЕ ADAMEX NOLA – ЛЕГКОСТЬ, СТИЛЬ И БЕЗОПАСНОСТЬ В КАЖДОЙ ПРОГУЛКЕ УЗНАТЬ ПОДРОБНЕЕ ADAMEX LOCCO LIGHT — МАКСИМУМ КОМФОРТА, МИНИМУМ ВЕСА! УЗНАТЬ ПОДРОБНЕЕ ЧЁРНАЯ ПЯТНИЦА В ADAMEX СКИДКА 10% НА КОЛЯСКИ ЗА ПОКУПКАМИ ОФИЦИАЛЬНЫЙ САЙТ ДИЛЕРА КОЛЯСОК ADAMEX ПОКУПАЯ ДЕТСКУЮ КОЛЯСКУ АДАМЕКС В НАШЕМ МАГАЗИНЕ, ВЫ МОЖЕТЕ БЫТЬ СПОКОЙНЫ, ЧТО ПРИОБРЕЛИ ДЕЙСТВИТЕЛЬНО КАЧЕСТВЕННУЮ ПРОДУКЦИЮ ОТ ИЗВЕСТНОГО ПРОИЗВОДИТЕЛЯ, СЕРТИФИЦИРОВАННУЮ, И С ОФИЦИАЛЬНОЙ ГАРАНТИЕЙ 1 ГОД. Бесплатно доставим заказ по Москве, Московской области до 30 км от МКАД и в регионы транспортными компаниями. Подробнее о доставке Бесплатная доставка При доставке по Москве и Московской области наши курьеры поднимут на этаж, соберут коляску, вы сможете осмотреть, проверить товар и после произвести оплату наличными или банковской картой курьеру. Подъем на этаж и сборка Оплату принимаем на расчетный счет организации. После оплаты вам придет электронный кассовый чек подтверждающий оплату. Перед отправкой мы вложим в коробку бумажный кассовый чек и заполненный гарантийный талон. Отсутствие риска при оплате Завод производитель на территории России дает гарантию 6 месяцев. За счет своего сервисного центра, мы от своего магазина увеличиваем срок гарантии до 1 года. Увеличенная гарантия - 1 год Делаете ремонт и на данный момент негде хранить коляску? Купленный у нас товар можно оставить на бесплатное хранение. По востребованности можно забрать самостоятельно со склада или заказать доставку. Хранение на теплом складе Ремонт коляски купленной в нашем магазине, чаще всего происходит в день обращения. Вам не придется оставлять коляску на срок до 45 дней как это происходит в большинстве магазинов ",
+   "forms": [
+    {
+     "action": "https://adamex.online/",
+     "input_types": [
+      "checkbox",
+      "select-one",
+      "text"
+     ],
+     "field_hints": [
+      "query поиск",
+      "sort",
+      "t898__btn_input_225723768"
+     ],
+     "sensitive": []
+    },
+    {
+     "action": "https://adamex.online/",
+     "input_types": [
+      "checkbox",
+      "email",
+      "radio",
+      "tel",
+      "text",
+      "textarea"
+     ],
+     "field_hints": [
+      "email",
+      "phone",
+      "address input_1563271997496 адрес доставки",
+      "checkbox    я согласен с политикой конфиденциальности и даю ",
+      "delivery   \nдоставка курьером по москве и мо",
+      "delivery   \nдоставка транспортной компанией по россии",
+      "delivery   \nсамовывоз из шоу-рума (г. москва, салтыковская 7",
+      "email input_1496239459190 email ваш email",
+      "form-spec-comments",
+      "name input_1496239431201 name ваше имя",
+      "tildaspec-phone-part[] input_1496239478607 (000) 000-00-00 в",
+      "есть промокод или сертификат? off введите код"
+     ],
+     "sensitive": [
+      "email",
+      "phone"
+     ]
+    },
+    {
+     "action": "https://adamex.online/",
+     "input_types": [
+      "checkbox",
+      "tel",
+      "text"
+     ],
+     "field_hints": [
+      "phone",
+      "checkbox    я согласен с политикой конфиденциальности и даю ",
+      "form-spec-comments",
+      "name input_1726130070640 name",
+      "tildaspec-phone-part[] input_1726130020891 (000) 000-00-00"
+     ],
+     "sensitive": [
+      "phone"
+     ]
+    }
+   ],
+   "download_signals": [],
+   "page_kind": "content",
+   "fingerprints": {
+    "favicon_mmh3": -784787691,
+    "favicon_sha256": "d112e6b44b3ce7ca123278863c5ef43d507a8763a09dc4c49008643cad96fd74",
+    "dom_hash": "a1871250fb0e75dd",
+    "screenshot_dhash": "cc6d73c3f033d080",
+    "tracking_ids": [],
+    "contacts": {
+     "phones": [
+      "+74951200734"
+     ],
+     "whatsapp": [],
+     "telegram": [
+      "adamex_help_bot",
+      "adamexonline"
+     ],
+     "emails": []
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [],
+    "desktop": {
+     "final_url": "https://adamex.online/",
+     "http_status": 200,
+     "title": "Купить коляску Adamex — официальный дилер в Москве",
+     "screenshot_path": null,
+     "fetch_error": null
+    }
+   },
+   "rdap": {
+    "created": "2019-03-02T11:50:04Z",
+    "registrar": "Registrar of Domain Names REG.RU LLC",
+    "abuse_email": "abuse@reg.ru"
+   },
+   "ip": "5.181.161.71",
+   "asn": 205282,
+   "hosting_org": "ie-tildapublishing-1 - TILDA PLATFORM CLOUD SERVICES CO. L.L.C, AE",
+   "hosting_abuse_email": "legal@tilda.cc",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T14:05:05.473916Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "http://adamex.online/",
+   "verdict": "SUSPICIOUS",
+   "score": 54,
+   "brand_target": "aramex",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 56,
+     "text_en": "URL pattern looks like phishing (90% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (90٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "typosquat",
+     "weight": 40,
+     "text_en": "Domain 'adamex' is a misspelling of aramex.com",
+     "text_ar": "النطاق «adamex» تحريف لاسم aramex.com",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "unrelated_content",
+     "weight": -40,
+     "text_en": "The site is live but never mentions Aramex and shows no sign of a scam (no login, payment or ID form, no scam wording)",
+     "text_ar": "الموقع يعمل لكنه لا يذكر أرامكس ولا يُظهر أي علامة احتيال (لا نموذج دخول أو دفع أو هوية، ولا عبارات احتيال)",
+     "evidence_ref": "screenshot"
+    },
+    {
+     "code": "old_domain",
+     "weight": -10,
+     "text_en": "Domain registered 7 years ago",
+     "text_ar": "تم تسجيل النطاق منذ 7 سنوات",
+     "evidence_ref": "rdap.created"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.online)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.online)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:24.810770Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-6a33a565",
+  "domain": "emiratespost.com",
+  "status": "new",
+  "candidate": {
+   "url": "http://emiratespost.com/",
+   "source": "lookalike",
+   "query": "emiratespost",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "emiratespost",
+    "details": {
+     "variant": "tld-swap"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://emiratespost.com/",
+   "profile": "mobile_ae",
+   "final_url": "https://emiratespost.com/",
+   "redirect_chain": [
+    {
+     "url": "http://emiratespost.com/",
+     "status": 301
+    },
+    {
+     "url": "https://emiratespost.com/",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T140339Z_6510c8ca9ca9.png",
+   "screenshot_sha256": "ce136efd6fbb0cd16f53bafcb1be7497a1902bfb5cdc67c4ff73f0da5b24e39e",
+   "title": "EmiratesPost.com is for sale - Premium Domain",
+   "text_excerpt": "(888) 694-6735 PREMIUM DOMAIN FOR SALE EmiratesPost.com Strong buyer interest Viewed by 144 people in the last 30 days $794,888 USD · paid once Buy Now or make an inquiry Secure checkout · Transfer guarantee ABOUT EMIRATESPOST.COM EmiratesPost.com carries the legacy of the Emirates Post, the official postal service of the UAE, which has been a trusted institution for decades. This domain name is not only a nod to the country's history but also symbolizes the country's forward-thinking spirit and its commitment to innovation. With EmiratesPost.com, your business can establish a strong online presence and reach a global audience. The domain name EmiratesPost.com is versatile and suitable for various industries, including logistics, e-commerce, communications, and more. By using this domain name, businesses can create a professional and memorable online identity that resonates with customers and sets them apart from competitors. What EmiratesPost.com says about your brand Where the name fits, what people search for, and how it makes them feel. Possible Uses postal services international shipping parcel tracking customs clearance document delivery logistics solutions Related Keywords UAE postal service emirates shipping tracking dubai mail service international post UAE emirates courier service post office UAE Characteristics Geographic Institutional Compound Word Official Emotions & Feelings reliability trust authority security Full Ownership, No Ongoing Commitments When you purchase a domain from DomainMarket.com, it becomes 100% yours. After the transfer, you'll manage the domain directly through your registrar, and we no longer have access, and you have no ongoing fees with us. Our Purchase Process 1 Complete Your Purchase Once you purchase the domain, you'll immediately receive an email confirmation from us. 2 Payment Verification We verify payment and buyer details before initiating the transfer. If paying by credit card or PayPal: Transfer instructions sent withi",
+   "forms": [
+    {
+     "action": "https://www.domainmarket.com/search",
+     "input_types": [
+      "search"
+     ],
+     "field_hints": [
+      "q drawer-search search 200,000+ premium domains search domai"
+     ],
+     "sensitive": []
+    }
+   ],
+   "download_signals": [],
+   "page_kind": "for_sale",
+   "fingerprints": {
+    "favicon_mmh3": 77305106,
+    "favicon_sha256": "e5e7b746561ac4dc97a6f5b92f3352204a6825ada1f91fb77e08e9fa902a7003",
+    "dom_hash": "92e3c15fe75225a5",
+    "screenshot_dhash": "91e1e1ccd801c8cc",
+    "tracking_ids": [
+     "google_analytics:G-H3DHRKVDVM",
+     "google_tag_manager:GTM-PDPD66B"
+    ],
+    "contacts": {
+     "phones": [],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": [
+      "interested@domainmarket.com"
+     ]
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [],
+    "desktop": {
+     "final_url": "https://emiratespost.com/",
+     "http_status": 200,
+     "title": "EmiratesPost.com is for sale - Premium Domain",
+     "screenshot_path": null,
+     "fetch_error": null
+    }
+   },
+   "rdap": {
+    "created": "2002-02-19T03:43:12Z",
+    "registrar": "eNom, LLC",
+    "abuse_email": "abuse@enom.com"
+   },
+   "ip": "44.195.229.203",
+   "asn": 14618,
+   "hosting_org": "AMAZON-AES - Amazon.com, Inc., US",
+   "hosting_abuse_email": "trustandsafety@support.aws.com",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T14:03:33.845836Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "http://emiratespost.com/",
+   "verdict": "LEGIT",
+   "score": 12,
+   "brand_target": "emiratespost",
+   "reasons": [
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'emiratespost' (Emirates Post) but is not the official emiratespost.ae",
+     "text_ar": "النطاق يستخدم «emiratespost» (بريد الإمارات) لكنه ليس النطاق الرسمي emiratespost.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "url_model",
+     "weight": -25,
+     "text_en": "URL pattern looks normal (phishing likelihood 32%)",
+     "text_ar": "نمط الرابط يبدو طبيعيًا (احتمال التصيّد 32٪)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "scam_theme_page",
+     "weight": 12,
+     "text_en": "Page text matches a known scam type: Parcel delivery and customs fees ('customs clearance')",
+     "text_ar": "نص الصفحة يطابق نوع احتيال معروف: رسوم توصيل الطرود والرسوم الجمركية («customs clearance»)",
+     "evidence_ref": "text_excerpt"
+    },
+    {
+     "code": "old_domain",
+     "weight": -10,
+     "text_en": "Domain registered 24 years ago",
+     "text_ar": "تم تسجيل النطاق منذ 24 سنوات",
+     "evidence_ref": "rdap.created"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:24.960037Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-7ec1d4fb",
+  "domain": "adpolice.ae",
+  "status": "new",
+  "candidate": {
+   "url": "http://adpolice.ae/",
+   "source": "lookalike",
+   "query": "adpolice",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "adpolice",
+    "details": {
+     "variant": "tld-swap"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://adpolice.ae/",
+   "profile": "mobile_ae",
+   "final_url": "https://adpolice.ae/",
+   "redirect_chain": [
+    {
+     "url": "http://adpolice.ae/",
+     "status": 301
+    },
+    {
+     "url": "https://adpolice.ae/",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T140206Z_fbe9418e3eb1.png",
+   "screenshot_sha256": "7ec247603ee8e5513ddc13fd42eff4ce9770e1ffe61219dd6616a8e86303feae",
+   "title": "الصفحة الرئيسية | عن شرطة أبوظبي",
+   "text_excerpt": "English عن شرطة أبوظبى الرؤية والرسالة والقيم تاريخ شرطة أبوظبي رسالة القائد العام الهيكل التنظيمي الجودة العالمية مراكز خدمة أبوظبى الجوائز عالمية محلية إقليمية خدماتنا المركز الإعلامي الأخبار معرض الفيديو الاسئلة الشائعة الذهاب إلى تم تواصل معنا ​أهلا بكم في الموقع الرسمي للقيادة العامة لشرطة ابوظبي الرؤية : أبوظبي رائدة عالميا ً في استدامة الأمن والأمان فرصة أمـــل طلب زيارة نزيل منصة التوظيف الذكية خدمة أمان من أجل مجتمع آمن ومستقر 8002626 2828 إرسال قضية أمان اكتشف مجموعتنا الواسعة من الخدمات الإلكترونية لشرطة أبوظبي دفع المخالفات المرورية من خلال هذه الخدمة يمكن للأفراد والشركات (أصحاب المركبات) تسديد المخالفات المرورية قراءة المزيد تجديد تصريح مدرب قيادة مركبة من خلال هذه الخدمة، يمكن لمدربي القيادة طلب تجديد التصريح لمزاولة مهنة مدرب سواقه قراءة المزيد طلب إصدار رخصة قيادة جديدة من خلال هذه الخدمة، يمكن للأفراد طلب إصدار رخصة جديدة بعد اجتياز اختبار القيادة. قراءة المزيد طلب حل المشكلات الاجتماعية من خلال هذه الخدمة، يمكن لأفراد المجتمع الراغبين في حل مشكلة اجتماعية بشكل ودي تقديم طلب إلى مركز الدعم الاجتماعي… قراءة المزيد طلب إصدار رخصة قيادة بدل تالف من خلال هذه الخدمة، يمكن للأفراد طلب إصدار بدل تالف لرخصة قيادة المركبة. قراءة المزيد عرض الكل الأخبار كن على اطلاع أخبار 09 نوفمبر 2026 سيارة بورش التاريخية لشرطة أبوظبي من عام 1979 تعود للموروث الشرطي بعد ترميمها تسلّمت القيادة العامة لشرطة أبوظبي سيارة «بورش 924» التاريخية، بعد استكمال أعمال ترميمها بالتعاون مع مركز بورش أبوظبي والعين، التابع لمجموعة علي… أخبار 08 نوفمبر 2026 شرطة أبوظبي تطّلع على المنظومة المشتركة لحماية الطفل بهيئة الرعاية الأسرية اطّلع اللواء محمد سهيل الراشدي مدير قطاع الأمن الجنائي بشرطة أبوظبي، خلال زيارته مركز الطفل التابع لهيئة الرعاية الأسرية، على المنظومة المشتركة لحماية… أخبار 11 نوفمبر 2026 شرطة أبوظبي تطلق خطتها الاستراتيجية 2026–2030 لتعزيز ريادة الإمارة عالمياً في الأمن والأمان أطلقت القيادة العامة لشرطة أبوظبي خطتها الاستراتيجية للأعوام 2026–2030، التي تشكل خارطة طريق لمستقبل العمل الشرطي والأمني في الإمارة،… أخبار 10 نوفمبر 2026 شرطة أبوظبي تعزز الوعي الأسري عبر مجلس \"أمن ا",
+   "forms": [
+    {
+     "action": "https://adpolice.ae/",
+     "input_types": [
+      "text"
+     ],
+     "field_hints": [
+      "off",
+      "textboxsearch off بحث"
+     ],
+     "sensitive": []
+    }
+   ],
+   "download_signals": [],
+   "page_kind": "content",
+   "fingerprints": {
+    "favicon_mmh3": 708691478,
+    "favicon_sha256": "99896e600f0bb4cc6998250b9e911ab560046a4123d0935404daf8ff442ee661",
+    "dom_hash": "71f4db0aba197313",
+    "screenshot_dhash": "6dfd8f9399bc770d",
+    "tracking_ids": [
+     "google_analytics:G-WNV13GCYGN",
+     "google_analytics:UA-214718466-2",
+     "google_tag_manager:GTM-N6S4R47"
+    ],
+    "contacts": {
+     "phones": [
+      "+9718002626",
+      "+9718003333"
+     ],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": []
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [],
+    "desktop": {
+     "final_url": "https://adpolice.ae/",
+     "http_status": 200,
+     "title": "الصفحة الرئيسية | عن شرطة أبوظبي",
+     "screenshot_path": null,
+     "fetch_error": null
+    }
+   },
+   "rdap": null,
+   "ip": "5.194.255.186",
+   "asn": 201678,
+   "hosting_org": "ADNET - Abu Dhabi Digital Authority, AE",
+   "hosting_abuse_email": "securityoperations@adgovcert.abudhabi.ae",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T14:02:00.340732Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "http://adpolice.ae/",
+   "verdict": "LEGIT",
+   "score": 0,
+   "brand_target": null,
+   "reasons": [
+    {
+     "code": "official_domain",
+     "weight": -50,
+     "text_en": "Official Abu Dhabi Police domain (adpolice.ae)",
+     "text_ar": "نطاق رسمي لـشرطة أبوظبي (adpolice.ae)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:25.142650Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-32f60739",
+  "domain": "uaetamm.com",
+  "status": "new",
+  "candidate": {
+   "url": "http://uaetamm.com/",
+   "source": "lookalike",
+   "query": "tamm",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "tamm",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://uaetamm.com/",
+   "profile": "mobile_ae",
+   "final_url": "https://uaetamm.com/",
+   "redirect_chain": [
+    {
+     "url": "http://uaetamm.com/",
+     "status": 301
+    },
+    {
+     "url": "https://uaetamm.com/",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T135445Z_c70e3c901d93.png",
+   "screenshot_sha256": "5c7b5e443ca55e0a08e7c9636ff3d08b1d43bb9d6784913f6d9bc1aa1c000eca",
+   "title": "Tamm Real Estate | Sales | Buying | Leasing | Property Management",
+   "text_excerpt": "Tamm Real Estate SALES | BUYING | LEASING | PROPERTY MANAGEMENT 🇬🇧 Tamm Real Estate Sales | Buying | Leasing | Property Management Leading real estate services across the UAE with over 20 years of expertise in property management. Get Started Learn More Our Services Comprehensive real estate solutions tailored to your needs Property Management Professional management services for residential and commercial properties Hotel & Resort Management Expert hospitality management for hotels and resort properties Sales & Buying Comprehensive buying and selling services for properties and land Leasing Flexible leasing solutions for residential and commercial spaces Investment Consulting Strategic investment advice for real estate portfolios Asset Management Maximize returns through professional asset management Learn More Our Achievements 20+ Years of Experience 500+ Properties Managed 4 Branches Across UAE 1,200+ Satisfied Clients Get in Touch Have questions? We're here to help Name Email Phone Message Submit Tamm Real Estate Sales | Buying | Leasing | Property Management About Tamm Real Estate A premier real estate agency in the UAE specializing in Sales, Buying, Leasing, and comprehensive Property Management. Quick Links Home About Services Branches Contact Contact Us info@uaetamm.com @UAE_TAMM www.UaeTamm.com © 2026 Tamm Real Estate. All rights reserved. Privacy Policy Terms of Service",
+   "forms": [
+    {
+     "action": "https://uaetamm.com/",
+     "input_types": [
+      "email",
+      "text",
+      "textarea"
+     ],
+     "field_hints": [
+      "email",
+      "phone",
+      "email email enter your email email",
+      "message message enter your message message",
+      "name name enter your name name",
+      "phone phone enter your phone number phone"
+     ],
+     "sensitive": [
+      "email",
+      "phone"
+     ]
+    }
+   ],
+   "download_signals": [],
+   "page_kind": "content",
+   "fingerprints": {
+    "favicon_mmh3": -260366381,
+    "favicon_sha256": "cad0933c49f86e5f2fcf3b8fc86d05771c0b8529d5fed64f6d4069ed594b6675",
+    "dom_hash": "16b0677eed456c59",
+    "screenshot_dhash": "c50658c82b0f4d8e",
+    "tracking_ids": [],
+    "contacts": {
+     "phones": [],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": [
+      "info@uaetamm.com"
+     ]
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [],
+    "desktop": {
+     "final_url": "https://uaetamm.com/",
+     "http_status": 200,
+     "title": "Tamm Real Estate | Sales | Buying | Leasing | Property Management",
+     "screenshot_path": null,
+     "fetch_error": null
+    }
+   },
+   "rdap": {
+    "created": "2025-06-03T11:05:58Z",
+    "registrar": "Gransy, s.r.o.",
+    "abuse_email": "abuse@regtons.com"
+   },
+   "ip": "88.223.91.159",
+   "asn": 47583,
+   "hosting_org": "AS-HOSTINGER - Hostinger Operations UAB, LT",
+   "hosting_abuse_email": "abuse@hostinger.com",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:54:42.424706Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "http://uaetamm.com/",
+   "verdict": "SUSPICIOUS",
+   "score": 55,
+   "brand_target": "tamm",
+   "reasons": [
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'tamm' (TAMM) but is not the official tamm.abudhabi",
+     "text_ar": "النطاق يستخدم «tamm» (تم) لكنه ليس النطاق الرسمي tamm.abudhabi",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "brand_on_wrong_domain",
+     "weight": 20,
+     "text_en": "Page presents itself as TAMM on a non-official domain",
+     "text_ar": "الصفحة تقدّم نفسها على أنها تم على نطاق غير رسمي",
+     "evidence_ref": "screenshot"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:26.073877Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-f897a16d",
+  "domain": "bit.ly",
+  "status": "new",
+  "candidate": {
+   "url": "https://bit.ly/4hDruaE",
+   "source": "citizen",
+   "query": null,
+   "discovered_at": "2026-11-24T13:37:39.698789Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": null,
+    "details": {}
+   }
+  },
+  "evidence": {
+   "url": "https://bit.ly/4hDruaE",
+   "profile": "mobile_ae",
+   "final_url": "https://bit.ly/4hDruaE",
+   "redirect_chain": [
+    {
+     "url": "https://bit.ly/4hDruaE",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T133811Z_063451edcab8.png",
+   "screenshot_sha256": "185e2dbcbaf6b22a152954b899a3dc239af3f993f896bd35234e5b85790dece4",
+   "title": "Warning! | The account that created this link has been suspended",
+   "text_excerpt": "Warning: This URL is no longer available because it was created by a suspended account. We recommend you close your browser window and notify the person who sent you the link. Why was this link blocked? The account used to create this link has been suspended for violations of our Acceptable Use Policy. Links created by suspended accounts are suspended as well. Learn more about what Bitly does to keep you safe at the Bitly Trust Center. If this is your link and believe your account has been suspended in error, submit an appeal via this this form.",
+   "forms": [],
+   "download_signals": [],
+   "page_kind": "content",
+   "fingerprints": {
+    "favicon_mmh3": -1595346580,
+    "favicon_sha256": "3ce43ec89d890b85133c3a0f68c666b4ff9afb9fdf6d146c642e1d3dcc1cc06b",
+    "dom_hash": "7d0a9a9fc419f93c",
+    "screenshot_dhash": "80f030b480c0a2c8",
+    "tracking_ids": [],
+    "contacts": {
+     "phones": [],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": []
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [],
+    "desktop": {
+     "final_url": "https://bit.ly/4hDruaE",
+     "http_status": 200,
+     "title": "Warning! | The account that created this link has been suspended",
+     "screenshot_path": null,
+     "fetch_error": null
+    }
+   },
+   "rdap": {
+    "created": "2008-05-17T22:00:00Z",
+    "registrar": "Libyan Spider Network (int)",
+    "abuse_email": "abuse@register.ly"
+   },
+   "ip": "67.199.248.10",
+   "asn": 396982,
+   "hosting_org": "GOOGLE-CLOUD-PLATFORM - Google LLC, US",
+   "hosting_abuse_email": "abuse@bitly.com",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:38:09.333880Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "https://bit.ly/4hDruaE",
+   "verdict": "FRAUD",
+   "score": 100,
+   "brand_target": null,
+   "reasons": [
+    {
+     "code": "threat_feed",
+     "weight": 70,
+     "text_en": "Listed as phishing by PhishTank",
+     "text_ar": "مُدرج كموقع تصيّد لدى PhishTank",
+     "evidence_ref": "threat_feed"
+    },
+    {
+     "code": "url_model",
+     "weight": 69,
+     "text_en": "URL pattern looks like phishing (99% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (99٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "free_platform",
+     "weight": 18,
+     "text_en": "Hosted on a free website platform (bit.ly)",
+     "text_ar": "مستضاف على منصة مواقع مجانية (bit.ly)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "shortener",
+     "weight": 5,
+     "text_en": "Short link hides the real destination",
+     "text_ar": "الرابط المختصر يخفي الوجهة الحقيقية",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:26.169130Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-f5b543f9",
+  "domain": "2h.ae",
+  "status": "new",
+  "candidate": {
+   "url": "https://2h.ae/pPGKr",
+   "source": "citizen",
+   "query": null,
+   "discovered_at": "2026-11-24T13:37:39.698789Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": null,
+    "details": {}
+   }
+  },
+  "evidence": {
+   "url": "https://2h.ae/pPGKr",
+   "profile": "mobile_ae",
+   "final_url": null,
+   "redirect_chain": [],
+   "http_status": null,
+   "screenshot_path": null,
+   "screenshot_sha256": null,
+   "title": null,
+   "text_excerpt": null,
+   "forms": [],
+   "download_signals": [],
+   "page_kind": null,
+   "fingerprints": null,
+   "visual_match": null,
+   "cloaking": null,
+   "rdap": null,
+   "ip": null,
+   "asn": null,
+   "hosting_org": null,
+   "hosting_abuse_email": null,
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:38:09.291402Z",
+   "fetch_error": "Offline: cannot resolve 2h.ae"
+  },
+  "verdict": {
+   "url": "https://2h.ae/pPGKr",
+   "verdict": "FRAUD",
+   "score": 70,
+   "brand_target": null,
+   "reasons": [
+    {
+     "code": "threat_feed",
+     "weight": 70,
+     "text_en": "Listed as phishing by PhishTank",
+     "text_ar": "مُدرج كموقع تصيّد لدى PhishTank",
+     "evidence_ref": "threat_feed"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:26.176282Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-6473efad",
+  "domain": "uaebillaccouae.hosted.phplist.com",
+  "status": "new",
+  "candidate": {
+   "url": "https://uaebillaccouae.hosted.phplist.com/lists/?p=subscribe&id=18",
+   "source": "citizen",
+   "query": null,
+   "discovered_at": "2026-11-24T13:37:39.691219Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": null,
+    "details": {}
+   }
+  },
+  "evidence": {
+   "url": "https://uaebillaccouae.hosted.phplist.com/lists/?p=subscribe&id=18",
+   "profile": "mobile_ae",
+   "final_url": "https://biglin.serv00.net/___4",
+   "redirect_chain": [
+    {
+     "url": "https://uaebillaccouae.hosted.phplist.com/lists/?p=subscribe&id=18",
+     "status": 200
+    },
+    {
+     "url": "https://biglin.serv00.net/___4",
+     "status": 403
+    }
+   ],
+   "http_status": 403,
+   "screenshot_path": "screenshots/20261124T133810Z_a288f22b0b5d.png",
+   "screenshot_sha256": "36e32be1822567ec88980265f05875dea1921fe37231ea67a6d3572fae11fb4d",
+   "title": "Serv00.com - Free Website Hosting - 403 Website blocked",
+   "text_excerpt": "Error 403 Website blocked The page has been blocked due to the serv00.com's ToS violation. If you are the owner of this site, please contact the administration. If you have any questions contact us. server: anp4s0",
+   "forms": [],
+   "download_signals": [],
+   "page_kind": "content",
+   "fingerprints": {
+    "favicon_mmh3": null,
+    "favicon_sha256": null,
+    "dom_hash": "2ac14ec3626cf34d",
+    "screenshot_dhash": "0000400000031f7f",
+    "tracking_ids": [],
+    "contacts": {
+     "phones": [],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": []
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [],
+    "desktop": {
+     "final_url": "https://biglin.serv00.net/___4",
+     "http_status": 403,
+     "title": "Serv00.com - Free Website Hosting - 403 Website blocked",
+     "screenshot_path": null,
+     "fetch_error": null
+    }
+   },
+   "rdap": {
+    "created": "2019-06-03T18:10:13Z",
+    "registrar": "OVH sas",
+    "abuse_email": "abuse@ovh.net"
+   },
+   "ip": "128.204.223.94",
+   "asn": null,
+   "hosting_org": null,
+   "hosting_abuse_email": "abuse@atman.pl",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:38:06.410830Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "https://uaebillaccouae.hosted.phplist.com/lists/?p=subscribe&id=18",
+   "verdict": "FRAUD",
+   "score": 80,
+   "brand_target": null,
+   "reasons": [
+    {
+     "code": "threat_feed",
+     "weight": 70,
+     "text_en": "Listed as phishing by PhishTank",
+     "text_ar": "مُدرج كموقع تصيّد لدى PhishTank",
+     "evidence_ref": "threat_feed"
+    },
+    {
+     "code": "cross_domain_redirect",
+     "weight": 10,
+     "text_en": "Link redirects to a different site (biglin.serv00.net)",
+     "text_ar": "الرابط يحوّل إلى موقع مختلف (biglin.serv00.net)",
+     "evidence_ref": "redirect_chain"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:26.183419Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-2e53fe32",
+  "domain": "accounts-meine-dkbs-kreditdeutshe.baitalarablaundry.ae",
+  "status": "new",
+  "candidate": {
+   "url": "https://accounts-meine-dkbs-kreditdeutshe.baitalarablaundry.ae//logs/dkbs",
+   "source": "citizen",
+   "query": null,
+   "discovered_at": "2026-11-24T13:37:39.687679Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": null,
+    "details": {}
+   }
+  },
+  "evidence": {
+   "url": "https://accounts-meine-dkbs-kreditdeutshe.baitalarablaundry.ae//logs/dkbs",
+   "profile": "mobile_ae",
+   "final_url": null,
+   "redirect_chain": [],
+   "http_status": null,
+   "screenshot_path": null,
+   "screenshot_sha256": null,
+   "title": null,
+   "text_excerpt": null,
+   "forms": [],
+   "download_signals": [],
+   "page_kind": null,
+   "fingerprints": null,
+   "visual_match": null,
+   "cloaking": null,
+   "rdap": null,
+   "ip": null,
+   "asn": null,
+   "hosting_org": null,
+   "hosting_abuse_email": null,
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:38:06.369317Z",
+   "fetch_error": "Offline: cannot resolve accounts-meine-dkbs-kreditdeutshe.baitalarablaundry.ae"
+  },
+  "verdict": {
+   "url": "https://accounts-meine-dkbs-kreditdeutshe.baitalarablaundry.ae//logs/dkbs",
+   "verdict": "FRAUD",
+   "score": 100,
+   "brand_target": null,
+   "reasons": [
+    {
+     "code": "threat_feed",
+     "weight": 70,
+     "text_en": "Listed as phishing by PhishTank",
+     "text_ar": "مُدرج كموقع تصيّد لدى PhishTank",
+     "evidence_ref": "threat_feed"
+    },
+    {
+     "code": "url_model",
+     "weight": 70,
+     "text_en": "URL pattern looks like phishing (100% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (100٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:26.190382Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-2b0bd3fd",
+  "domain": "rallysteelworks.ae",
+  "status": "new",
+  "candidate": {
+   "url": "https://rallysteelworks.ae/fonts/",
+   "source": "citizen",
+   "query": null,
+   "discovered_at": "2026-11-24T13:37:39.681517Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": null,
+    "details": {}
+   }
+  },
+  "evidence": {
+   "url": "https://rallysteelworks.ae/fonts/",
+   "profile": "mobile_ae",
+   "final_url": "https://www.rallysteelworks.ae/fonts/",
+   "redirect_chain": [
+    {
+     "url": "https://rallysteelworks.ae/fonts/",
+     "status": 308
+    },
+    {
+     "url": "https://www.rallysteelworks.ae/fonts/",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T133804Z_de87c433304b.png",
+   "screenshot_sha256": "e774c239f54d19946d94f9967aaea2e5f7f0597ac190460b6f41ec17f83186c1",
+   "title": "Page Not Found (404) | Rally Steel Works",
+   "text_excerpt": "Rally Steel Works HOME ABOUT US SERVICES PRODUCTS GALLERY CONTACT Get A Quote 404 Page Not Found We are sorry, but the page you are looking for does not exist, has been removed, or has its name changed. Back To Homepage Rally Steel Works High-precision metal fabrication, CNC machining, and custom steel solutions serving key industries across the UAE - built on quality, delivered on time. Company Home About Us Services Products Contact Our Services Metal Fabrication Metal Cutting Blasting & Coating CNC Machining Interior and Home Decors Contact Us Jiddha St - Al Jerf Industrial 2 - Ajman - United Arab Emirates info@rallysteelworks.ae SALES +971 6 7439472 +971 55 565 3998 PRODUCTION AND ESTIMATION +971 50 491 1071 © 2026 Rally Steel Works. All Rights Reserved. Privacy Policy Terms & Conditions",
+   "forms": [],
+   "download_signals": [],
+   "page_kind": "error",
+   "fingerprints": {
+    "favicon_mmh3": -325991803,
+    "favicon_sha256": "ebca6cafb4606569b80df696c93c95e90eda90edf925cdec687fe77a7ff1f2d0",
+    "dom_hash": "7cd77fc0c29197e1",
+    "screenshot_dhash": "00107065c4b2696a",
+    "tracking_ids": [],
+    "contacts": {
+     "phones": [
+      "+971504911071",
+      "+971555653998",
+      "+97167439472"
+     ],
+     "whatsapp": [
+      "+971555653998"
+     ],
+     "telegram": [],
+     "emails": [
+      "info@rallysteelworks.ae"
+     ]
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [],
+    "desktop": {
+     "final_url": "https://www.rallysteelworks.ae/fonts/",
+     "http_status": 200,
+     "title": "Page Not Found (404) | Rally Steel Works",
+     "screenshot_path": null,
+     "fetch_error": null
+    }
+   },
+   "rdap": null,
+   "ip": "216.198.79.65",
+   "asn": 16509,
+   "hosting_org": "AMAZON-02 - Amazon.com, Inc., US",
+   "hosting_abuse_email": "abuse@vercel.com",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:38:01.740948Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "https://rallysteelworks.ae/fonts/",
+   "verdict": "FRAUD",
+   "score": 70,
+   "brand_target": null,
+   "reasons": [
+    {
+     "code": "threat_feed",
+     "weight": 70,
+     "text_en": "Listed as phishing by PhishTank",
+     "text_ar": "مُدرج كموقع تصيّد لدى PhishTank",
+     "evidence_ref": "threat_feed"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:26.196887Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-e2945c3f",
+  "domain": "sunnysoldesign.ae",
+  "status": "new",
+  "candidate": {
+   "url": "https://sunnysoldesign.ae/calkie/ors/index.html?email=",
+   "source": "citizen",
+   "query": null,
+   "discovered_at": "2026-11-24T13:37:39.674556Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": null,
+    "details": {}
+   }
+  },
+  "evidence": {
+   "url": "https://sunnysoldesign.ae/calkie/ors/index.html?email=",
+   "profile": "mobile_ae",
+   "final_url": "https://sunnysoldesign.ae/calkie/ors/index.html?email=",
+   "redirect_chain": [
+    {
+     "url": "https://sunnysoldesign.ae/calkie/ors/index.html?email=",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T133758Z_38ed65668151.png",
+   "screenshot_sha256": "b4238d8df71e438f198d2a13494b817cc9c1ac6d2350ea883223c1aa1eabd78e",
+   "title": "Roundcube Webmail :: Welcome to Rouncube webmail",
+   "text_excerpt": "LOGIN Roundcube Webmail",
+   "forms": [
+    {
+     "action": "https://sunnysoldesign.ae/calkie/ors/index.html?email=",
+     "input_types": [
+      "email",
+      "password"
+     ],
+     "field_hints": [
+      "email",
+      "password",
+      "email email",
+      "password password password"
+     ],
+     "sensitive": [
+      "email",
+      "password"
+     ]
+    }
+   ],
+   "download_signals": [],
+   "page_kind": "content",
+   "fingerprints": {
+    "favicon_mmh3": null,
+    "favicon_sha256": null,
+    "dom_hash": "6a1778e7daf5e4c8",
+    "screenshot_dhash": "200030b08ce800c4",
+    "tracking_ids": [],
+    "contacts": {
+     "phones": [],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": []
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [],
+    "desktop": {
+     "final_url": "https://sunnysoldesign.ae/calkie/ors/index.html?email=",
+     "http_status": 200,
+     "title": "Roundcube Webmail :: Welcome to Rouncube webmail",
+     "screenshot_path": null,
+     "fetch_error": null
+    }
+   },
+   "rdap": null,
+   "ip": "212.16.86.15",
+   "asn": 48147,
+   "hosting_org": "AminIDC - Asre Pardazeshe Ettelaate Amin Institute, IR",
+   "hosting_abuse_email": "ripe@interlir.com",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:37:55.560184Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "https://sunnysoldesign.ae/calkie/ors/index.html?email=",
+   "verdict": "FRAUD",
+   "score": 100,
+   "brand_target": null,
+   "reasons": [
+    {
+     "code": "threat_feed",
+     "weight": 70,
+     "text_en": "Listed as phishing by PhishTank",
+     "text_ar": "مُدرج كموقع تصيّد لدى PhishTank",
+     "evidence_ref": "threat_feed"
+    },
+    {
+     "code": "url_model",
+     "weight": 32,
+     "text_en": "URL pattern looks like phishing (73% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (73٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "credential_form",
+     "weight": 20,
+     "text_en": "Page asks for a password",
+     "text_ar": "الصفحة تطلب كلمة المرور",
+     "evidence_ref": "forms"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:26.204985Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-adbcabf4",
+  "domain": "www.adpolice.gov.ae",
+  "status": "new",
+  "candidate": {
+   "url": "https://www.adpolice.gov.ae/",
+   "source": "search",
+   "query": null,
+   "discovered_at": "2026-11-24T13:37:39.671364Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": null,
+    "details": {}
+   }
+  },
+  "evidence": {
+   "url": "https://www.adpolice.gov.ae/",
+   "profile": "mobile_ae",
+   "final_url": "https://www.adpolice.gov.ae/",
+   "redirect_chain": [
+    {
+     "url": "https://www.adpolice.gov.ae/",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T133759Z_4a38331d964e.png",
+   "screenshot_sha256": "7ec247603ee8e5513ddc13fd42eff4ce9770e1ffe61219dd6616a8e86303feae",
+   "title": "الصفحة الرئيسية | عن شرطة أبوظبي",
+   "text_excerpt": "English عن شرطة أبوظبى الرؤية والرسالة والقيم تاريخ شرطة أبوظبي رسالة القائد العام الهيكل التنظيمي الجودة العالمية مراكز خدمة أبوظبى الجوائز عالمية محلية إقليمية خدماتنا المركز الإعلامي الأخبار معرض الفيديو الاسئلة الشائعة الذهاب إلى تم تواصل معنا ​أهلا بكم في الموقع الرسمي للقيادة العامة لشرطة ابوظبي الرؤية : أبوظبي رائدة عالميا ً في استدامة الأمن والأمان فرصة أمـــل طلب زيارة نزيل منصة التوظيف الذكية خدمة أمان من أجل مجتمع آمن ومستقر 8002626 2828 إرسال قضية أمان اكتشف مجموعتنا الواسعة من الخدمات الإلكترونية لشرطة أبوظبي دفع المخالفات المرورية من خلال هذه الخدمة يمكن للأفراد والشركات (أصحاب المركبات) تسديد المخالفات المرورية قراءة المزيد تجديد تصريح مدرب قيادة مركبة من خلال هذه الخدمة، يمكن لمدربي القيادة طلب تجديد التصريح لمزاولة مهنة مدرب سواقه قراءة المزيد طلب إصدار رخصة قيادة جديدة من خلال هذه الخدمة، يمكن للأفراد طلب إصدار رخصة جديدة بعد اجتياز اختبار القيادة. قراءة المزيد طلب حل المشكلات الاجتماعية من خلال هذه الخدمة، يمكن لأفراد المجتمع الراغبين في حل مشكلة اجتماعية بشكل ودي تقديم طلب إلى مركز الدعم الاجتماعي… قراءة المزيد طلب إصدار رخصة قيادة بدل تالف من خلال هذه الخدمة، يمكن للأفراد طلب إصدار بدل تالف لرخصة قيادة المركبة. قراءة المزيد عرض الكل الأخبار كن على اطلاع أخبار 09 نوفمبر 2026 سيارة بورش التاريخية لشرطة أبوظبي من عام 1979 تعود للموروث الشرطي بعد ترميمها تسلّمت القيادة العامة لشرطة أبوظبي سيارة «بورش 924» التاريخية، بعد استكمال أعمال ترميمها بالتعاون مع مركز بورش أبوظبي والعين، التابع لمجموعة علي… أخبار 08 نوفمبر 2026 شرطة أبوظبي تطّلع على المنظومة المشتركة لحماية الطفل بهيئة الرعاية الأسرية اطّلع اللواء محمد سهيل الراشدي مدير قطاع الأمن الجنائي بشرطة أبوظبي، خلال زيارته مركز الطفل التابع لهيئة الرعاية الأسرية، على المنظومة المشتركة لحماية… أخبار 11 نوفمبر 2026 شرطة أبوظبي تطلق خطتها الاستراتيجية 2026–2030 لتعزيز ريادة الإمارة عالمياً في الأمن والأمان أطلقت القيادة العامة لشرطة أبوظبي خطتها الاستراتيجية للأعوام 2026–2030، التي تشكل خارطة طريق لمستقبل العمل الشرطي والأمني في الإمارة،… أخبار 10 نوفمبر 2026 شرطة أبوظبي تعزز الوعي الأسري عبر مجلس \"أمن ا",
+   "forms": [
+    {
+     "action": "https://www.adpolice.gov.ae/",
+     "input_types": [
+      "text"
+     ],
+     "field_hints": [
+      "off",
+      "textboxsearch off بحث"
+     ],
+     "sensitive": []
+    }
+   ],
+   "download_signals": [],
+   "page_kind": "content",
+   "fingerprints": {
+    "favicon_mmh3": 708691478,
+    "favicon_sha256": "99896e600f0bb4cc6998250b9e911ab560046a4123d0935404daf8ff442ee661",
+    "dom_hash": "71f4db0aba197313",
+    "screenshot_dhash": "6dfd8f9399bc770d",
+    "tracking_ids": [
+     "google_analytics:G-WNV13GCYGN",
+     "google_analytics:UA-214718466-2",
+     "google_tag_manager:GTM-N6S4R47"
+    ],
+    "contacts": {
+     "phones": [
+      "+9718002626",
+      "+9718003333"
+     ],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": []
+    }
+   },
+   "visual_match": null,
+   "cloaking": null,
+   "rdap": null,
+   "ip": "5.194.255.186",
+   "asn": 201678,
+   "hosting_org": "ADNET - Abu Dhabi Digital Authority, AE",
+   "hosting_abuse_email": "securityoperations@adgovcert.abudhabi.ae",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:37:53.573592Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "https://www.adpolice.gov.ae/",
+   "verdict": "LEGIT",
+   "score": 0,
+   "brand_target": null,
+   "reasons": [
+    {
+     "code": "official_domain",
+     "weight": -50,
+     "text_en": "Official Abu Dhabi Police domain (www.adpolice.gov.ae)",
+     "text_ar": "نطاق رسمي لـشرطة أبوظبي (www.adpolice.gov.ae)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:26.210985Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-118a3941",
+  "domain": "www.emiratesnbd.com",
+  "status": "new",
+  "candidate": {
+   "url": "https://www.emiratesnbd.com/",
+   "source": "search",
+   "query": null,
+   "discovered_at": "2026-11-24T13:37:39.669336Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": null,
+    "details": {}
+   }
+  },
+  "evidence": {
+   "url": "https://www.emiratesnbd.com/",
+   "profile": "mobile_ae",
+   "final_url": "https://www.emiratesnbd.com/en",
+   "redirect_chain": [
+    {
+     "url": "https://www.emiratesnbd.com/",
+     "status": 302
+    },
+    {
+     "url": "https://www.emiratesnbd.com/en",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T133804Z_bc933d54e175.png",
+   "screenshot_sha256": "34f02bf7a1bb8b66320ad1bc3112bf6bd5e4149f34645b79e6badfcb98069f94",
+   "title": "Emirates NBD | Financial Services and Online Banking in Dubai and UAE",
+   "text_excerpt": "Mobile menu عربي Quick Services Customer Care ATM & Branches Online Banking Search PERSONAL Accounts Cards Loans Wealth & Insurance Ways of Banking PRIORITY PRIVATE EMIRATI BUSINESS CORPORATE & INSTITUTIONAL ISLAMIC INTERNATIONAL INNOVATION ABOUT US Choose your website / عربي UAE Back Accounts and deposits Begin a rewarding banking journey with accounts tailored to your needs. Current Accounts Savings Accounts Deposits Salary transfer offer Find a suitable account and apply Our banking packages Discover the benefits of being our customer by browsing through our banking packages. Banking Packages overview Beyond Package Plus Plus Maximizer Learn more about banking packages Have an account with us already? Learn all about how to use your account's features and benefits to the fullest. Managing your account Activating your debit card All about your account statement Manage your transfers and payments Banking packages to suit your needs What you can do with online banking Help & support Visit our dedicated support centre for answers to all your banking-related questions. Get support for your account Key Facts Statement (KFS) & Bank Fee Schedule Help with an inactive or dormant account Ways of banking View support centre Back Our cards All our cards offer you an exciting range of rewards and benefits. Cards overview Credit Cards Debit Cards Prepaid Cards Salary Prepay Card Commercial Cards Find a suitable card and apply Card benefits Learn more about the rewards and benefits on our cards. Deals by Emirates NBD Rewards Instalments Balance transfer Loan on card Balance Conversion Promotions Have a card with us already? Learn all about how to use your card's features and benefits to the fullest. Apply for a supplementary credit card Apply for a supplementary debit card Understanding your rewards Manage your credit card limits Financial benefits on your card Track your rewards Help & support Visit our dedicated support centre for answers to all your banking-related questions",
+   "forms": [
+    {
+     "action": "https://www.emiratesnbd.com/en",
+     "input_types": [
+      "radio",
+      "text"
+     ],
+     "field_hints": [
+      "borrow",
+      "enbd-topsearch-bar off start typing or click on the icon on ",
+      "sorting-radio \n                                        \n    ",
+      "web-rating web_rating_1 1",
+      "web-rating web_rating_10 10",
+      "web-rating web_rating_2 2",
+      "web-rating web_rating_3 3",
+      "web-rating web_rating_4 4",
+      "web-rating web_rating_5 5",
+      "web-rating web_rating_6 6",
+      "web-rating web_rating_7 7",
+      "web-rating web_rating_8 8",
+      "web-rating web_rating_9 9"
+     ],
+     "sensitive": []
+    },
+    {
+     "action": "https://www.emiratesnbd.com/en",
+     "input_types": [
+      "checkbox",
+      "number",
+      "select-one",
+      "text",
+      "textarea"
+     ],
+     "field_hints": [
+      "card",
+      "email",
+      "phone",
+      "28e59f94-08b0-497e-b95c-7967fd795045 28e59f94-08b0-497e-b95c",
+      "359f1850-e1a6-4e22-9d4e-eddc431ecf9e 359f1850-e1a6-4e22-9d4e",
+      "56a2c6a0-2b39-4445-987c-5a6c2a1574e2 30451d3e-5cd5-4ffb-b05e",
+      "56a2c6a0-2b39-4445-987c-5a6c2a1574e2 30b8a05f-c94d-45c2-8315",
+      "56a2c6a0-2b39-4445-987c-5a6c2a1574e2 4ea5e0ab-ee53-4e7d-b987",
+      "56a2c6a0-2b39-4445-987c-5a6c2a1574e2 664b5db1-33f7-4e8c-b66a",
+      "56a2c6a0-2b39-4445-987c-5a6c2a1574e2 938c8617-e642-418d-8b1c",
+      "56a2c6a0-2b39-4445-987c-5a6c2a1574e2 947baaf3-8920-4bbd-9c83",
+      "56a2c6a0-2b39-4445-987c-5a6c2a1574e2 9583e418-693f-4e50-a035",
+      "56a2c6a0-2b39-4445-987c-5a6c2a1574e2 99bd0fd7-0211-49b0-a794",
+      "56a2c6a0-2b39-4445-987c-5a6c2a1574e2 9d19d7f3-9767-4777-9117",
+      "56a2c6a0-2b39-4445-987c-5a6c2a1574e2 a208e8be-ebae-4b35-a2af",
+      "56a2c6a0-2b39-4445-987c-5a6c2a1574e2 a34634e4-cf50-4484-a1f5",
+      "56a2c6a0-2b39-4445-987c-5a6c2a1574e2 ac59dc26-4e73-452f-af52",
+      "56a2c6a0-2b39-4445-987c-5a6c2a1574e2 c98e43a7-db95-4d9d-acb0",
+      "56a2c6a0-2b39-4445-987c-5a6c2a1574e2 d00e6a70-5e15-4bb4-8196",
+      "56a2c6a0-2b39-4445-987c-5a6c2a1574e2 e286acf3-0420-4eba-ac98",
+      "593a2de0-cdcf-4f5f-a177-72590d80fda9 593a2de0-cdcf-4f5f-a177",
+      "637ef6db-2420-4b02-9689-92d496fcc7ea 1a105077-b60f-44b9-a199",
+      "637ef6db-2420-4b02-9689-92d496fcc7ea 1ea1448b-54c9-438f-934a"
+     ],
+     "sensitive": [
+      "card",
+      "email",
+      "phone"
+     ]
+    }
+   ],
+   "download_signals": [],
+   "page_kind": "content",
+   "fingerprints": {
+    "favicon_mmh3": -695380800,
+    "favicon_sha256": "f8ce255a2a81415bc8ac662dbcf3f850b3076c5259c00d5e067e1d159bfbd841",
+    "dom_hash": "a785c06cbde07654",
+    "screenshot_dhash": "95161c3ac080e869",
+    "tracking_ids": [
+     "facebook_pixel:330002877568845",
+     "google_analytics:G-FJYSQM2N6Y",
+     "google_tag_manager:GTM-57SLSDN"
+    ],
+    "contacts": {
+     "phones": [],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": []
+    }
+   },
+   "visual_match": null,
+   "cloaking": null,
+   "rdap": {
+    "created": "2007-05-02T18:52:38Z",
+    "registrar": "E & Enterprise Cloud - Sole Proprietorship L.L.C",
+    "abuse_email": "abuse@nic.ae"
+   },
+   "ip": "104.18.38.176",
+   "asn": 13335,
+   "hosting_org": "CLOUDFLARENET - Cloudflare, Inc., US",
+   "hosting_abuse_email": "abuse@cloudflare.com",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:37:53.047244Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "https://www.emiratesnbd.com/",
+   "verdict": "LEGIT",
+   "score": 0,
+   "brand_target": null,
+   "reasons": [
+    {
+     "code": "official_domain",
+     "weight": -50,
+     "text_en": "Official Emirates NBD domain (www.emiratesnbd.com)",
+     "text_ar": "نطاق رسمي لـبنك الإمارات دبي الوطني (www.emiratesnbd.com)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:26.212985Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-6d35e77d",
+  "domain": "www.rta.ae",
+  "status": "new",
+  "candidate": {
+   "url": "https://www.rta.ae/",
+   "source": "search",
+   "query": null,
+   "discovered_at": "2026-11-24T13:37:39.666361Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": null,
+    "details": {}
+   }
+  },
+  "evidence": {
+   "url": "https://www.rta.ae/",
+   "profile": "mobile_ae",
+   "final_url": "https://www.rta.ae/wps/portal/rta/ae/home?lang=ar",
+   "redirect_chain": [
+    {
+     "url": "https://www.rta.ae/",
+     "status": 200
+    },
+    {
+     "url": "https://www.rta.ae/wps/portal/rta/ae/home?lang=ar",
+     "status": 200
+    },
+    {
+     "url": "https://www.rta.ae/wps/portal/rta/ae/home?lang=ar",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T133748Z_1ff3d5eff44a.png",
+   "screenshot_sha256": "479617b15b91d52b773dc1a723042646f46c73a0ec3a6f04d95aceeab4637f05",
+   "title": "هيئة الطرق والمواصلات - الصفحة الرئيسية",
+   "text_excerpt": "اﺳﺘﻤﺘﻊ ﺑﺮﺣﻼت أﻛﺜﺮ ﺳﻼﺳﺔ ﺑﻴﻦ ﺟﺴﺮ إﻧﻔﻴﻨﻴﺘﻲ واﻟﻤﻤﺰر اضغط هنا لتعرف المزيد البداية من اﺳﺘﻤﺘﻊ ﺑﺮﺣﻼت أﻛﺜﺮ ﺳﻼﺳﺔ ﺑﻴﻦ ﺟﺴﺮ إﻧﻔﻴﻨﻴﺘﻲ واﻟﻤﻤﺰر.. للمزيد بصمتك الخاصة على الطريق شارك في المزاد واحصل على رقم لوحة مميز. اضغط هنا لمشاهدة الأرقام والتسجيل في المزاد الإلكتروني 84 شارك الآن البداية من هنا. اكتشف بطاقة نول الجديدة. اضغط هنا لتعرف المزيد البداية من هنا. اكتشف بطاقة نول الجديدة.. للمزيد تحديثات خدمة الحافلات اعتباراً من 20 نوفمبر 2026 اضغط هنا لتعرف المزيد البداية من تحديثات خدمة الحافلات اعتباراً من 20 نوفمبر 2026. للمزيد صلاحية تسجيل المركبة الاستعلام عن المخالفات رصيد بطاقة نول جداول المواعيد لوحة المغادرة خطط رحلتك النتائج الموضحة هي ملخص رحلتك. للاطلاع على التفاصيل، استخدم خدمة خطط رحلتك أو تطبيق سهيل. اختر نقطة البداية اختر وجهتك اختر وقت المغادرة المترو الباص الترام النقل البحري الطرق ذات الإنعطافات الأقل بحث مسح الخدمات الأكثر استخداما يمكنك الآن الوصول بسهولة إلى الخدمات الأكثر استخداماً في مكان واحد تجديد وتعديل بيانات ملكية مركبة دفع مخالفات المركبة إدارة حساب المحفظة الإلكترونية معلومات المواصلات العامة والتخطيط للرحلات شهادة عدم ممانعة لأعمال ضمن حرم القطارات تسجيل مركبة فاخرة وفق عقد امتياز لنقل الركاب تصريح تحويلات الشوارع والتقاطعات الرئيسية تصريح السكوتر الكهربائي تصريح تنقل مركبات بأوزان أو مقاسات زائدة تأجير قصير المدى لرصيف بحري معاينة موقع فحص قيادة مركبات ذات طبيعة خاصة أبرز الحملات والمستجدات استكشف تجارب جديدة واطلع على أحدث حملاتنا الترويجية و المستجدات. أمـــان لـهـم، راحـــة لـك. اضغط هنا لتعرف المزيد عن أمـــان لـهـم، راحـــة لـك. المزيد شارع لطيفة بنت حمدان اضغط هنا لتعرف المزيد عن شارع لطيفة بنت حمدان المزيد ارشادات الترام اضغط هنا لتعرف المزيد عن ارشادات الترام المزيد أحدث الحملات الترويجية الأخبار الصحفية ابقَ على اطلاع دائم مع هيئة الطرق والمواصلات وتابع آخر الأخبار. ‏٢٤ نوفمبر، ٢٠٢٦‏ ‏'‏ 150 رقماً مميزاً للوحات المركبات والدراجات النارية في مزاد إلكتروني 30 نوفمبر 2026 اضغط هنا لتقرأ عن 150 رقماً مميزاً للوحات المركبات والدراجات النارية في مزاد إلكتروني 30 نوفمبر 2026 اقرأ أكثر ‏٢٣ نوفمبر، ٢٠٢٦‏ ‏'‏ تكريم الشركاء الاستراتيجيين ونخبة من القي",
+   "forms": [
+    {
+     "action": "https://www.rta.ae/wps/portal/rta/ae/home?lang=ar",
+     "input_types": [
+      "text"
+     ],
+     "field_hints": [
+      "searchkw searchkw off كيف نستطيع أن نساعدك اليوم ؟ ادخل كلما",
+      "subheadersearch بحث .. بحث search.."
+     ],
+     "sensitive": []
+    },
+    {
+     "action": "https://www.rta.ae/wps/portal/rta/ae/POST",
+     "input_types": [
+      "radio",
+      "select-one",
+      "tel",
+      "text",
+      "textarea"
+     ],
+     "field_hints": [
+      "otp",
+      "phone",
+      "departurestop departurestop off اختر محطة المغادرة اسم المحط",
+      "finesplatecode finesplatecode الرمز",
+      "finesplateno finesplateno مثال، 123456 رقم اللوحة",
+      "finessearchtype cb_fines_by_plate \n\t      \t\t\t\t\t\t\t\t\t\tاللوحة",
+      "finessearchtype cb_fines_by_trafficno \n\t      \t\t\t\t\t\t\t\t\t\tالمل",
+      "g-recaptcha-response g-recaptcha-response رمز التحقق من جوجل",
+      "noltagid noltagid xxxxxxxxxx رقم بطاقة نول",
+      "platecode platecode الرمز",
+      "plateno plateno مثال، 123456 رقم اللوحة",
+      "routename routename مثال، x25 أو 22 أو m رقم المسار",
+      "trafficfileno trafficfileno xxxxxxxx رقم الملف المروري"
+     ],
+     "sensitive": [
+      "otp",
+      "phone"
+     ]
+    },
+    {
+     "action": "https://www.rta.ae/wps/portal/rta/ae/p0/IZ7_KG402B82MGIF8066PQMJDP1OK1=CZ6_N004G041LGU600AURQQVJR30D7=LA0=Eaction!jptransfer==/",
+     "input_types": [
+      "checkbox",
+      "text"
+     ],
+     "field_hints": [
+      "avoidchanges cbavoid الطرق ذات الإنعطافات الأقل",
+      "bus cbbus الباص",
+      "departing pyjtime off dd/mm/yyyy hh:mm اختر وقت المغادرة",
+      "destination pyjto off مثال: الموقع، موقف الحافلة اختر وجهتك",
+      "metro cbmetro المترو",
+      "origin pyjfrom off مثال: الموقع، موقف الحافلة اختر نقطة البد",
+      "tram cbtram الترام",
+      "waterbus cbmarine النقل البحري"
+     ],
+     "sensitive": []
+    },
+    {
+     "action": "https://www.rta.ae/wps/portal/rta/ae/POST",
+     "input_types": [
+      "email",
+      "tel",
+      "text"
+     ],
+     "field_hints": [
+      "email",
+      "phone",
+      "email emailinput email مثال، name@domain.ae البريد الإلكترون",
+      "mobile nlmobilenumber tel 05xxxxxxxx رقم الهاتف المتحرك",
+      "name nameinput given-name أدخل الاسم الاسم الكامل"
+     ],
+     "sensitive": [
+      "email",
+      "phone"
+     ]
+    }
+   ],
+   "download_signals": [],
+   "page_kind": "content",
+   "fingerprints": {
+    "favicon_mmh3": 708049661,
+    "favicon_sha256": "16a880acc974adbfab87bdc0037bf4958d25d4bdfebd43388298a4e57a7909ab",
+    "dom_hash": "d6f0d43b47241e38",
+    "screenshot_dhash": "796e614976121aaa",
+    "tracking_ids": [
+     "facebook_pixel:2137179800187846",
+     "facebook_pixel:3629118910553347",
+     "google_analytics:G-FZ1KMEJTLH",
+     "google_analytics:G-HJXTZ083QT",
+     "google_tag_manager:GTM-K42ZGXR"
+    ],
+    "contacts": {
+     "phones": [],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": []
+    }
+   },
+   "visual_match": null,
+   "cloaking": null,
+   "rdap": null,
+   "ip": "213.42.51.106",
+   "asn": 204206,
+   "hosting_org": "GIN-INT-AS - Digital Dubai Government Establishment, AE",
+   "hosting_abuse_email": "gin.service@digitaldubai.ae",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:37:39.858694Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "https://www.rta.ae/",
+   "verdict": "LEGIT",
+   "score": 0,
+   "brand_target": null,
+   "reasons": [
+    {
+     "code": "official_domain",
+     "weight": -50,
+     "text_en": "Official RTA - Roads and Transport Authority Dubai domain (www.rta.ae)",
+     "text_ar": "نطاق رسمي لـهيئة الطرق والمواصلات (www.rta.ae)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:26.215133Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-fa713c91",
+  "domain": "www.tamm.abudhabi",
+  "status": "new",
+  "candidate": {
+   "url": "https://www.tamm.abudhabi/",
+   "source": "search",
+   "query": null,
+   "discovered_at": "2026-11-24T13:37:39.664324Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": null,
+    "details": {}
+   }
+  },
+  "evidence": {
+   "url": "https://www.tamm.abudhabi/",
+   "profile": "mobile_ae",
+   "final_url": "https://www.tamm.abudhabi/",
+   "redirect_chain": [
+    {
+     "url": "https://www.tamm.abudhabi/",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T133746Z_346d3ed6909e.png",
+   "screenshot_sha256": "14f28edef4657c36cd53023ec862fcb25ea5d550d54678b7dbbfee23fb87b57f",
+   "title": "TAMM - Abu Dhabi Government Services",
+   "text_excerpt": "Sign in Abu Dhabi Government Services 1,200+ government services in one platform to make life simpler for you Discover your Space For all your business needs Property. BINAA. Simplified One space for family services Health services that care for you All you need to move smarter List of Services Agriculture & Livestock Farms, Livestock and Animals Housing & Properties Houses, Lands and Real Estate Identity & Citizenship Residency, Identity, Entry Permit, and Work Legal and Judicial Services Legal services, courts, and judicial procedures Police Services Firearm Licencing and Penal and Correctional Institutions related services Drive & Transport Vehicles, Traffic and Driving Services Work & Education Work, Education, and Training Healthcare Services Health Insurance, Licensing, and Facilities Culture & Leisure Tourism, Culture and Diversity Social Care Support Environmental Affairs and Society Services Deceased & Inheritance Legislation and Inheritance-related Services Explore a Service for Every Need For Individuals A range of services including healthcare, education, benefits, and many others. For Businesses Services to start, manage, and grow your business with ease and confidence. By Entity Discover government services sorted by the entities providing them. Explore All Services for Everyone Explore services for you and your loved ones. Golden Visa Nomination Through this service, you can provide the required information to receive a nomination to initiate the Golden Visa application process. Upon approval, you will be directed to finalise your application with the Federal Authority for Identity, Citizenship, Customs and Port Security (ICP). Department of Economic Development Issue an Attested Report Card Through this service, you can request an attested report card by the Department of Education and Knowledge and the Ministry of Foreign Affairs (Optional) for a specific academic year, which includes information about student, private school/charter school in the E",
+   "forms": [
+    {
+     "action": "https://www.tamm.abudhabi/",
+     "input_types": [
+      "text",
+      "textarea"
+     ],
+     "field_hints": [
+      "g-recaptcha-response g-recaptcha-response-100000",
+      "search for services"
+     ],
+     "sensitive": []
+    }
+   ],
+   "download_signals": [],
+   "page_kind": "content",
+   "fingerprints": {
+    "favicon_mmh3": 2004802421,
+    "favicon_sha256": "587497ef7dbdef1ac146a29297c27cf49ab4d59f36ab32049aa2bf275d2f174c",
+    "dom_hash": "a02ca420e48ff081",
+    "screenshot_dhash": "960016165179b38c",
+    "tracking_ids": [
+     "google_analytics:G-3DYGZ5ZRDB",
+     "google_tag_manager:GTM-PR8LVKK"
+    ],
+    "contacts": {
+     "phones": [],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": []
+    }
+   },
+   "visual_match": null,
+   "cloaking": null,
+   "rdap": {
+    "created": "2018-07-09T07:40:31Z",
+    "registrar": "ADSIC Registry Operator",
+    "abuse_email": null
+   },
+   "ip": "5.194.255.186",
+   "asn": 201678,
+   "hosting_org": "ADNET - Abu Dhabi Digital Authority, AE",
+   "hosting_abuse_email": "securityoperations@adgovcert.abudhabi.ae",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:37:39.858694Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "https://www.tamm.abudhabi/",
+   "verdict": "LEGIT",
+   "score": 0,
+   "brand_target": null,
+   "reasons": [
+    {
+     "code": "official_domain",
+     "weight": -50,
+     "text_en": "Official TAMM domain (www.tamm.abudhabi)",
+     "text_ar": "نطاق رسمي لـتم (www.tamm.abudhabi)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:26.215680Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-671ea178",
+  "domain": "tamm-service.site",
+  "status": "new",
+  "candidate": {
+   "url": "https://tamm-service.site/",
+   "source": "lookalike",
+   "query": null,
+   "discovered_at": "2026-11-24T13:37:39.658838Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": null,
+    "details": {}
+   }
+  },
+  "evidence": {
+   "url": "https://tamm-service.site/",
+   "profile": "mobile_ae",
+   "final_url": "https://tamm-service.site/",
+   "redirect_chain": [
+    {
+     "url": "https://tamm-service.site/",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T133745Z_f6207e82f1a5.png",
+   "screenshot_sha256": "d0e7dab470eed4e21f2bd7763b30d5e755193943909fc802da89d4e290db60aa",
+   "title": "Parked Domain name on Hostinger DNS system",
+   "text_excerpt": "tamm-service.site Registered at If this is your domain, you can manage it in your Hostinger account. Manage domain Start your online journey Build your website today Launch your business with WordPress or Website Builder using AI tools, templates, and reliable hosting. Get Web hosting Prompt your website Chat with AI to build a complete website - with CRM, booking forms, and more. Horizons handles code, design, and copy so you can launch instantly. Get Horizons Power your projects with VPS Get full control with dedicated resources. Scale apps, websites, and workloads on secure VPS hosting. Get VPS hosting Find similar domains Explore available alternatives and secure the domain that works best for your brand. Search domains Look professional with email Create a business email that matches your domain. Build your brand with a professional email address like info@tamm-service.site. Create email",
+   "forms": [
+    {
+     "action": "https://www.hostinger.com/domain-name-results",
+     "input_types": [
+      "text"
+     ],
+     "field_hints": [
+      "domain domaininput off type a domain you want domain name"
+     ],
+     "sensitive": []
+    }
+   ],
+   "download_signals": [],
+   "page_kind": "parked",
+   "fingerprints": {
+    "favicon_mmh3": -1966316735,
+    "favicon_sha256": "46c687d88f7977878b1ed39fb33f653875a6ab415e6584b4564bce0b888727c5",
+    "dom_hash": "ee8fb5f04567ce45",
+    "screenshot_dhash": "92a8cd8ad8d0ceb1",
+    "tracking_ids": [
+     "google_analytics:G-S4HMJ5EXYY",
+     "google_analytics:UA-26575989-44"
+    ],
+    "contacts": {
+     "phones": [],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": [
+      "info@tamm-service.site"
+     ]
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [],
+    "desktop": {
+     "final_url": "https://tamm-service.site/",
+     "http_status": 200,
+     "title": "Parked Domain name on Hostinger DNS system",
+     "screenshot_path": null,
+     "fetch_error": null
+    }
+   },
+   "rdap": {
+    "created": "2026-01-07T11:57:43Z",
+    "registrar": "HOSTINGER operations, UAB",
+    "abuse_email": "abuse@hostinger.com"
+   },
+   "ip": "2.57.91.91",
+   "asn": 47583,
+   "hosting_org": "AS-HOSTINGER - Hostinger Operations UAB, LT",
+   "hosting_abuse_email": "abuse@hostinger.com",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:37:39.858694Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "https://tamm-service.site/",
+   "verdict": "SUSPICIOUS",
+   "score": 60,
+   "brand_target": "tamm",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 60,
+     "text_en": "URL pattern looks like phishing (93% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (93٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "holding_page",
+     "weight": -43,
+     "text_en": "Shows only a parked-domain page: the domain is registered but not used yet, so it is watched rather than reported",
+     "text_ar": "تعرض صفحة نطاق محجوز فقط: النطاق مسجّل لكنه غير مستخدم بعد، لذا يبقى تحت المراقبة بدل الإبلاغ عنه",
+     "evidence_ref": "screenshot"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'tamm' (TAMM) but is not the official tamm.abudhabi",
+     "text_ar": "النطاق يستخدم «tamm» (تم) لكنه ليس النطاق الرسمي tamm.abudhabi",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.site)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.site)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:26.218325Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-30fdadcb",
+  "domain": "moi-portal.com",
+  "status": "confirmed",
+  "candidate": {
+   "url": "https://moi-portal.com/",
+   "source": "lookalike",
+   "query": null,
+   "discovered_at": "2026-11-24T13:37:37.981352Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": null,
+    "details": {}
+   }
+  },
+  "evidence": {
+   "url": "https://moi-portal.com/",
+   "profile": "mobile_ae",
+   "final_url": "https://moi-portal.com/",
+   "redirect_chain": [
+    {
+     "url": "https://moi-portal.com/",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T133746Z_4ad1e9b6a108.png",
+   "screenshot_sha256": "d4fa2a98f3b621ef3e63a1bef7ae21201d0dd1403516bb58e3db29ce0b92bbff",
+   "title": "Ministry of Interior — Official Verification Portal",
+   "text_excerpt": "MINISTRY OF INTERIOR Official Government Portal Contact Us A- A+ العربية HOME MOI SERVICES DEPARTMENTS & COMMITTEES MEDIA CENTER SECURITY AWARENESS INFORMATION CENTER ABOUT MINISTRY Emergency Hotline: 999 · General Directorate: 800-2000 Service hours: Sun – Thu, 7:00 AM – 1:00 PM Securing the Nation. Serving its People. VERIFY A DOCUMENT 12.4M+ DOCUMENTS VERIFIED 2.1M ACTIVE E-SERVICE USERS 247 SERVICE CENTERS NATIONWIDE 98.6% SATISFACTION RATE FREQUENTLY USED SERVICES How can we help you today? Document Inquiries Verify the authenticity of any official document. E-Services Access 200+ digital ministry services online. Official Forms Download and submit ministry application forms. Visit Visas Apply for and check the status of visit visas. E-SERVICES DIRECTORY Browse by Department Passports & Travel Documents 18 active services Residency & Visit Visas 24 active services Civil Status & Records 15 active services Traffic & Vehicle Licensing 31 active services General Directorate Services 22 active services Public Inquiries & Reports 12 active services H.E. THE MINISTER A WORD FROM THE MINISTER \"Our duty is to safeguard every citizen and every guest of this nation.\" The Ministry of Interior continues to invest in the modernisation of public services, the digitisation of documentation and the continuous training of our security forces. We believe that an accessible, transparent and efficient ministry is the foundation of a secure and prosperous society. Through this portal, every official document we issue can be independently verified, and every service we provide is just a few clicks away. READ THE FULL MESSAGE Latest News & Announcements Read All News PRESS RELEASE 22 Mar 2026 Ministry Issues Statement on Search and Rescue Operation in Territorial Waters Coast Guard units recovered all personnel following a precautionary landing of a maritime patrol helicopter. READ MORE OFFICIAL VISIT 05 Mar 2026 His Highness Inspects the National Command and Operations Center The vi",
+   "forms": [
+    {
+     "action": "https://moi-portal.com/",
+     "input_types": [
+      "search"
+     ],
+     "field_hints": [
+      "search the portal"
+     ],
+     "sensitive": []
+    }
+   ],
+   "download_signals": [],
+   "page_kind": "content",
+   "fingerprints": {
+    "favicon_mmh3": null,
+    "favicon_sha256": null,
+    "dom_hash": "14311947c6d6a8d3",
+    "screenshot_dhash": "2086130580000001",
+    "tracking_ids": [],
+    "contacts": {
+     "phones": [
+      "+9718002000"
+     ],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": [
+      "contact@moi.gov"
+     ]
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [],
+    "desktop": {
+     "final_url": "https://moi-portal.com/",
+     "http_status": 200,
+     "title": "Ministry of Interior — Official Verification Portal",
+     "screenshot_path": null,
+     "fetch_error": null
+    }
+   },
+   "rdap": {
+    "created": "2026-04-18T18:00:25Z",
+    "registrar": "NameSilo, LLC",
+    "abuse_email": "abuse@namesilo.com"
+   },
+   "ip": "185.158.133.1",
+   "asn": 13335,
+   "hosting_org": "CLOUDFLARENET - Cloudflare, Inc., US",
+   "hosting_abuse_email": "report@abuseradar.com",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:37:39.854209Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "https://moi-portal.com/",
+   "verdict": "FRAUD",
+   "score": 75,
+   "brand_target": "moi",
+   "reasons": [
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'moi' (Ministry of Interior) but is not the official moi.gov.ae",
+     "text_ar": "النطاق يستخدم «moi» (وزارة الداخلية) لكنه ليس النطاق الرسمي moi.gov.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "brand_on_wrong_domain",
+     "weight": 20,
+     "text_en": "Page presents itself as Ministry of Interior on a non-official domain",
+     "text_ar": "الصفحة تقدّم نفسها على أنها وزارة الداخلية على نطاق غير رسمي",
+     "evidence_ref": "screenshot"
+    },
+    {
+     "code": "impersonation_confirmed",
+     "weight": 20,
+     "text_en": "Both the domain name and the page claim to be Ministry of Interior, on a domain it does not own",
+     "text_ar": "اسم النطاق ومحتوى الصفحة ينتحلان معًا صفة وزارة الداخلية على نطاق لا تملكه",
+     "evidence_ref": "screenshot"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:26.218325Z"
+  },
+  "decisions": [
+   {
+    "action": "confirm",
+    "reason": "Fake MOI portal: claims to be the ministry on a .com",
+    "by": "analyst",
+    "at": "2026-11-24T13:42:13.006821Z"
+   }
+  ]
+ },
+ {
+  "id": "c-0b8e1a9f",
+  "domain": "aramexdelivery.live",
+  "status": "new",
+  "candidate": {
+   "url": "http://aramexdelivery.live/",
+   "source": "lookalike",
+   "query": "aramex",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "aramex",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://aramexdelivery.live/",
+   "profile": "mobile_ae",
+   "final_url": null,
+   "redirect_chain": [],
+   "http_status": null,
+   "screenshot_path": null,
+   "screenshot_sha256": null,
+   "title": null,
+   "text_excerpt": null,
+   "forms": [],
+   "download_signals": [],
+   "page_kind": null,
+   "fingerprints": null,
+   "visual_match": null,
+   "cloaking": null,
+   "rdap": {
+    "created": "2026-06-14T11:28:07.607000Z",
+    "registrar": "NameSilo, LLC",
+    "abuse_email": "abuse@namesilo.com"
+   },
+   "ip": null,
+   "asn": null,
+   "hosting_org": null,
+   "hosting_abuse_email": null,
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T14:05:44.670858Z",
+   "fetch_error": "Offline: cannot resolve aramexdelivery.live"
+  },
+  "verdict": {
+   "url": "http://aramexdelivery.live/",
+   "verdict": "FRAUD",
+   "score": 100,
+   "brand_target": "aramex",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 69,
+     "text_en": "URL pattern looks like phishing (99% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (99٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'aramex' (Aramex) but is not the official aramex.com",
+     "text_ar": "النطاق يستخدم «aramex» (أرامكس) لكنه ليس النطاق الرسمي aramex.com",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.live)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.live)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:24.626376Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-9501002d",
+  "domain": "emiratespostae.xyz",
+  "status": "new",
+  "candidate": {
+   "url": "http://emiratespostae.xyz/",
+   "source": "lookalike",
+   "query": "emiratespost",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "emiratespost",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://emiratespostae.xyz/",
+   "profile": "mobile_ae",
+   "final_url": "http://emiratespostae.xyz/",
+   "redirect_chain": [
+    {
+     "url": "http://emiratespostae.xyz/",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T140353Z_5fea352e4b75.png",
+   "screenshot_sha256": "d1a8cc828c68458cbe2149667c77ce4e3756d0ecca6effead72a2310f54ed14d",
+   "title": "",
+   "text_excerpt": "",
+   "forms": [],
+   "download_signals": [],
+   "page_kind": "empty",
+   "fingerprints": {
+    "favicon_mmh3": 161172396,
+    "favicon_sha256": "af34dd3a5f3f20a802dd00bfe43f8a288d6779dbf526ada17c6b9a13bc3a555a",
+    "dom_hash": "4af32f2924b07856",
+    "screenshot_dhash": "0000000000000000",
+    "tracking_ids": [],
+    "contacts": {
+     "phones": [],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": []
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [],
+    "desktop": {
+     "final_url": "http://emiratespostae.xyz/",
+     "http_status": 200,
+     "title": "",
+     "screenshot_path": null,
+     "fetch_error": null
+    }
+   },
+   "rdap": {
+    "created": "2026-08-09T15:44:17Z",
+    "registrar": "GMO Internet Group, Inc. d/b/a Onamae.com",
+    "abuse_email": "abuse@internet.gmo"
+   },
+   "ip": "13.248.169.48",
+   "asn": 16509,
+   "hosting_org": "AMAZON-02 - Amazon.com, Inc., US",
+   "hosting_abuse_email": "trustandsafety@support.aws.com",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T14:03:51.209041Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "http://emiratespostae.xyz/",
+   "verdict": "FRAUD",
+   "score": 100,
+   "brand_target": "emiratespost",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 69,
+     "text_en": "URL pattern looks like phishing (99% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (99٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'emiratespost' (Emirates Post) but is not the official emiratespost.ae",
+     "text_ar": "النطاق يستخدم «emiratespost» (بريد الإمارات) لكنه ليس النطاق الرسمي emiratespost.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.xyz)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.xyz)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:24.934616Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-4feff2f3",
+  "domain": "emiratespost-ae.top",
+  "status": "new",
+  "candidate": {
+   "url": "http://emiratespost-ae.top/",
+   "source": "lookalike",
+   "query": "emiratespost",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "emiratespost",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://emiratespost-ae.top/",
+   "profile": "mobile_ae",
+   "final_url": null,
+   "redirect_chain": [],
+   "http_status": null,
+   "screenshot_path": null,
+   "screenshot_sha256": null,
+   "title": null,
+   "text_excerpt": null,
+   "forms": [],
+   "download_signals": [],
+   "page_kind": null,
+   "fingerprints": null,
+   "visual_match": null,
+   "cloaking": null,
+   "rdap": {
+    "created": "2026-08-13T05:09:33Z",
+    "registrar": "Dominet (HK) Limited",
+    "abuse_email": "domainabuse@service.aliyun.com"
+   },
+   "ip": null,
+   "asn": null,
+   "hosting_org": null,
+   "hosting_abuse_email": null,
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T14:03:24.273294Z",
+   "fetch_error": "Offline: cannot resolve emiratespost-ae.top"
+  },
+  "verdict": {
+   "url": "http://emiratespost-ae.top/",
+   "verdict": "FRAUD",
+   "score": 100,
+   "brand_target": "emiratespost",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 69,
+     "text_en": "URL pattern looks like phishing (99% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (99٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'emiratespost' (Emirates Post) but is not the official emiratespost.ae",
+     "text_ar": "النطاق يستخدم «emiratespost» (بريد الإمارات) لكنه ليس النطاق الرسمي emiratespost.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.top)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.top)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:24.985938Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-754e69ca",
+  "domain": "rta-ae.xyz",
+  "status": "new",
+  "candidate": {
+   "url": "http://rta-ae.xyz/",
+   "source": "lookalike",
+   "query": "rta",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "rta",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://rta-ae.xyz/",
+   "profile": "mobile_ae",
+   "final_url": null,
+   "redirect_chain": [],
+   "http_status": null,
+   "screenshot_path": null,
+   "screenshot_sha256": null,
+   "title": null,
+   "text_excerpt": null,
+   "forms": [],
+   "download_signals": [],
+   "page_kind": null,
+   "fingerprints": null,
+   "visual_match": null,
+   "cloaking": null,
+   "rdap": {
+    "created": "2026-08-06T11:09:22Z",
+    "registrar": "GMO Internet Group, Inc. d/b/a Onamae.com",
+    "abuse_email": "abuse@internet.gmo"
+   },
+   "ip": null,
+   "asn": null,
+   "hosting_org": null,
+   "hosting_abuse_email": null,
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T14:00:11.428510Z",
+   "fetch_error": "Offline: cannot resolve rta-ae.xyz"
+  },
+  "verdict": {
+   "url": "http://rta-ae.xyz/",
+   "verdict": "FRAUD",
+   "score": 100,
+   "brand_target": "rta",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 60,
+     "text_en": "URL pattern looks like phishing (93% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (93٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'rta' (RTA - Roads and Transport Authority Dubai) but is not the official rta.ae",
+     "text_ar": "النطاق يستخدم «rta» (هيئة الطرق والمواصلات) لكنه ليس النطاق الرسمي rta.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.xyz)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.xyz)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:25.361480Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-e5be3010",
+  "domain": "login-rta.icu",
+  "status": "new",
+  "candidate": {
+   "url": "http://login-rta.icu/",
+   "source": "lookalike",
+   "query": "rta",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "rta",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://login-rta.icu/",
+   "profile": "mobile_ae",
+   "final_url": null,
+   "redirect_chain": [],
+   "http_status": null,
+   "screenshot_path": null,
+   "screenshot_sha256": null,
+   "title": null,
+   "text_excerpt": null,
+   "forms": [],
+   "download_signals": [],
+   "page_kind": null,
+   "fingerprints": null,
+   "visual_match": null,
+   "cloaking": null,
+   "rdap": {
+    "created": "2026-01-27T14:35:35Z",
+    "registrar": "Gname.com Pte. Ltd.",
+    "abuse_email": "complaint@gname.com"
+   },
+   "ip": null,
+   "asn": null,
+   "hosting_org": null,
+   "hosting_abuse_email": null,
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T14:00:04.353149Z",
+   "fetch_error": "Offline: cannot resolve login-rta.icu"
+  },
+  "verdict": {
+   "url": "http://login-rta.icu/",
+   "verdict": "FRAUD",
+   "score": 100,
+   "brand_target": "rta",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 70,
+     "text_en": "URL pattern looks like phishing (100% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (100٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'rta' (RTA - Roads and Transport Authority Dubai) but is not the official rta.ae",
+     "text_ar": "النطاق يستخدم «rta» (هيئة الطرق والمواصلات) لكنه ليس النطاق الرسمي rta.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.icu)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.icu)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:25.361480Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-abc7cadc",
+  "domain": "moiservice.top",
+  "status": "new",
+  "candidate": {
+   "url": "http://moiservice.top/",
+   "source": "lookalike",
+   "query": "moi",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "moi",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://moiservice.top/",
+   "profile": "mobile_ae",
+   "final_url": null,
+   "redirect_chain": [],
+   "http_status": null,
+   "screenshot_path": null,
+   "screenshot_sha256": null,
+   "title": null,
+   "text_excerpt": null,
+   "forms": [],
+   "download_signals": [],
+   "page_kind": null,
+   "fingerprints": null,
+   "visual_match": null,
+   "cloaking": null,
+   "rdap": {
+    "created": "2025-08-26T04:01:42Z",
+    "registrar": "Porkbun LLC",
+    "abuse_email": "abuse@porkbun.com"
+   },
+   "ip": null,
+   "asn": null,
+   "hosting_org": null,
+   "hosting_abuse_email": null,
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:59:15.152536Z",
+   "fetch_error": "Offline: cannot resolve moiservice.top"
+  },
+  "verdict": {
+   "url": "http://moiservice.top/",
+   "verdict": "FRAUD",
+   "score": 100,
+   "brand_target": "moi",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 63,
+     "text_en": "URL pattern looks like phishing (95% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (95٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'moi' (Ministry of Interior) but is not the official moi.gov.ae",
+     "text_ar": "النطاق يستخدم «moi» (وزارة الداخلية) لكنه ليس النطاق الرسمي moi.gov.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.top)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.top)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:25.539406Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-dab919fe",
+  "domain": "moipay.xyz",
+  "status": "new",
+  "candidate": {
+   "url": "http://moipay.xyz/",
+   "source": "lookalike",
+   "query": "moi",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "moi",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://moipay.xyz/",
+   "profile": "mobile_ae",
+   "final_url": "https://moipay.xyz/",
+   "redirect_chain": [
+    {
+     "url": "http://moipay.xyz/",
+     "status": 308
+    },
+    {
+     "url": "https://moipay.xyz/",
+     "status": 404
+    }
+   ],
+   "http_status": 404,
+   "screenshot_path": "screenshots/20261124T135905Z_fa4474492399.png",
+   "screenshot_sha256": "fd999e49e8ae9c5dbdd52b74874942eba261d621f49164abe76161948877a7eb",
+   "title": "404: NOT_FOUND",
+   "text_excerpt": "This page doesn’t exist It may have been moved, removed, or never existed. 404 DEPLOYMENT_NOT_FOUND bom1::b5qvz-1795528745133-434ab37082aa VIEW DOCUMENTATION COPY DEBUG PROMPT",
+   "forms": [],
+   "download_signals": [],
+   "page_kind": "error",
+   "fingerprints": {
+    "favicon_mmh3": null,
+    "favicon_sha256": null,
+    "dom_hash": "db3560b98bf20fbb",
+    "screenshot_dhash": "00002080802000cc",
+    "tracking_ids": [],
+    "contacts": {
+     "phones": [],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": []
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [],
+    "desktop": {
+     "final_url": "https://moipay.xyz/",
+     "http_status": 404,
+     "title": "404: NOT_FOUND",
+     "screenshot_path": null,
+     "fetch_error": null
+    }
+   },
+   "rdap": {
+    "created": "2026-08-26T14:45:16Z",
+    "registrar": "Name.com, Inc.",
+    "abuse_email": "abuse@name.com"
+   },
+   "ip": "216.150.1.129",
+   "asn": 16509,
+   "hosting_org": "AMAZON-02 - Amazon.com, Inc., US",
+   "hosting_abuse_email": "abuse@vercel.com",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:59:02.674992Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "http://moipay.xyz/",
+   "verdict": "FRAUD",
+   "score": 100,
+   "brand_target": "moi",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 68,
+     "text_en": "URL pattern looks like phishing (99% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (99٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'moi' (Ministry of Interior) but is not the official moi.gov.ae",
+     "text_ar": "النطاق يستخدم «moi» (وزارة الداخلية) لكنه ليس النطاق الرسمي moi.gov.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.xyz)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.xyz)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:25.562497Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-a18b6bc8",
+  "domain": "icpupdate.info",
+  "status": "new",
+  "candidate": {
+   "url": "http://icpupdate.info/",
+   "source": "lookalike",
+   "query": "icp",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "icp",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://icpupdate.info/",
+   "profile": "mobile_ae",
+   "final_url": "http://icpupdate.info/",
+   "redirect_chain": [
+    {
+     "url": "http://icpupdate.info/",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T135727Z_47d7cf5c1db2.png",
+   "screenshot_sha256": "d1a8cc828c68458cbe2149667c77ce4e3756d0ecca6effead72a2310f54ed14d",
+   "title": "",
+   "text_excerpt": "",
+   "forms": [],
+   "download_signals": [],
+   "page_kind": "empty",
+   "fingerprints": {
+    "favicon_mmh3": 717697781,
+    "favicon_sha256": "259f9e37e49eb87987320f05e96c787f3346ea8e826561c07fc7e07424e3f481",
+    "dom_hash": "4af32f2924b07856",
+    "screenshot_dhash": "0000000000000000",
+    "tracking_ids": [],
+    "contacts": {
+     "phones": [],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": []
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [],
+    "desktop": {
+     "final_url": "http://icpupdate.info/",
+     "http_status": 200,
+     "title": "",
+     "screenshot_path": null,
+     "fetch_error": null
+    }
+   },
+   "rdap": {
+    "created": "2026-06-21T13:15:55.857000Z",
+    "registrar": "Spaceship, Inc.",
+    "abuse_email": "abuse@spaceship.com"
+   },
+   "ip": "199.36.158.100",
+   "asn": 54113,
+   "hosting_org": "FASTLY - Fastly, Inc., US",
+   "hosting_abuse_email": "network-abuse@google.com",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:57:24.945290Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "http://icpupdate.info/",
+   "verdict": "FRAUD",
+   "score": 100,
+   "brand_target": "icp",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 69,
+     "text_en": "URL pattern looks like phishing (99% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (99٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'icp' (ICP - Federal Authority for Identity, Citizenship, Customs and Port Security) but is not the official icp.gov.ae",
+     "text_ar": "النطاق يستخدم «icp» (الهيئة الاتحادية للهوية والجنسية والجمارك وأمن المنافذ) لكنه ليس النطاق الرسمي icp.gov.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.info)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.info)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:25.740020Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-c87b87f9",
+  "domain": "icpservices.info",
+  "status": "new",
+  "candidate": {
+   "url": "http://icpservices.info/",
+   "source": "lookalike",
+   "query": "icp",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "icp",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://icpservices.info/",
+   "profile": "mobile_ae",
+   "final_url": null,
+   "redirect_chain": [],
+   "http_status": null,
+   "screenshot_path": null,
+   "screenshot_sha256": null,
+   "title": null,
+   "text_excerpt": null,
+   "forms": [],
+   "download_signals": [],
+   "page_kind": null,
+   "fingerprints": null,
+   "visual_match": null,
+   "cloaking": null,
+   "rdap": {
+    "created": "2026-04-04T17:48:07.438000Z",
+    "registrar": "NameCheap, Inc.",
+    "abuse_email": "abuse@namecheap.com"
+   },
+   "ip": null,
+   "asn": null,
+   "hosting_org": null,
+   "hosting_abuse_email": null,
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:56:59.622774Z",
+   "fetch_error": "Offline: cannot resolve icpservices.info"
+  },
+  "verdict": {
+   "url": "http://icpservices.info/",
+   "verdict": "FRAUD",
+   "score": 100,
+   "brand_target": "icp",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 60,
+     "text_en": "URL pattern looks like phishing (93% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (93٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'icp' (ICP - Federal Authority for Identity, Citizenship, Customs and Port Security) but is not the official icp.gov.ae",
+     "text_ar": "النطاق يستخدم «icp» (الهيئة الاتحادية للهوية والجنسية والجمارك وأمن المنافذ) لكنه ليس النطاق الرسمي icp.gov.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.info)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.info)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:25.793002Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-3a2faab8",
+  "domain": "icpservice.online",
+  "status": "new",
+  "candidate": {
+   "url": "http://icpservice.online/",
+   "source": "lookalike",
+   "query": "icp",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "icp",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://icpservice.online/",
+   "profile": "mobile_ae",
+   "final_url": "http://icpservice.online/",
+   "redirect_chain": [
+    {
+     "url": "http://icpservice.online/",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T135659Z_b0f78b6b6bfc.png",
+   "screenshot_sha256": "d1a8cc828c68458cbe2149667c77ce4e3756d0ecca6effead72a2310f54ed14d",
+   "title": "",
+   "text_excerpt": "",
+   "forms": [],
+   "download_signals": [],
+   "page_kind": "empty",
+   "fingerprints": {
+    "favicon_mmh3": 990218646,
+    "favicon_sha256": "fca8d3a3d67a7aedbc164ba369cdec66b28b69ea8ea762f06054b72aa1ee2088",
+    "dom_hash": "4af32f2924b07856",
+    "screenshot_dhash": "0000000000000000",
+    "tracking_ids": [],
+    "contacts": {
+     "phones": [],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": []
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [],
+    "desktop": {
+     "final_url": "http://icpservice.online/",
+     "http_status": 200,
+     "title": "",
+     "screenshot_path": null,
+     "fetch_error": null
+    }
+   },
+   "rdap": {
+    "created": "2026-05-30T04:52:49.843000Z",
+    "registrar": "HOSTINGER operations, UAB",
+    "abuse_email": "abuse@hostinger.com"
+   },
+   "ip": "88.223.91.118",
+   "asn": 47583,
+   "hosting_org": "AS-HOSTINGER - Hostinger Operations UAB, LT",
+   "hosting_abuse_email": "abuse@hostinger.com",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:56:57.280630Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "http://icpservice.online/",
+   "verdict": "FRAUD",
+   "score": 100,
+   "brand_target": "icp",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 66,
+     "text_en": "URL pattern looks like phishing (97% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (97٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'icp' (ICP - Federal Authority for Identity, Citizenship, Customs and Port Security) but is not the official icp.gov.ae",
+     "text_ar": "النطاق يستخدم «icp» (الهيئة الاتحادية للهوية والجنسية والجمارك وأمن المنافذ) لكنه ليس النطاق الرسمي icp.gov.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.online)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.online)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:25.804197Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-30b06ced",
+  "domain": "icpservice.live",
+  "status": "new",
+  "candidate": {
+   "url": "http://icpservice.live/",
+   "source": "lookalike",
+   "query": "icp",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "icp",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://icpservice.live/",
+   "profile": "mobile_ae",
+   "final_url": null,
+   "redirect_chain": [],
+   "http_status": null,
+   "screenshot_path": null,
+   "screenshot_sha256": null,
+   "title": null,
+   "text_excerpt": null,
+   "forms": [],
+   "download_signals": [],
+   "page_kind": null,
+   "fingerprints": null,
+   "visual_match": null,
+   "cloaking": null,
+   "rdap": {
+    "created": "2026-06-01T19:53:37.108000Z",
+    "registrar": "NameCheap, Inc.",
+    "abuse_email": "abuse@namecheap.com"
+   },
+   "ip": null,
+   "asn": null,
+   "hosting_org": null,
+   "hosting_abuse_email": null,
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:56:56.333181Z",
+   "fetch_error": "Offline: cannot resolve icpservice.live"
+  },
+  "verdict": {
+   "url": "http://icpservice.live/",
+   "verdict": "FRAUD",
+   "score": 100,
+   "brand_target": "icp",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 63,
+     "text_en": "URL pattern looks like phishing (95% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (95٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'icp' (ICP - Federal Authority for Identity, Citizenship, Customs and Port Security) but is not the official icp.gov.ae",
+     "text_ar": "النطاق يستخدم «icp» (الهيئة الاتحادية للهوية والجنسية والجمارك وأمن المنافذ) لكنه ليس النطاق الرسمي icp.gov.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.live)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.live)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:25.808650Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-2b880fd8",
+  "domain": "icppay.xyz",
+  "status": "new",
+  "candidate": {
+   "url": "http://icppay.xyz/",
+   "source": "lookalike",
+   "query": "icp",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "icp",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://icppay.xyz/",
+   "profile": "mobile_ae",
+   "final_url": "https://headlinelogic.com/?d=icppay.xyz&pcid=56&a=false&uuid=13e081a47e9250c2aba14de8be51d6de&brand=icppay.xyz",
+   "redirect_chain": [
+    {
+     "url": "http://icppay.xyz/",
+     "status": 200
+    },
+    {
+     "url": "https://headlinelogic.com/?d=icppay.xyz&pcid=56&a=false&uuid=13e081a47e9250c2aba14de8be51d6de&brand=icppay.xyz",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T135642Z_c8729b706705.png",
+   "screenshot_sha256": "bd5e10eec8d3c1956268fa96cf014152f6a84a02a8c4beeef130cf05fbfffe02",
+   "title": "HeadlineLogic News Portal",
+   "text_excerpt": "Darian Westmere British starts headline 2027 Tour de France routes Celia Thornavel Victorian election early voting opens Rowan Kelveris Tuscany flooding and landslides recorded in disaster-monitoring update Rowan Kelveris Tibet earthquake kills at least 16, Chinese state media report Elara Venswick David Jones Owes Creditors at Least $459 Million Liora Fenwicke Australia Raises Third-Year Backpacker Visa Cap to 25,000 Rowan Kelveris UK approves Jackdaw gas project amid climate debate Adrian Solmere Trump and Albanese back closer AI ties Adrian Solmere G20 Foreign Ministers Finish Atlanta Meeting Without Joint Agreement Callen Ordelis Binance Restores Withdrawals After Record $6.3 Billion Cryptocurrency Theft Celia Thornavel US Midterm Campaign Reaches Final Stage With Control of Congress at Stake Adrian Solmere Typhoon Champi disrupts flights as Taiwan and Japan prepare Tessa Brindale Robert Pattinson Confirmed as the Next James Bond Nolan Veycroft Nvidia Board Not Weighing Jensen Huang’s Return as CEO Adrian Solmere Donald Trump to meet Quad leaders in Manila before APEC summit in China Callen Ordelis US and India signal progress on trade deal Adrian Solmere Trump given December deadline to testify in BBC case Adrian Solmere Iran and US Continue Talks as New Hormuz Proposal Raises Hopes of a Breakthrough Rowan Kelveris COP17 Produces New Biodiversity Plan but Leaves Major Funding Questions Unresolved Tessa Brindale Taiwan indicts five over alleged attack on comedian who mocked Xi Nolan Veycroft Musk reportedly invests US$1 billion in Skydance Top Stories Breaking News Finance Nolan Veycroft ANZ cash profit rises to A$7.59 billion as CEO faces questions in Canberra Elara Venswick UK growth accelerates to 0.7% as services drive the economy Callen Ordelis Anthropic IPO Price Hits US$83 Ahead of Nasdaq Debut Rowan Kelveris How To Reduce Business Expenses Callen Ordelis How To Make Extra Cash - Side Hustles That Actually Work Callen Ordelis Economists expect an ECB rate",
+   "forms": [
+    {
+     "action": "https://headlinelogic.com/?d=icppay.xyz&pcid=56&a=false&uuid=13e081a47e9250c2aba14de8be51d6de&brand=icppay.xyz",
+     "input_types": [
+      "email",
+      "password"
+     ],
+     "field_hints": [
+      "email",
+      "password",
+      "email enter your email address user name *",
+      "password enter your password"
+     ],
+     "sensitive": [
+      "email",
+      "password"
+     ]
+    },
+    {
+     "action": "https://headlinelogic.com/?d=icppay.xyz&pcid=56&a=false&uuid=13e081a47e9250c2aba14de8be51d6de&brand=icppay.xyz",
+     "input_types": [
+      "email"
+     ],
+     "field_hints": [
+      "email",
+      "forgot_email enter your email address user name *"
+     ],
+     "sensitive": [
+      "email"
+     ]
+    },
+    {
+     "action": "https://headlinelogic.com/?d=icppay.xyz&pcid=56&a=false&uuid=13e081a47e9250c2aba14de8be51d6de&brand=icppay.xyz",
+     "input_types": [
+      "checkbox",
+      "email",
+      "password",
+      "text"
+     ],
+     "field_hints": [
+      "email",
+      "password",
+      "signup-cpassword confirm your password",
+      "signup-email name@email.com",
+      "signup-name enter your name",
+      "signup-password enter your password",
+      "signup-terms"
+     ],
+     "sensitive": [
+      "email",
+      "password"
+     ]
+    }
+   ],
+   "download_signals": [],
+   "page_kind": "content",
+   "fingerprints": {
+    "favicon_mmh3": 908830000,
+    "favicon_sha256": "af3cb70431b24c8658d1a774ba2d2261b9269099f378b06b7eeee7adecc95999",
+    "dom_hash": "fc76c90a80d502ee",
+    "screenshot_dhash": "78b2f69c088084a0",
+    "tracking_ids": [
+     "google_analytics:G-YJXNNJKPG6"
+    ],
+    "contacts": {
+     "phones": [],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": []
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [
+     "different_destination"
+    ],
+    "desktop": {
+     "final_url": "https://simcast.com/",
+     "http_status": 200,
+     "title": "HeadlineLogic News Portal",
+     "screenshot_path": "screenshots/20261124T135659Z_c8729b706705_desktop_us.png",
+     "fetch_error": null
+    }
+   },
+   "rdap": {
+    "created": "2026-05-14T04:16:17Z",
+    "registrar": "Dynadot Inc",
+    "abuse_email": "abuse@dynadot.com"
+   },
+   "ip": "172.236.96.118",
+   "asn": 63949,
+   "hosting_org": "AKAMAI-LINODE-AP - Akamai Connected Cloud, SG",
+   "hosting_abuse_email": "abuse@linode.com",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:56:37.421424Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "http://icppay.xyz/",
+   "verdict": "FRAUD",
+   "score": 100,
+   "brand_target": "icp",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 68,
+     "text_en": "URL pattern looks like phishing (98% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (98٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'icp' (ICP - Federal Authority for Identity, Citizenship, Customs and Port Security) but is not the official icp.gov.ae",
+     "text_ar": "النطاق يستخدم «icp» (الهيئة الاتحادية للهوية والجنسية والجمارك وأمن المنافذ) لكنه ليس النطاق الرسمي icp.gov.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "cloaking",
+     "weight": 25,
+     "text_en": "Shows different content to a foreign desktop visitor than to a UAE phone (different destination)",
+     "text_ar": "يعرض محتوى مختلفًا لزائر من حاسوب خارج الدولة عن هاتف داخل الإمارات (different destination)",
+     "evidence_ref": "cloaking"
+    },
+    {
+     "code": "credential_form",
+     "weight": 20,
+     "text_en": "Page asks for a password",
+     "text_ar": "الصفحة تطلب كلمة المرور",
+     "evidence_ref": "forms"
+    },
+    {
+     "code": "cross_domain_redirect",
+     "weight": 10,
+     "text_en": "Link redirects to a different site (headlinelogic.com)",
+     "text_ar": "الرابط يحوّل إلى موقع مختلف (headlinelogic.com)",
+     "evidence_ref": "redirect_chain"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:25.833324Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-b650c598",
+  "domain": "icp-uae.info",
+  "status": "new",
+  "candidate": {
+   "url": "http://icp-uae.info/",
+   "source": "lookalike",
+   "query": "icp",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "icp",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://icp-uae.info/",
+   "profile": "mobile_ae",
+   "final_url": null,
+   "redirect_chain": [],
+   "http_status": null,
+   "screenshot_path": null,
+   "screenshot_sha256": null,
+   "title": null,
+   "text_excerpt": null,
+   "forms": [],
+   "download_signals": [],
+   "page_kind": null,
+   "fingerprints": null,
+   "visual_match": null,
+   "cloaking": null,
+   "rdap": {
+    "created": "2026-02-04T11:46:58.053000Z",
+    "registrar": "Sav.com, LLC",
+    "abuse_email": "abuse-trusted.savcom@in.wixanswers.com"
+   },
+   "ip": null,
+   "asn": null,
+   "hosting_org": null,
+   "hosting_abuse_email": null,
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:55:37.542577Z",
+   "fetch_error": "Offline: cannot resolve icp-uae.info"
+  },
+  "verdict": {
+   "url": "http://icp-uae.info/",
+   "verdict": "FRAUD",
+   "score": 99,
+   "brand_target": "icp",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 56,
+     "text_en": "URL pattern looks like phishing (90% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (90٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'icp' (ICP - Federal Authority for Identity, Citizenship, Customs and Port Security) but is not the official icp.gov.ae",
+     "text_ar": "النطاق يستخدم «icp» (الهيئة الاتحادية للهوية والجنسية والجمارك وأمن المنافذ) لكنه ليس النطاق الرسمي icp.gov.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.info)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.info)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:25.969010Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-4576bf7b",
+  "domain": "emiratespostae.info",
+  "status": "new",
+  "candidate": {
+   "url": "http://emiratespostae.info/",
+   "source": "lookalike",
+   "query": "emiratespost",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "emiratespost",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://emiratespostae.info/",
+   "profile": "mobile_ae",
+   "final_url": "http://emiratespostae.info/",
+   "redirect_chain": [
+    {
+     "url": "http://emiratespostae.info/",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T140352Z_bd539afe08f0.png",
+   "screenshot_sha256": "d1a8cc828c68458cbe2149667c77ce4e3756d0ecca6effead72a2310f54ed14d",
+   "title": "",
+   "text_excerpt": "",
+   "forms": [],
+   "download_signals": [],
+   "page_kind": "empty",
+   "fingerprints": {
+    "favicon_mmh3": 1764449703,
+    "favicon_sha256": "823bcde06f303df9baea4922f61dc4e99ff9129c1172fd409dc4944a5d9c152c",
+    "dom_hash": "4af32f2924b07856",
+    "screenshot_dhash": "0000000000000000",
+    "tracking_ids": [],
+    "contacts": {
+     "phones": [],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": []
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [],
+    "desktop": {
+     "final_url": "http://emiratespostae.info/",
+     "http_status": 200,
+     "title": "",
+     "screenshot_path": null,
+     "fetch_error": null
+    }
+   },
+   "rdap": {
+    "created": "2023-03-17T13:28:51.918000Z",
+    "registrar": "Launchpad.com Inc.",
+    "abuse_email": "abuse@bluehost.com"
+   },
+   "ip": "162.241.194.53",
+   "asn": 31898,
+   "hosting_org": "ORACLE-BMC-31898 - Oracle Corporation, US",
+   "hosting_abuse_email": "IARPOC@Newfold.com",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T14:03:49.911698Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "http://emiratespostae.info/",
+   "verdict": "FRAUD",
+   "score": 98,
+   "brand_target": "emiratespost",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 65,
+     "text_en": "URL pattern looks like phishing (96% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (96٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'emiratespost' (Emirates Post) but is not the official emiratespost.ae",
+     "text_ar": "النطاق يستخدم «emiratespost» (بريد الإمارات) لكنه ليس النطاق الرسمي emiratespost.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "old_domain",
+     "weight": -10,
+     "text_en": "Domain registered 3 years ago",
+     "text_ar": "تم تسجيل النطاق منذ 3 سنوات",
+     "evidence_ref": "rdap.created"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.info)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.info)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:24.934616Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-a8789ea7",
+  "domain": "moi-gov.xyz",
+  "status": "new",
+  "candidate": {
+   "url": "http://moi-gov.xyz/",
+   "source": "lookalike",
+   "query": "moi",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "moi",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://moi-gov.xyz/",
+   "profile": "mobile_ae",
+   "final_url": "https://moi-gov.xyz/",
+   "redirect_chain": [
+    {
+     "url": "http://moi-gov.xyz/",
+     "status": 308
+    },
+    {
+     "url": "https://moi-gov.xyz/",
+     "status": 404
+    }
+   ],
+   "http_status": 404,
+   "screenshot_path": "screenshots/20261124T135802Z_2b8b10b4835d.png",
+   "screenshot_sha256": "c38a00927a9a36368ada3d76a088ac113b6cb339096362e4e4a5a5cb36b07aa8",
+   "title": "Not Found",
+   "text_excerpt": "404 Not Found",
+   "forms": [],
+   "download_signals": [],
+   "page_kind": "error",
+   "fingerprints": {
+    "favicon_mmh3": null,
+    "favicon_sha256": null,
+    "dom_hash": "0adc61c67bbbd6de",
+    "screenshot_dhash": "6868000000000000",
+    "tracking_ids": [],
+    "contacts": {
+     "phones": [],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": []
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [],
+    "desktop": {
+     "final_url": "https://moi-gov.xyz/",
+     "http_status": 404,
+     "title": "Not Found",
+     "screenshot_path": null,
+     "fetch_error": null
+    }
+   },
+   "rdap": {
+    "created": "2022-07-05T14:40:04Z",
+    "registrar": "Cloudflare, Inc.",
+    "abuse_email": "registrar-abuse@cloudflare.com"
+   },
+   "ip": "80.225.68.79",
+   "asn": 31898,
+   "hosting_org": "ORACLE-BMC-31898 - Oracle Corporation, US",
+   "hosting_abuse_email": "abuse@oracleemaildelivery.com",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:57:59.545300Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "http://moi-gov.xyz/",
+   "verdict": "FRAUD",
+   "score": 95,
+   "brand_target": "moi",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 62,
+     "text_en": "URL pattern looks like phishing (94% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (94٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'moi' (Ministry of Interior) but is not the official moi.gov.ae",
+     "text_ar": "النطاق يستخدم «moi» (وزارة الداخلية) لكنه ليس النطاق الرسمي moi.gov.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "old_domain",
+     "weight": -10,
+     "text_en": "Domain registered 4 years ago",
+     "text_ar": "تم تسجيل النطاق منذ 4 سنوات",
+     "evidence_ref": "rdap.created"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.xyz)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.xyz)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:25.661110Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-c6f27f0a",
+  "domain": "icpuae.info",
+  "status": "new",
+  "candidate": {
+   "url": "http://icpuae.info/",
+   "source": "lookalike",
+   "query": "icp",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "icp",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://icpuae.info/",
+   "profile": "mobile_ae",
+   "final_url": "http://icpuae.info/",
+   "redirect_chain": [
+    {
+     "url": "http://icpuae.info/",
+     "status": 200
+    }
+   ],
+   "http_status": 200,
+   "screenshot_path": "screenshots/20261124T135718Z_ba4330d1ebd4.png",
+   "screenshot_sha256": "9540a2d9138825f886f5caae7fd216a15443bf3db5734c9235e5b6cfc90a0990",
+   "title": "Restricted Domain",
+   "text_excerpt": "Access to this domain has been restricted. This domain was identified as part of a suspected phishing campaign. To reduce the risk of online abuse, access to this domain has been limited. Actions like this help safeguard users from scams, malware, and other harmful activity online. Explore Online Security Solutions Discover resources to help protect yourself from online threats.",
+   "forms": [],
+   "download_signals": [],
+   "page_kind": "blocked",
+   "fingerprints": {
+    "favicon_mmh3": null,
+    "favicon_sha256": null,
+    "dom_hash": "f8ce818c276457bf",
+    "screenshot_dhash": "632b0f07070f0f8c",
+    "tracking_ids": [],
+    "contacts": {
+     "phones": [],
+     "whatsapp": [],
+     "telegram": [],
+     "emails": []
+    }
+   },
+   "visual_match": null,
+   "cloaking": {
+    "signals": [],
+    "desktop": {
+     "final_url": "http://icpuae.info/",
+     "http_status": 200,
+     "title": "Restricted Domain",
+     "screenshot_path": null,
+     "fetch_error": null
+    }
+   },
+   "rdap": {
+    "created": "2025-12-21T09:19:21.951000Z",
+    "registrar": "Sav.com, LLC",
+    "abuse_email": "abuse-trusted.savcom@in.wixanswers.com"
+   },
+   "ip": "34.76.205.124",
+   "asn": 396982,
+   "hosting_org": "GOOGLE-CLOUD-PLATFORM - Google LLC, US",
+   "hosting_abuse_email": "google-cloud-compliance@google.com",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T13:57:15.453809Z",
+   "fetch_error": null
+  },
+  "verdict": {
+   "url": "http://icpuae.info/",
+   "verdict": "FRAUD",
+   "score": 95,
+   "brand_target": "icp",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 52,
+     "text_en": "URL pattern looks like phishing (87% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (87٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'icp' (ICP - Federal Authority for Identity, Citizenship, Customs and Port Security) but is not the official icp.gov.ae",
+     "text_ar": "النطاق يستخدم «icp» (الهيئة الاتحادية للهوية والجنسية والجمارك وأمن المنافذ) لكنه ليس النطاق الرسمي icp.gov.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.info)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.info)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:25.754195Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-887e9721",
+  "domain": "emiratespost-pay.com",
+  "status": "new",
+  "candidate": {
+   "url": "http://emiratespost-pay.com/",
+   "source": "lookalike",
+   "query": "emiratespost",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "emiratespost",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://emiratespost-pay.com/",
+   "profile": "mobile_ae",
+   "final_url": null,
+   "redirect_chain": [],
+   "http_status": null,
+   "screenshot_path": null,
+   "screenshot_sha256": null,
+   "title": null,
+   "text_excerpt": null,
+   "forms": [],
+   "download_signals": [],
+   "page_kind": null,
+   "fingerprints": null,
+   "visual_match": null,
+   "cloaking": null,
+   "rdap": {
+    "created": "2025-12-28T05:12:24Z",
+    "registrar": "PDR Ltd. d/b/a PublicDomainRegistry.com",
+    "abuse_email": "abuse-contact@publicdomainregistry.com"
+   },
+   "ip": null,
+   "asn": null,
+   "hosting_org": null,
+   "hosting_abuse_email": null,
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T14:03:28.737584Z",
+   "fetch_error": "Offline: cannot resolve emiratespost-pay.com"
+  },
+  "verdict": {
+   "url": "http://emiratespost-pay.com/",
+   "verdict": "FRAUD",
+   "score": 93,
+   "brand_target": "emiratespost",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 58,
+     "text_en": "URL pattern looks like phishing (91% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (91٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'emiratespost' (Emirates Post) but is not the official emiratespost.ae",
+     "text_ar": "النطاق يستخدم «emiratespost» (بريد الإمارات) لكنه ليس النطاق الرسمي emiratespost.ae",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:24.981551Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-0fdbe870",
+  "domain": "dubaipolicee.site",
+  "status": "new",
+  "candidate": {
+   "url": "http://dubaipolicee.site/",
+   "source": "lookalike",
+   "query": "dubaipolice",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "dubaipolice",
+    "details": {
+     "variant": "typo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://dubaipolicee.site/",
+   "profile": "mobile_ae",
+   "final_url": null,
+   "redirect_chain": [],
+   "http_status": null,
+   "screenshot_path": null,
+   "screenshot_sha256": null,
+   "title": null,
+   "text_excerpt": null,
+   "forms": [],
+   "download_signals": [],
+   "page_kind": null,
+   "fingerprints": null,
+   "visual_match": null,
+   "cloaking": null,
+   "rdap": {
+    "created": "2026-10-13T17:16:41.535000Z",
+    "registrar": "NameCheap, Inc.",
+    "abuse_email": "abuse@namecheap.com"
+   },
+   "ip": null,
+   "asn": null,
+   "hosting_org": null,
+   "hosting_abuse_email": null,
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T14:01:49.991660Z",
+   "fetch_error": "Offline: cannot resolve dubaipolicee.site"
+  },
+  "verdict": {
+   "url": "http://dubaipolicee.site/",
+   "verdict": "FRAUD",
+   "score": 92,
+   "brand_target": "dubaipolice",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 49,
+     "text_en": "URL pattern looks like phishing (85% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (85٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'dubaipolice' (Dubai Police) but is not the official dubaipolice.gov.ae",
+     "text_ar": "النطاق يستخدم «dubaipolice» (شرطة دبي) لكنه ليس النطاق الرسمي dubaipolice.gov.ae",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "suspicious_tld",
+     "weight": 8,
+     "text_en": "Cheap domain ending often used in scams (.site)",
+     "text_ar": "امتداد نطاق رخيص يكثر استخدامه في الاحتيال (.site)",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:25.175075Z"
+  },
+  "decisions": []
+ },
+ {
+  "id": "c-128e1b5e",
+  "domain": "securerta.com",
+  "status": "new",
+  "candidate": {
+   "url": "http://securerta.com/",
+   "source": "lookalike",
+   "query": "rta",
+   "discovered_at": "2026-11-24T13:48:48.895443Z",
+   "extra": {
+    "listing_name": null,
+    "phone": null,
+    "address": null,
+    "brand": "rta",
+    "details": {
+     "variant": "combo"
+    }
+   }
+  },
+  "evidence": {
+   "url": "http://securerta.com/",
+   "profile": "mobile_ae",
+   "final_url": null,
+   "redirect_chain": [
+    {
+     "url": "http://securerta.com/",
+     "status": 301
+    }
+   ],
+   "http_status": null,
+   "screenshot_path": null,
+   "screenshot_sha256": null,
+   "title": null,
+   "text_excerpt": null,
+   "forms": [],
+   "download_signals": [],
+   "page_kind": null,
+   "fingerprints": null,
+   "visual_match": null,
+   "cloaking": null,
+   "rdap": {
+    "created": "2026-07-10T11:35:53Z",
+    "registrar": "NameCheap, Inc.",
+    "abuse_email": "abuse@namecheap.com"
+   },
+   "ip": "3.130.129.202",
+   "asn": null,
+   "hosting_org": null,
+   "hosting_abuse_email": "trustandsafety@support.aws.com",
+   "shared_hosting": false,
+   "fetched_at": "2026-11-24T14:01:18.440366Z",
+   "fetch_error": "Error: Page.goto: net::ERR_CERT_COMMON_NAME_INVALID at http://securerta.com/"
+  },
+  "verdict": {
+   "url": "http://securerta.com/",
+   "verdict": "FRAUD",
+   "score": 91,
+   "brand_target": "rta",
+   "reasons": [
+    {
+     "code": "url_model",
+     "weight": 56,
+     "text_en": "URL pattern looks like phishing (90% by our URL model)",
+     "text_ar": "نمط الرابط يشبه روابط التصيّد (90٪ حسب نموذج الروابط)",
+     "evidence_ref": "url"
+    },
+    {
+     "code": "lookalike_domain",
+     "weight": 35,
+     "text_en": "Domain uses 'rta' (RTA - Roads and Transport Authority Dubai) but is not the official rta.ae",
+     "text_ar": "النطاق يستخدم «rta» (هيئة الطرق والمواصلات) لكنه ليس النطاق الرسمي rta.ae",
+     "evidence_ref": "url"
+    }
+   ],
+   "model_version": "engine-1/url-model",
+   "scored_at": "2026-11-24T14:12:25.228151Z"
+  },
+  "decisions": []
+ }
+]

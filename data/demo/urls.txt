@@ -20,3 +20,9 @@ https://uaebillaccouae.hosted.phplist.com/lists/?p=subscribe&id=18          citi
 # Short links from phishing feeds: the fetcher follows them to the real page
 https://2h.ae/pPGKr                    citizen
 https://bit.ly/4hDruaE                 citizen
+
+# Radar finds the engine must NOT report as fraud (explainability)
+http://adpolice.ae/                    lookalike   # Abu Dhabi Police's own alias (same IP as adpolice.gov.ae) -> LEGIT
+http://uaetamm.com/                    lookalike   # "Tamm Real Estate": shares the name, claims nothing -> SUSPICIOUS
+http://adamex.online/                  lookalike   # pram shop, unrelated to Aramex -> SUSPICIOUS
+http://emiratespost.com/               lookalike   # "this domain is for sale" page -> not a brand claim
