@@ -1,0 +1,112 @@
+[
+  {
+    "brand": "tamm",
+    "domain": "tamm.abudhabi",
+    "final_url": "https://www.tamm.abudhabi/",
+    "title": "",
+    "screenshot_path": "screenshots/20261124T112114Z_346d3ed6909e.png",
+    "favicon_mmh3": 2004802421,
+    "favicon_sha256": "587497ef7dbdef1ac146a29297c27cf49ab4d59f36ab32049aa2bf275d2f174c",
+    "dom_hash": "e1ea2a2c44742f53",
+    "screenshot_dhash": "0000000000000000"
+  },
+  {
+    "brand": "icp",
+    "domain": "icp.gov.ae",
+    "final_url": "https://icp.gov.ae/",
+    "title": "UAE ICP | الهيئة الاتحادية للهوية والجنسية والجمارك وأمن المنافذ",
+    "screenshot_path": "screenshots/20261124T112054Z_ce038110aaad.png",
+    "favicon_mmh3": 1600036011,
+    "favicon_sha256": "ca6ed641bf2126379e86ceb76eb4e721f9a4da02d10aff9b1e1bff41aace44da",
+    "dom_hash": "3fd633e662f9e913",
+    "screenshot_dhash": "cd8a92baf2e6d85a"
+  },
+  {
+    "brand": "salik",
+    "domain": "salik.ae",
+    "final_url": "https://www.salik.ae/",
+    "title": "الصفحة الرئيسية",
+    "screenshot_path": "screenshots/20261124T112157Z_4e0f1dc1a5f9.png",
+    "favicon_mmh3": 370352555,
+    "favicon_sha256": "48d9e4e4c5248e7abdf2893e281dc2388f5eca1384b39f561136068c0a8b1533",
+    "dom_hash": "fb1b3e81eb5ab811",
+    "screenshot_dhash": "88f7f700314d4d4d"
+  },
+  {
+    "brand": "dewa",
+    "domain": "dewa.gov.ae",
+    "final_url": "https://dewa.gov.ae/",
+    "title": "هيئة كهرباء ومياه دبي (ديوا) | الصفحة الرئيسية",
+    "screenshot_path": "screenshots/20261124T112218Z_d7c0faa14f9f.png",
+    "favicon_mmh3": -1555945484,
+    "favicon_sha256": "1ae1fc78f38560f3d8620a7ea1469fc220d354485d48ff2ed7ba5aba38f91b91",
+    "dom_hash": "1df705314211485a",
+    "screenshot_dhash": "e366cdcd66c7dfc5"
+  },
+  {
+    "brand": "emiratesnbd",
+    "domain": "emiratesnbd.com",
+    "final_url": "https://www.emiratesnbd.com/en",
+    "title": "Emirates NBD | Financial Services and Online Banking in Dubai and UAE",
+    "screenshot_path": "screenshots/20261124T112233Z_853b8f63dd4f.png",
+    "favicon_mmh3": -695380800,
+    "favicon_sha256": "f8ce255a2a81415bc8ac662dbcf3f850b3076c5259c00d5e067e1d159bfbd841",
+    "dom_hash": "afa5514109914a86",
+    "screenshot_dhash": "97161c3ae08e8eaa"
+  },
+  {
+    "brand": "adcb",
+    "domain": "adcb.com",
+    "final_url": "https://www.adcb.com/en/personal/",
+    "title": "ADCB | A leading banking institution in the UAE",
+    "screenshot_path": "screenshots/20261124T112249Z_f4a38f88f5c3.png",
+    "favicon_mmh3": 422823366,
+    "favicon_sha256": "76343fe8c8f6dbacfac8c95e4e212e8c4f07be06817d94bb0de2fbff42155ff3",
+    "dom_hash": "996e503653414cd5",
+    "screenshot_dhash": "c44de6701d3c3c2c"
+  },
+  {
+    "brand": "mashreq",
+    "domain": "mashreqbank.com",
+    "final_url": "https://www.mashreq.com/en/uae/neo/",
+    "title": "Mashreq | Best Digital Banking in Middle East | Rise Everyday",
+    "screenshot_path": "screenshots/20261124T112332Z_8982ac7cd4a6.png",
+    "favicon_mmh3": -1157111182,
+    "favicon_sha256": "dd0a923f0d8f51233cfa778aad8ce025d35f150b74d14216d9c1ca88eb976286",
+    "dom_hash": "f1a29ecef4136019",
+    "screenshot_dhash": "06c8c000400080d0"
+  },
+  {
+    "brand": "adib",
+    "domain": "adib.ae",
+    "final_url": "https://www.adib.ae/",
+    "title": "Financial & Banking Services In The UAE Cards, Financing, Accounts And More | ADIB Abu Dhabi Islamic Bank",
+    "screenshot_path": "screenshots/20261124T112411Z_7128ea226085.png",
+    "favicon_mmh3": 511577553,
+    "favicon_sha256": "c0666d6897a00bfd8aab02005c239902adbba3e5a0302d69e630e00ccd64855f",
+    "dom_hash": "3420bd8f9fb7b77d",
+    "screenshot_dhash": "0000000000000000"
+  },
+  {
+    "brand": "darb",
+    "domain": "itc.gov.ae",
+    "final_url": "https://admobility.gov.ae/",
+    "title": "الصفحة الرئيسية",
+    "screenshot_path": "screenshots/20261124T112416Z_b36094781c5f.png",
+    "favicon_mmh3": null,
+    "favicon_sha256": null,
+    "dom_hash": "dce9318b89b9c564",
+    "screenshot_dhash": "0008709e86700400"
+  },
+  {
+    "brand": "adcustoms",
+    "domain": "adcustoms.gov.ae",
+    "final_url": "https://www.adcustoms.gov.ae/",
+    "title": "Abu Dhabi Customs",
+    "screenshot_path": "screenshots/20261124T112458Z_2c8bf81b9c35.png",
+    "favicon_mmh3": -1350165914,
+    "favicon_sha256": "396fd99dbfec338fa1f2a36625405ce6cb1e66d5d16257a009a2a366c946cbb8",
+    "dom_hash": "9a44ef3903c882e3",
+    "screenshot_dhash": "c480766c5b383f0f"
+  }
+]
