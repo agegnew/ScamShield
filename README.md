@@ -38,6 +38,14 @@ Residents receive SMS and WhatsApp links, search ads and Maps listings for "TAMM
 
 Most misses are phishing homepages with ordinary names (`http://www.jolifm.com`) that a URL alone cannot reveal; the page fetch (screenshot, forms, brand text, domain age) catches those. Reproduce from `backend/`: `python -m scripts.build_dataset`, `python -m scripts.train_url_model`, `python -m scripts.evaluate [--feeds]`.
 
+### One radar run (24 Nov 2026)
+
+The lookalike radar generated **56,958** typo, homoglyph and brand + bait-word names for the 23 brands and found **978 registered** in DNS, in about 4.5 minutes, with nobody pasting anything. Of the 239 we opened with the full page check, **38 were FRAUD, 64 SUSPICIOUS and 137 LEGIT** (many lookalikes are parked, for sale or unrelated businesses). Checking those finds by hand also caught two engine mistakes before the demo:
+- **`adpolice.ae` is Abu Dhabi Police's own alias.** It serves the official site from the same IP as `adpolice.gov.ae` and scored FRAUD 75. It is now an official domain, and any site on a UAE government network counts strongly in its favour.
+- **Businesses that just share a name**, such as "Tamm Real Estate" or the ad-fraud firm AdPolice, no longer reach FRAUD without an official-status claim or a request for sensitive data.
+
+The real cases from this run, with screenshots, are in [`data/demo/`](data/demo/urls.txt).
+
 ### Live checks with the full page fetch (24 Nov 2026)
 
 | URL | Verdict | Why |
@@ -47,6 +55,7 @@ Most misses are phishing homepages with ordinary names (`http://www.jolifm.com`)
 | Phishing kits on hacked `.ae` business sites (`sunnysoldesign.ae`, `rallysteelworks.ae`, `baitalarablaundry.ae`) | FRAUD | Reported phishing URL; a years-old domain no longer counts in its favour |
 | `bit.ly` short link from a phishing feed | FRAUD 100 | Followed to the destination |
 | `tamm.abudhabi`, `rta.ae`, `emiratesnbd.com`, `adpolice.gov.ae` | LEGIT 0 | Official domains |
+| `adpolice.ae` (Abu Dhabi Police alias), `uaetamm.com` ("Tamm Real Estate") | LEGIT 0, SUSPICIOUS 55 | Official alias; a business sharing the name, watched but not reported |
 | Local demo pages: fake TAMM fine payment, fake Emirates NBD login, a motoring blog | FRAUD 100, FRAUD 100, LEGIT 27 | Card + OTP + Emirates ID form, brand on a lookalike domain; the blog only mentions the brands |
 
 ## How it works
@@ -146,6 +155,7 @@ Input: a `.txt` file with one URL per line, or a `.csv` with a `url` column. Out
 - **The URL model alone misses phishing on ordinary-looking domains**; the page fetch catches more, but a site that is already offline can only be judged on its URL, WHOIS and feeds.
 - **Cloaking:** we compare a UAE phone visit with a foreign desktop visit, but a kit that blocks all automated browsers or data-centre IPs can still hide from us.
 - **crt.sh is often slow or down**; the radar falls back to the last good answer.
+- **Short brand names collide with foreign businesses** ("icp", "moi", "rta"): a live site that never mentions the brand is held back from FRAUD, but a cheap `.xyz` name can still reach it on its URL alone (`icp-online.xyz`, a Japanese company, scores 70).
 - **No LLM or image-similarity model yet:** visual match compares favicons and page templates against 10 official sites, not the rendered look of every brand.
 - **The accuracy numbers are on public phishing feeds**, which are global; UAE-specific scams are a small part of them. The 230 UAE official pages and the live checks above are our UAE evidence.
 
