@@ -6,6 +6,7 @@ Run from backend/ (uses DATABASE_URL like the API; SQLite file by default):
                                                              # (e.g. what the radar found)
   python -m scripts.seed_demo export ../data/demo --also ../data/demo/urls.txt --min-score 30 --max 25
                                                              # write cases.json + their screenshots
+  python -m scripts.seed_demo rescore                        # score every stored case again (after engine changes)
   python -m scripts.seed_demo load ../data/demo              # load a snapshot (skips URLs already stored)
 
 The API loads data/demo/ by itself on start when SCAMSHIELD_SEED_DEMO=1.
@@ -147,6 +148,21 @@ def cmd_export(args) -> int:
     return 0
 
 
+def cmd_rescore(args) -> int:
+    """Score every stored case again with the current engine, from its saved evidence (no fetch)."""
+    changed = 0
+    with SessionLocal() as session:
+        repo = CaseRepo(session)
+        for case in repo.all():
+            verdict = engine.score(case.candidate.url, evidence=case.evidence, candidate=case.candidate)
+            if (verdict.verdict, verdict.score) != (case.verdict.verdict, case.verdict.score):
+                changed += 1
+                print(f"{case.verdict.verdict.value} {case.verdict.score} -> {verdict.verdict.value} {verdict.score}  {case.candidate.url}")
+            repo.save_analysis(case.id, case.evidence, verdict)  # evidence may be None (URL only)
+    print(f"rescored; {changed} verdicts changed")
+    return 0
+
+
 def cmd_load(args) -> int:
     print(f"loaded {load_snapshot(args.dir)} cases from {args.dir}")
     return 0
@@ -171,6 +187,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--max", type=int, default=0, help="at most this many other cases, highest score first")
     p.add_argument("--also", type=Path, help="URL file whose cases are always exported (e.g. urls.txt)")
     p.set_defaults(func=cmd_export)
+    p = sub.add_parser("rescore", help="score every stored case again with the current engine (no fetch)")
+    p.set_defaults(func=cmd_rescore)
     p = sub.add_parser("load", help="load a snapshot folder into the database")
     p.add_argument("dir", type=Path)
     p.set_defaults(func=cmd_load)

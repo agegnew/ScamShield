@@ -40,3 +40,12 @@ def test_fetch_finds_cases_without_evidence(session, monkeypatch):
     assert seed_demo.main(["fetch"]) == 0
     no_evidence = {c.id for c in CaseRepo(session).all() if c.evidence is None}
     assert no_evidence and {cid for cid, _ in seen} == no_evidence
+
+
+def test_rescore_keeps_cases_and_uses_the_current_engine(session):
+    from app.mock.data import build_cases
+
+    CaseRepo(session).seed(build_cases())
+    assert seed_demo.main(["rescore"]) == 0
+    cases = CaseRepo(session).all()
+    assert len(cases) == 8 and all(c.verdict.model_version.startswith("engine-1") for c in cases)
