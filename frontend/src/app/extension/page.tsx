@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Ban, Check, Copy, Download, FileWarning, MessageCircle, MousePointerClick, Share2, ShieldCheck, Smartphone } from "lucide-react";
+import { Ban, Check, Copy, Download, Puzzle, FileWarning, MessageCircle, MousePointerClick, Share2, ShieldCheck, Smartphone } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useLang } from "@/lib/i18n";
 import { L, type Pair } from "@/lib/radar";
@@ -21,6 +21,8 @@ const T = {
     "ينبّهك قبل أن تُدخل بطاقتك أو رمز التحقق أو كلمة المرور في موقع إماراتي مزيف.",
   ],
   download: ["Download for Chrome and Edge", "تنزيل لمتصفح كروم وإيدج"],
+  addToChrome: ["Add to Chrome", "أضف إلى كروم"],
+  manual: ["Or download the file and install it yourself", "أو نزّل الملف وثبّته بنفسك"],
   desktopOnly: ["For computers. On a phone, use the free online checker.", "لأجهزة الكمبيوتر. على الهاتف استخدم الفاحص المجاني عبر الإنترنت."],
   phoneChecker: ["Open the phone checker", "افتح فاحص الهاتف"],
   f1t: ["Blocks known scam sites", "يحجب مواقع الاحتيال المعروفة"],
@@ -59,6 +61,10 @@ const T = {
     "مشروع CipherGuard لهاكاثون 42 أبوظبي × شرطة أبوظبي. تجربة مقترحة، ليست خدمة شرطية رسمية.",
   ],
 } as const satisfies Record<string, Pair>;
+
+/* Once the extension is published, set NEXT_PUBLIC_CHROME_STORE_URL to its Chrome Web Store page:
+   the main button becomes "Add to Chrome" (one click, installs in place) and the zip stays as a fallback. */
+const STORE_URL = process.env.NEXT_PUBLIC_CHROME_STORE_URL ?? "";
 
 export default function ExtensionPage() {
   const { lang } = useLang();
@@ -106,14 +112,31 @@ export default function ExtensionPage() {
             <h1 className="mt-4 text-4xl font-extrabold leading-tight tracking-tight text-ink sm:text-5xl">{tr("title")}</h1>
             <p className="mt-3 max-w-xl text-lg leading-relaxed text-ink-2">{tr("lead")}</p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
-              <a
-                href="/scamshield-guardian.zip"
-                download
-                className="inline-flex h-14 items-center gap-2 rounded-full bg-primary px-7 text-base font-bold text-primary-ink shadow-[0_8px_24px_-10px_var(--glow)] hover:brightness-110"
-              >
-                <Download aria-hidden className="size-5" />
-                {tr("download")}
-              </a>
+              {STORE_URL ? (
+                <a
+                  href={STORE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-14 items-center gap-2 rounded-full bg-primary px-7 text-base font-bold text-primary-ink shadow-[0_8px_24px_-10px_var(--glow)] hover:brightness-110"
+                >
+                  <Puzzle aria-hidden className="size-5" />
+                  {tr("addToChrome")}
+                </a>
+              ) : (
+                <a
+                  href="/scamshield-guardian.zip"
+                  download
+                  className="inline-flex h-14 items-center gap-2 rounded-full bg-primary px-7 text-base font-bold text-primary-ink shadow-[0_8px_24px_-10px_var(--glow)] hover:brightness-110"
+                >
+                  <Download aria-hidden className="size-5" />
+                  {tr("download")}
+                </a>
+              )}
+              {STORE_URL && (
+                <a href="/scamshield-guardian.zip" download className="text-sm font-bold text-primary underline">
+                  {tr("manual")}
+                </a>
+              )}
               <span className="ltr text-sm text-muted">v0.1 · 60 KB</span>
             </div>
             <p className="mt-4 flex items-center gap-2 text-sm text-ink-2">

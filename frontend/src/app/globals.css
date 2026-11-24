@@ -297,3 +297,11 @@ a {
   stroke-dasharray: 3 9;
   animation: link-flow 1.4s linear infinite;
 }
+
+/* Citizen checker: a bar runs under the input while it checks */
+@keyframes scan-bar {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+/* The scanner card shows focus (focus-within ring), so the field inside it skips its own outline */
+.scan-input:focus-visible { outline: none; }
