@@ -29,3 +29,14 @@ def test_read_urls_with_sources_and_comments(tmp_path):
         ("https://moi-portal.com/", "lookalike"),
         ("https://www.tamm.abudhabi/", "manual"),
     ]
+
+
+def test_fetch_finds_cases_without_evidence(session, monkeypatch):
+    from app.mock.data import build_cases
+
+    CaseRepo(session).seed(build_cases())
+    seen = []
+    monkeypatch.setattr(seed_demo, "_run", lambda pairs, workers: seen.extend(pairs))
+    assert seed_demo.main(["fetch"]) == 0
+    no_evidence = {c.id for c in CaseRepo(session).all() if c.evidence is None}
+    assert no_evidence and {cid for cid, _ in seen} == no_evidence

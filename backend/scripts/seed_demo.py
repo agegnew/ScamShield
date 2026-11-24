@@ -98,11 +98,12 @@ def cmd_scan(args) -> int:
 
 
 def cmd_fetch(args) -> int:
+    # An empty evidence column holds JSON null, not SQL NULL, so filter in Python (works on Postgres too).
     with SessionLocal() as session:
         rows = session.execute(
-            select(CaseRow.id, CaseRow.url).where(CaseRow.evidence_json.is_(None)).order_by(CaseRow.discovered_at)
+            select(CaseRow.id, CaseRow.url, CaseRow.evidence_json).order_by(CaseRow.discovered_at)
         ).all()
-    pairs = [(r.id, r.url) for r in rows][: args.limit or None]
+    pairs = [(r.id, r.url) for r in rows if not r.evidence_json][: args.limit or None]
     print(f"{len(pairs)} cases without evidence")
     _run(pairs, args.workers)
     return 0
