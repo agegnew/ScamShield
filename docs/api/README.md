@@ -1,6 +1,6 @@
 # ScamShield API — contract for the UI
 
-The API runs in **mock mode** until the real engine lands (Gate 2, 17:00). Shapes stay the same when it switches to live data, so build against this now.
+The engine, radar and worker are real. The API still starts in **mock mode** by default (8 demo cases on `.test` domains); set `SCAMSHIELD_MODE=live` (and `SCAMSHIELD_SEED_DEMO=1` for the real pre-scanned demo cases). Shapes are the same in both modes.
 
 - **Live server:** `docker compose up` from the repo root (or see `backend/README.md`), then open http://localhost:8000/docs for every endpoint with "Try it out".
 - **No Python?** Every response is saved in [`mock/`](mock/) and the full schema in [`openapi.json`](openapi.json).
@@ -24,11 +24,15 @@ The API runs in **mock mode** until the real engine lands (Gate 2, 17:00). Shape
 | POST | `/api/scan` `{url}` | "Scan a URL" box. Returns `status: queued` with a quick URL-only verdict; poll `GET /api/cases/{case_id}` every 2 s until `evidence` is filled | `scan.json` |
 | POST | `/api/batch` `{urls: [...]}` (`?format=csv` for a file) | Batch upload | `batch.json` |
 | POST | `/api/check` `{input}` | **Public citizen checker** — link or phone number | `check_*.json` |
-| POST | `/api/auth/login` `{username, password}` | Login | `login.json` |
+| POST | `/api/auth/login` `{username, password}` | Login. Returns `{access_token, token_type: "bearer", user: {username, role}}`; **401** "Wrong username or password" | `login.json` |
+| GET | `/api/auth/me` | Who is logged in (restore the session on page load); **401** if the token is missing, invalid or expired | `auth_me.json` |
+| GET | `/api/users` | **Admin only.** Accounts: `username, role, disabled, created_at` (never passwords) | `users.json` |
+| POST | `/api/users` `{username, password (min 8), role: admin\|analyst}` | **Admin only.** Create an account → **201**; **409** if the username exists | returns the user |
+| GET | `/api/decisions?limit=100` | **Admin only.** Audit log of every confirm/dismiss: `case_id, domain, action, reason, by, at`, newest first | `decisions.json` |
 
 ## Conventions
 
-- **Verdicts:** `FRAUD`, `SUSPICIOUS`, `LEGIT`. The citizen checker can also return `UNKNOWN` (an unknown phone number), with `score: null`. Until the engine is built, new URLs come back `SUSPICIOUS` 50 with reason code `engine_incomplete` — show it like any other reason.
+- **Verdicts:** `FRAUD` (score ≥ 70), `SUSPICIOUS` (30–69), `LEGIT` (< 30). The citizen checker can also return `UNKNOWN` (an unknown phone number), with `score: null`.
 - **Score:** 0–100, higher = riskier.
 - **Bilingual text:** every user-facing string comes as a pair, `*_en` and `*_ar` (reasons, headlines, advice, takedown body). Pick by the UI language; never machine-translate in the UI.
 - **Reasons:** list of `{code, weight, text_en, text_ar, evidence_ref}`. Positive weight raises risk, negative lowers it. `evidence_ref` tells you which evidence block to highlight (`screenshot`, `rdap.created`, `forms`, `redirect_chain`, `candidate.extra.phone`, ...).
@@ -36,7 +40,12 @@ The API runs in **mock mode** until the real engine lands (Gate 2, 17:00). Shape
 - **Times:** ISO 8601 with offset. Show them in UAE time.
 - **Sources:** `lookalike`, `ct` (new certificate), `nrd` (newly registered domain), `search`, `search_ad`, `maps`, `manual`, `citizen`, `batch`.
 - **Case status:** `new`, `confirmed`, `dismissed`.
-- **Auth (mock):** log in as `admin` or `analyst` with any password; send `Authorization: Bearer <access_token>`. Real login with roles arrives at 14:00, same endpoint.
+- **Auth:** log in with `POST /api/auth/login` and send `Authorization: Bearer <access_token>` on every request. Tokens are JWTs that expire after 12 hours; on any **401** (it carries `WWW-Authenticate: Bearer`) clear the token and show the login page. Demo accounts: `admin` / `admin123` (role `admin`) and `analyst` / `analyst123` (role `analyst`).
+  - **Public, no login:** `/api/health`, `/api/brands`, `/api/metrics`, `/api/check`, `/api/auth/login`.
+  - **Logged in (analyst or admin):** `POST /api/cases/{id}/decision`. The decision is stored with the token's username as `by`, the server time as `at`, and your `reason`.
+  - **Admin only:** `/api/users`, `/api/decisions`. Analysts get **403**; hide these screens for them.
+  - **Dashboard reads** (radar, cases, case page, graph, takedown, report.pdf, scan, batch) are open for the demo, so a stale token there is ignored. With `SCAMSHIELD_REQUIRE_LOGIN=1` they need a token too, so always send it if you have one.
+  - Tokens beginning `mock-` are no longer accepted.
 
 ## Mock data at a glance
 

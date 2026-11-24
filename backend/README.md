@@ -48,6 +48,8 @@ pytest -q        # from backend/ or the repo root
 | `python -m scripts.build_dataset` | Downloads phishing feeds + Tranco, crawls legit deep pages, writes `data/datasets/{train,test,test_uae_legit}.csv` (~10 min) |
 | `python -m scripts.train_url_model` | Trains `models/url_model.joblib` (2 MB) and writes `models/top_domains.txt` (~1 min) |
 | `python -m scripts.evaluate [--feeds] [--save]` | Scores the held-out test set; `--save` writes `eval/latest.json`, served by `GET /api/metrics` |
+| `python -m scripts.batch urls.txt -o verdicts.csv [--mode url\|whois\|full]` | **Batch mode** for a judges' list: `.txt` (one URL per line) or `.csv` with a `url` column in, CSV of verdicts out (verdict, `flagged`, score, brand, reasons EN + AR). `url` = URL only (~1 ms/URL), `whois` = + domain age and hosting, `full` = + page fetch. Prints precision/recall when the file has a `label` column |
+| `python -m scripts.seed_demo scan\|fetch\|export\|load` | Demo data: scan `../data/demo/urls.txt` now, fetch whatever the radar found, export cases + screenshots to `../data/demo/`, or load that snapshot. The API loads it on start with `SCAMSHIELD_SEED_DEMO=1` |
 
 After `export_contract`, regenerate the UI types from the repo root:
 `npx openapi-typescript docs/api/openapi.json -o docs/api/scamshield-api.d.ts`
@@ -73,9 +75,9 @@ After `export_contract`, regenerate the UI types from the repo root:
 | `app/workers/safety.py`, `pipeline.py`, `runner.py` | Agegnew | SSRF guard, job handlers, worker loop |
 | `app/engine/` | Agegnew + Claude | Detection engine: `core.py` (score), `checks.py` (rules), `model.py` + `features.py` (URL model), `feeds.py` (PhishTank/OpenPhish, refreshed hourly by the worker), `lists.py` |
 | `app/db.py`, `repo.py`, `jobs.py` | Agegnew | Tables, case storage, job queue |
-| `app/routes/`, `api_models.py`, `auth.py` | Agegnew | HTTP API |
+| `app/routes/`, `api_models.py`, `auth.py` | Agegnew | HTTP API; login (JWT), admin and analyst roles |
 | `app/graph.py`, `takedown.py`, `messages.py` | Agegnew | Network graph (IP, registration day, favicon, template, tracker, contact), takedown email, EN/AR text |
-| `app/mock/data.py` | Agegnew | Demo cases |
+| `app/mock/data.py`, `app/demo_data.py` | Agegnew | Mock cases (`.test` domains) and the real pre-scanned demo snapshot (`data/demo/`) |
 | `../data/brands.json` | **Samri** | Brand registry |
 | `../data/scam_themes.json` | **Samri** | Scam types that don't copy one brand: keywords + search queries |
 
@@ -93,3 +95,10 @@ Try one piece on its own: `python -m app.workers.fetcher https://example.com`, `
 | `SCAMSHIELD_CORS` | `http://localhost:3000,http://127.0.0.1:3000` |
 | `SCAMSHIELD_WORKER_POLL` | `2` seconds between empty-queue checks |
 | `SERPAPI_KEY` | empty — Search and Maps radar stay off |
+| `SCAMSHIELD_ADMIN_PASSWORD` / `SCAMSHIELD_ANALYST_PASSWORD` | `admin123` / `analyst123` — seeded accounts `admin` and `analyst`, created when the users table is empty |
+| `SCAMSHIELD_JWT_SECRET` | empty — a random secret is created once in `backend/.jwt-secret` (gitignored) |
+| `SCAMSHIELD_TOKEN_HOURS` | `12` |
+| `SCAMSHIELD_REQUIRE_LOGIN` | `0` — dashboard reads are open for the demo; `1` requires a token on every analyst endpoint |
+| `SCAMSHIELD_SEED_DEMO` | `0` — `1` loads the real pre-scanned cases in `data/demo/` on start |
+| `SCAMSHIELD_DEMO_HOSTS` | empty — demo laptop only: hostnames of the local demo pages the worker may open (see `demo-pages/README.md`) |
+| `SCAMSHIELD_CLOAK_CHECK` | `1` — `0` skips the second (desktop) visit and halves fetch time |
