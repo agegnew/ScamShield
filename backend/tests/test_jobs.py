@@ -35,6 +35,19 @@ def test_job_gives_up_after_max_attempts(session, monkeypatch):
     assert row.error == "boom"
 
 
+def test_user_scans_jump_ahead_of_radar_fetches(session):
+    jobs.enqueue(session, jobs.FETCH, {"url": "https://radar-found.test/"})
+    jobs.enqueue(session, jobs.RADAR, {"source": "ct"})
+    scan_id = jobs.enqueue(session, jobs.SCAN, {"url": "https://user-asked.test/"})
+    assert jobs.claim(session).id == scan_id
+
+
+def test_claim_only_takes_requested_types(session):
+    jobs.enqueue(session, jobs.RADAR, {"source": "ct"})
+    assert jobs.claim(session, (jobs.SCAN, jobs.FETCH)) is None
+    assert jobs.claim(session, (jobs.RADAR,)).type == jobs.RADAR
+
+
 def test_completed_key_can_be_enqueued_again(session):
     first = jobs.enqueue(session, jobs.RADAR, {"source": "ct"}, dedupe_key="radar:ct")
     jobs.claim(session)

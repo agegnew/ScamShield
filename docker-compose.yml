@@ -45,6 +45,7 @@ services:
       interval: 5s
       retries: 20
 
+  # Fetches pages: user scans first, then radar finds. Scale with --scale worker=3.
   worker:
     build:
       context: ./backend
@@ -52,10 +53,33 @@ services:
     env_file:
       - path: .env
         required: false
-    environment: *backend-env
+    environment:
+      <<: *backend-env
+      SCAMSHIELD_WORKER_JOBS: scan,fetch,feeds
+      SCAMSHIELD_WORKER_SCHEDULE: "0"
     volumes:
       - ./backend/app:/app/app
-      - ./data:/data  # writable: radar caches and hourly phishing-feed refresh
+      - ./data:/data  # writable: hourly phishing-feed refresh
+      - ./backend/artifacts:/artifacts
+    depends_on:
+      api:
+        condition: service_healthy
+
+  # Runs the discovery sources on their schedule (slow: crt.sh, DNS sweeps, daily lists).
+  radar:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.worker
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      <<: *backend-env
+      SCAMSHIELD_WORKER_JOBS: radar
+      SCAMSHIELD_WORKER_SCHEDULE: "1"
+    volumes:
+      - ./backend/app:/app/app
+      - ./data:/data  # writable: radar caches
       - ./backend/artifacts:/artifacts
     depends_on:
       api:

@@ -8,12 +8,13 @@ From the repo root:
 
 ```bash
 cp .env.example .env          # add SERPAPI_KEY when we have one
-docker compose up --build     # db + api + worker
+docker compose up --build     # db + api + worker (page fetching) + radar (discovery)
 ```
 
 - API docs: http://localhost:8000/docs
 - Postgres: `localhost:5432`, user/password/db `scamshield`
-- Logs: `docker compose logs -f worker`
+- Logs: `docker compose logs -f worker` (fetching) and `docker compose logs -f radar` (discovery)
+- More fetching capacity: `docker compose up -d --scale worker=3`; user scans always run before radar finds
 - Code in `backend/app/` is mounted into both containers. The API reloads by itself; after changing worker code run `docker compose restart worker`.
 - Reset the database: `docker compose down -v`
 
@@ -27,7 +28,7 @@ python -m venv .venv
 # Windows: .venv\Scripts\activate    macOS/Linux: source .venv/bin/activate
 pip install -r requirements-dev.txt
 uvicorn app.main:app --reload --port 8000     # API
-python -m app.workers.runner                  # worker, in a second terminal
+python -m app.workers.runner                  # worker (fetching + radar), in a second terminal
 ```
 
 The worker needs its own packages and a browser: `pip install -r requirements-worker.txt` then `playwright install chromium` (`requirements-dev.txt` includes both sets). `.ae` WHOIS uses the `whois` command (in the Docker image).

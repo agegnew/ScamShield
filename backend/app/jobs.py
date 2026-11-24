@@ -2,15 +2,20 @@
 
 from datetime import timedelta
 
-from sqlalchemy import select
+from sqlalchemy import case, select
 from sqlalchemy.orm import Session
 
 from .config import JOB_MAX_ATTEMPTS
 from .db import JobRow, utcnow
 
-FETCH = "fetch"  # payload: {"url": str}
+SCAN = "scan"  # payload: {"url": str} — a person asked (scan box, citizen): runs first
+FETCH = "fetch"  # payload: {"url": str} — found by the radar
 RADAR = "radar"  # payload: {"source": RadarSource.name}
 FEEDS = "feeds"  # payload: {} — refresh phishing feeds
+ALL_TYPES = (SCAN, FETCH, RADAR, FEEDS)
+
+# Lower runs first: people waiting on a result beat background discovery.
+_PRIORITY = case((JobRow.type == SCAN, 0), (JobRow.type == FEEDS, 1), else_=2)
 
 STALE_AFTER = timedelta(minutes=10)
 
@@ -42,12 +47,17 @@ def enqueue(
     return job.id
 
 
-def claim(session: Session) -> JobRow | None:
-    """Take the oldest due job. SKIP LOCKED lets several workers share the queue."""
+def claim(session: Session, types: tuple[str, ...] = ALL_TYPES) -> JobRow | None:
+    """Take the next due job of the given types: user scans first, then oldest.
+    SKIP LOCKED lets several workers share the queue."""
     job = session.scalars(
         select(JobRow)
-        .where(JobRow.status == "pending", JobRow.run_after <= utcnow())
-        .order_by(JobRow.id)
+        .where(
+            JobRow.status == "pending",
+            JobRow.run_after <= utcnow(),
+            JobRow.type.in_(types),
+        )
+        .order_by(_PRIORITY, JobRow.id)
         .limit(1)
         .with_for_update(skip_locked=True)
     ).first()

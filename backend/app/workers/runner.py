@@ -1,11 +1,16 @@
-"""Worker process: schedules radar sources and runs queued jobs.
+"""Worker process: runs queued jobs and (optionally) schedules the radar sources.
 
-    python -m app.workers.runner
+    python -m app.workers.runner                      # everything in one process (local dev)
+    SCAMSHIELD_WORKER_JOBS=scan,fetch,feeds python -m app.workers.runner   # page fetching only
+    SCAMSHIELD_WORKER_JOBS=radar SCAMSHIELD_WORKER_SCHEDULE=1 python -m app.workers.runner
 
-Run several copies to go faster; the queue hands each job to one worker.
+docker-compose runs two: `worker` fetches pages (user scans first) and `radar` runs the
+slow discovery sources, so a scan never waits behind a radar run. Scale fetching with
+`docker compose up --scale worker=3`; the queue hands each job to one worker.
 """
 
 import logging
+import os
 import time
 
 from .. import jobs
@@ -16,6 +21,11 @@ from .pipeline import HANDLERS
 from .radar import SOURCES
 
 log = logging.getLogger("scamshield.worker")
+
+JOB_TYPES = tuple(
+    t.strip() for t in os.getenv("SCAMSHIELD_WORKER_JOBS", ",".join(jobs.ALL_TYPES)).split(",") if t.strip()
+)
+SCHEDULE = os.getenv("SCAMSHIELD_WORKER_SCHEDULE", "1") == "1"
 
 
 def schedule_radar(next_due: dict[str, float]) -> None:
@@ -31,10 +41,10 @@ def schedule_radar(next_due: dict[str, float]) -> None:
             next_due["_feeds"] = now + feeds.REFRESH_MINUTES * 60
 
 
-def run_once() -> bool:
-    """Claim and run one job. Returns False when the queue is empty."""
+def run_once(types: tuple[str, ...] = jobs.ALL_TYPES) -> bool:
+    """Claim and run one job. Returns False when there is nothing to do."""
     with SessionLocal() as session:
-        job = jobs.claim(session)
+        job = jobs.claim(session, types)
         if job is None:
             return False
         job_id, job_type, payload = job.id, job.type, dict(job.payload)
@@ -59,14 +69,17 @@ def run_forever() -> None:
     with SessionLocal() as session:
         requeued = jobs.requeue_stale(session)
     log.info(
-        "worker started; radar sources enabled: %s; requeued %d stale jobs",
+        "worker started; jobs %s; scheduling radar: %s (%s); requeued %d stale jobs",
+        list(JOB_TYPES),
+        SCHEDULE,
         [name for name, s in SOURCES.items() if s.enabled()],
         requeued,
     )
     next_due: dict[str, float] = {}
     while True:
-        schedule_radar(next_due)
-        if not run_once():
+        if SCHEDULE:
+            schedule_radar(next_due)
+        if not run_once(JOB_TYPES):
             time.sleep(WORKER_POLL_SECONDS)
 
 

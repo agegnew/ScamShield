@@ -28,7 +28,7 @@ def scan(body: ScanRequest, repo: CaseRepo = Depends(get_repo)) -> ScanResponse:
     )
     if case.evidence is not None:
         return ScanResponse(case_id=case.id, status="done", verdict=case.verdict)
-    jobs.enqueue(repo.s, jobs.FETCH, {"url": case.candidate.url}, f"fetch:{case.id}")
+    jobs.enqueue(repo.s, jobs.SCAN, {"url": case.candidate.url}, f"fetch:{case.id}")
     return ScanResponse(case_id=case.id, status="queued", verdict=case.verdict)
 
 

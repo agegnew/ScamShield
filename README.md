@@ -12,7 +12,7 @@ We win with a working engine that finds UAE-brand scams on its own (Search, Maps
 git clone https://github.com/agegnew/ScamShield.git
 cd ScamShield
 cp .env.example .env
-docker compose up --build        # Postgres + API + worker
+docker compose up --build        # Postgres + API + page worker + radar
 ```
 
 API docs at http://localhost:8000/docs. No Docker? See [`backend/README.md`](backend/README.md) (runs on SQLite).

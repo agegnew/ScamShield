@@ -49,6 +49,7 @@ def run_radar(session: Session, source_name: str) -> int:
 
 
 HANDLERS = {
+    jobs.SCAN: lambda session, payload: run_fetch(session, payload["url"]),
     jobs.FETCH: lambda session, payload: run_fetch(session, payload["url"]),
     jobs.RADAR: lambda session, payload: run_radar(session, payload["source"]),
     jobs.FEEDS: lambda session, payload: feeds.refresh(),
