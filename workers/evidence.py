@@ -43,4 +43,8 @@ def collect(url: str) -> dict:
         origin = enrich(url)
         evidence["origin"] = {k: origin[k] for k in ("domain", "registered_domain", "shared_hosting", "rdap", "ip",
                                                    "hosting_org")}
+        # A placeholder destination (a marketplace, a registrar's parking page) is not the site being judged:
+        # describe the domain that was scanned instead of, say, godaddy.com.
+        if page["page_kind"] not in (None, "content", "empty"):
+            evidence["rdap"] = origin["rdap"]
     return evidence

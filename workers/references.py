@@ -25,11 +25,12 @@ def _capture_one(brand_id: str, domain: str) -> dict | None:
 
     for url in (f"https://{domain}/", f"https://www.{domain}/"):
         page = fetch(url)
-        if page["status"] == "ok" and page["fingerprints"]:
+        # A block or challenge page would match every other block page, so it is not a reference.
+        if page["status"] == "ok" and page["fingerprints"] and page["page_kind"] == "content":
             return {"brand": brand_id, "domain": domain, "final_url": page["final_url"], "title": page["title"],
                     "screenshot_path": page["screenshot_path"], **{k: page["fingerprints"][k] for k in (
                         "favicon_mmh3", "favicon_sha256", "dom_hash", "screenshot_dhash")}}
-        log.warning("%s %s: %s", brand_id, url, page["fetch_error"])
+        log.warning("%s %s: %s %s", brand_id, url, page["page_kind"], page["fetch_error"])
     return None
 
 
