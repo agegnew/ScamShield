@@ -12,3 +12,7 @@ node_modules/
 .next/
 
 kickoff/
+
+data/*
+!data/brands.json
+!data/logos/
