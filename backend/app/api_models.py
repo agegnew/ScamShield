@@ -182,6 +182,35 @@ class Takedown(BaseModel):
     subject: str
     body_en: str
     body_ar: str
+    recipients: list[str] = Field(
+        default_factory=list, description="Registrar and host abuse emails, deduplicated"
+    )
+    mailto: str | None = Field(
+        default=None,
+        description="mailto: link with the recipients, subject and English body; None without recipients",
+    )
+
+
+class RelatedDomain(BaseModel):
+    """Another case that shares infrastructure with this one (an edge of GET /api/graph)."""
+
+    case_id: str
+    domain: str
+    verdict: Label
+    score: int
+    type: EdgeType
+    detail: str
+
+
+class EvidenceExport(BaseModel):
+    """Downloadable evidence bundle for one case (GET /api/cases/{id}/export.json)."""
+
+    generated_at: datetime
+    scamshield_version: str
+    model_version: str = Field(description="Detection engine that produced this export")
+    case: Case
+    takedown: Takedown
+    related: list[RelatedDomain]
 
 
 class LoginRequest(BaseModel):

@@ -1,5 +1,7 @@
 """Takedown request for a case, addressed to the registrar and the host."""
 
+from urllib.parse import quote, urlencode
+
 from .api_models import Case, Takedown
 from .brands import brand_by_id
 
@@ -48,15 +50,42 @@ def build_takedown(case: Case) -> Takedown:
         "نرجو إيقاف هذا النطاق أو الموقع.\n\n"
         "ScamShield"
     )
+    registrar_abuse = rdap.abuse_email if rdap else None
+    hosting_abuse = ev.hosting_abuse_email if ev else None
+    recipients = _recipients(registrar_abuse, hosting_abuse)
+    subject = f"Phishing site impersonating {brand_en}: {case.domain}"
     return Takedown(
         case_id=case.id,
         domain=case.domain,
         registrar=rdap.registrar if rdap else None,
-        registrar_abuse_email=rdap.abuse_email if rdap else None,
+        registrar_abuse_email=registrar_abuse,
         hosting_org=ev.hosting_org if ev else None,
-        hosting_abuse_email=ev.hosting_abuse_email if ev else None,
+        hosting_abuse_email=hosting_abuse,
         ip=ip,
-        subject=f"Phishing site impersonating {brand_en}: {case.domain}",
+        subject=subject,
         body_en=body_en,
         body_ar=body_ar,
+        recipients=recipients,
+        mailto=_mailto(recipients, subject, body_en),
     )
+
+
+def _recipients(*emails: str | None) -> list[str]:
+    """Non-empty abuse addresses, first occurrence kept (case-insensitive)."""
+    seen: set[str] = set()
+    out: list[str] = []
+    for email in emails:
+        email = (email or "").strip()
+        if email and "@" in email and email.lower() not in seen:
+            seen.add(email.lower())
+            out.append(email)
+    return out
+
+
+def _mailto(recipients: list[str], subject: str, body: str) -> str | None:
+    """RFC 6068 mailto: link; line breaks become CRLF as the RFC asks."""
+    if not recipients:
+        return None
+    to = ",".join(quote(r, safe="@") for r in recipients)
+    query = urlencode({"subject": subject, "body": body.replace("\n", "\r\n")}, quote_via=quote)
+    return f"mailto:{to}?{query}"
