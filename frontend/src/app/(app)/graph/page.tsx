@@ -46,7 +46,8 @@ function layout(g: Graph, w: number, h: number) {
       p.vx += (w / 2 - p.x) * 0.003;
       p.vy += (h / 2 - p.y) * 0.003;
       p.x = Math.max(60, Math.min(w - 60, p.x + p.vx * 0.5));
-      p.y = Math.max(40, Math.min(h - 40, p.y + p.vy * 0.5));
+      // Leave room under the bottom row for the label (circle radius up to 26 + label offset 14).
+      p.y = Math.max(40, Math.min(h - 56, p.y + p.vy * 0.5));
       p.vx *= 0.6;
       p.vy *= 0.6;
     }
@@ -55,7 +56,7 @@ function layout(g: Graph, w: number, h: number) {
 }
 
 export default function GraphPage() {
-  const { t, lang } = useLang();
+  const { t } = useLang();
   const { data, error, isLoading, mutate } = useGraph();
   const [sel, setSel] = useState<string | null>(null);
   const W = 860;
@@ -96,7 +97,8 @@ export default function GraphPage() {
                   <g key={n.id} transform={`translate(${pos[i].x},${pos[i].y})`} opacity={dim ? 0.3 : 1} className="cursor-pointer" onClick={() => setSel(sel === n.id ? null : n.id)} tabIndex={0} role="button" aria-label={`${n.domain}: ${t(n.verdict)} ${n.score}`} onKeyDown={(e) => e.key === "Enter" && setSel(sel === n.id ? null : n.id)}>
                     <circle r={r} fill={verdictHex[n.verdict]} fillOpacity={0.15} stroke={verdictHex[n.verdict]} strokeWidth={sel === n.id ? 4 : 2} />
                     <text y={r + 14} textAnchor="middle" fontSize={11} fontWeight={700} fill="var(--ink)">
-                      {n.domain}
+                      {/* Long hacked-site names would run into their neighbours; the side list has the full name. */}
+                      {n.domain.length > 20 ? `${n.domain.slice(0, 17)}…` : n.domain}
                     </text>
                   </g>
                 );
@@ -147,7 +149,6 @@ export default function GraphPage() {
                 )}
               </>
             )}
-            <p className="sr-only">{lang}</p>
           </Panel>
         </div>
       )}

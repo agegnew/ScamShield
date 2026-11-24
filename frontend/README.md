@@ -40,7 +40,7 @@ uvicorn app.main:app --port 8000
 
 - Every string the UI owns is in `src/lib/i18n.tsx` as an `[en, ar]` pair. Content from the API arrives as `*_en` / `*_ar` fields; use `pick(obj, "text")`.
 - URLs, numbers and codes get the `ltr` class so they read correctly inside Arabic text.
-- Verdicts always show icon + word + colour (`VerdictChip`). Green means "official site", never "safe".
+- Verdicts always show icon + word + colour (`VerdictChip`). Green means "no warning signs" (the API's own words), never "safe" or "official": unrelated sites and parked pages score LEGIT too. The reasons say when a site is an official domain.
 - A "Demo data" badge appears whenever the API answers with `X-ScamShield-Mode: mock`; "Live" when it is real data.
 - Tokens are JWTs. Any 401 clears the session and returns to the login page. Dashboard reads work without a token for the demo; decisions, the audit log and users need one.
 - Types come from `src/lib/api-types.d.ts`, a copy of `docs/api/scamshield-api.d.ts`. After an API change, regenerate the contract (`python -m scripts.export_contract` in `backend/`) and copy the file again.

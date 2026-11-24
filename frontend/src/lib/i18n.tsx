@@ -68,7 +68,9 @@ const strings = {
 
   FRAUD: ["Fraud", "احتيال"],
   SUSPICIOUS: ["Suspicious", "مشبوه"],
-  LEGIT: ["Official", "رسمي"],
+  // LEGIT means "no warning signs", not "official": unrelated sites, parked pages and example.com score LEGIT too.
+  // Same words as the API's citizen headline (backend/app/messages.py).
+  LEGIT: ["No warning signs", "لا علامات تحذيرية"],
   UNKNOWN: ["Unknown", "غير معروف"],
   verdict: ["Verdict", "الحكم"],
   riskScore: ["Risk score", "درجة الخطورة"],
