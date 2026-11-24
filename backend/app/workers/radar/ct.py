@@ -34,7 +34,7 @@ def query(token: str) -> list[dict]:
             if resp.status_code == 200:
                 rows = resp.json()
                 cache.parent.mkdir(parents=True, exist_ok=True)
-                cache.write_text(json.dumps(rows))
+                cache.write_text(json.dumps(rows), encoding="utf-8")
                 return rows
             log.warning("crt.sh %s: HTTP %s", token, resp.status_code)
         except (requests.RequestException, ValueError) as exc:
@@ -43,7 +43,7 @@ def query(token: str) -> list[dict]:
     if cache.exists():
         log.info("crt.sh %s: using cache from %s", token,
                  datetime.fromtimestamp(cache.stat().st_mtime).isoformat(timespec="minutes"))
-        return json.loads(cache.read_text())
+        return json.loads(cache.read_text(encoding="utf-8"))
     return []
 
 

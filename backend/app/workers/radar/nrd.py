@@ -28,7 +28,7 @@ LOOKBACK_DAYS = 3
 def download(day: date) -> list[str]:
     cached = CACHE_DIR / "nrd" / f"{day.isoformat()}.txt"
     if cached.exists():
-        return cached.read_text().split()
+        return cached.read_text(encoding="utf-8", errors="ignore").split()
     token = base64.b64encode(f"{day.isoformat()}.zip".encode()).decode()
     try:
         resp = requests.get(NRD_URL.format(token), timeout=60)
@@ -41,7 +41,7 @@ def download(day: date) -> list[str]:
     with zipfile.ZipFile(io.BytesIO(resp.content)) as archive:
         text = archive.read(archive.namelist()[0]).decode("utf-8", "ignore")
     cached.parent.mkdir(parents=True, exist_ok=True)
-    cached.write_text(text)
+    cached.write_text(text, encoding="utf-8")
     return text.split()
 
 
