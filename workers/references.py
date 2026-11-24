@@ -1,7 +1,8 @@
 """Visual references of the real brand sites, and matching a suspicious page against them.
 
-A page that reuses an official favicon, or looks almost the same as an official page, while sitting on a
-non-official domain is imitating that brand.
+A page that reuses an official favicon or page template while sitting on a non-official domain is imitating
+that brand. Screenshot hashes are not used for matching: mobile screenshots of different official sites (mostly
+white, cookie banners) differ by only 1-2 of 64 bits, so they cannot tell brands apart.
 
 Usage: python -m workers.references        # capture missing references into data/references.json
 """
@@ -13,13 +14,10 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from workers import brands
-from workers.fingerprint import hamming
 
 log = logging.getLogger("references")
 
 REFERENCES_PATH = Path(__file__).resolve().parent.parent / "data" / "references.json"
-# dHash bits that may differ (of 64) for two screenshots to count as the same look. Tuned on official pages.
-LOOKALIKE_MAX_DISTANCE = 10
 
 
 def _capture_one(brand_id: str, domain: str) -> dict | None:
@@ -50,24 +48,16 @@ def load() -> list[dict]:
 
 
 def visual_match(final_url: str | None, fingerprints: dict | None) -> dict | None:
-    """Closest official look-alike for a page on a non-official host, or None."""
+    """Official brand whose favicon or page template a page on a non-official host reuses, or None."""
     host = urlsplit(final_url or "").hostname or ""
     if not fingerprints or not host or brands.is_official(host):
         return None
-    best = None
     for ref in load():
-        if fingerprints.get("favicon_sha256") and fingerprints["favicon_sha256"] == ref["favicon_sha256"]:
-            return {"brand": ref["brand"], "kind": "same_favicon", "reference_url": ref["final_url"],
-                    "reference_screenshot": ref["screenshot_path"]}
-        if fingerprints.get("dom_hash") and fingerprints["dom_hash"] == ref["dom_hash"]:
-            return {"brand": ref["brand"], "kind": "same_template", "reference_url": ref["final_url"],
-                    "reference_screenshot": ref["screenshot_path"]}
-        if fingerprints.get("screenshot_dhash") and ref["screenshot_dhash"]:
-            distance = hamming(fingerprints["screenshot_dhash"], ref["screenshot_dhash"])
-            if distance <= LOOKALIKE_MAX_DISTANCE and (not best or distance < best["distance"]):
-                best = {"brand": ref["brand"], "kind": "similar_screenshot", "distance": distance,
-                        "reference_url": ref["final_url"], "reference_screenshot": ref["screenshot_path"]}
-    return best
+        for kind, key in (("same_favicon", "favicon_sha256"), ("same_template", "dom_hash")):
+            if fingerprints.get(key) and fingerprints[key] == ref[key]:
+                return {"brand": ref["brand"], "kind": kind, "reference_url": ref["final_url"],
+                        "reference_screenshot": ref["screenshot_path"]}
+    return None
 
 
 if __name__ == "__main__":
