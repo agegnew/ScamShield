@@ -1200,6 +1200,65 @@
         ],
         "title": "CheckResponse"
       },
+      "CloakingCheck": {
+        "properties": {
+          "signals": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Signals",
+            "description": "desktop_blocked | different_destination | forms_hidden_from_desktop | different_page"
+          },
+          "desktop": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DesktopVisit"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "CloakingCheck",
+        "description": "Second visit as a foreign desktop browser, compared with the UAE phone visit."
+      },
+      "Contacts": {
+        "properties": {
+          "phones": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Phones"
+          },
+          "whatsapp": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Whatsapp"
+          },
+          "telegram": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Telegram"
+          },
+          "emails": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Emails"
+          }
+        },
+        "type": "object",
+        "title": "Contacts"
+      },
       "Decision": {
         "properties": {
           "action": {
@@ -1257,6 +1316,67 @@
         ],
         "title": "DecisionRequest"
       },
+      "DesktopVisit": {
+        "properties": {
+          "final_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Final Url"
+          },
+          "http_status": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Http Status"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "screenshot_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Screenshot Path"
+          },
+          "fetch_error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fetch Error"
+          }
+        },
+        "type": "object",
+        "title": "DesktopVisit"
+      },
       "DownloadSignal": {
         "properties": {
           "kind": {
@@ -1299,6 +1419,12 @@
           "url": {
             "type": "string",
             "title": "Url"
+          },
+          "profile": {
+            "type": "string",
+            "title": "Profile",
+            "description": "Browser profile used for the visit",
+            "default": "mobile_ae"
           },
           "final_url": {
             "anyOf": [
@@ -1390,6 +1516,36 @@
             "type": "array",
             "title": "Download Signals"
           },
+          "fingerprints": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Fingerprints"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "visual_match": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VisualMatch"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cloaking": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CloakingCheck"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "rdap": {
             "anyOf": [
               {
@@ -1476,6 +1632,71 @@
         "title": "Evidence",
         "description": "What the fetcher and enrichment saw for one URL."
       },
+      "Fingerprints": {
+        "properties": {
+          "favicon_mmh3": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Favicon Mmh3",
+            "description": "Shodan favicon hash: search http.favicon.hash:<value>"
+          },
+          "favicon_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Favicon Sha256"
+          },
+          "dom_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dom Hash",
+            "description": "Page template (tag structure) hash"
+          },
+          "screenshot_dhash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Screenshot Dhash",
+            "description": "64-bit look-alike hash of the page"
+          },
+          "tracking_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tracking Ids",
+            "description": "e.g. google_analytics:G-AB12"
+          },
+          "contacts": {
+            "$ref": "#/components/schemas/Contacts"
+          }
+        },
+        "type": "object",
+        "title": "Fingerprints",
+        "description": "Traits that link sites run by the same people (scam network)."
+      },
       "FormInfo": {
         "properties": {
           "action": {
@@ -1557,7 +1778,11 @@
             "enum": [
               "same_ip",
               "same_registration_day",
-              "same_final_host"
+              "same_final_host",
+              "same_favicon",
+              "same_template",
+              "same_tracker",
+              "same_contact"
             ],
             "title": "Type"
           },
@@ -2207,6 +2432,51 @@
           "scored_at"
         ],
         "title": "Verdict"
+      },
+      "VisualMatch": {
+        "properties": {
+          "brand": {
+            "type": "string",
+            "title": "Brand"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "same_favicon",
+              "same_template"
+            ],
+            "title": "Kind"
+          },
+          "reference_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Url"
+          },
+          "reference_screenshot": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Screenshot"
+          }
+        },
+        "type": "object",
+        "required": [
+          "brand",
+          "kind"
+        ],
+        "title": "VisualMatch",
+        "description": "The page reuses an official brand site's favicon or template on a non-official host."
       }
     }
   }

@@ -17,6 +17,7 @@
   },
   "evidence": {
     "url": "https://tamm-fines-pay.test/pay?ref=AD-55120",
+    "profile": "mobile_ae",
     "final_url": "https://tamm-fines-pay.test/pay?ref=AD-55120",
     "redirect_chain": [],
     "http_status": 200,
@@ -42,6 +43,9 @@
       }
     ],
     "download_signals": [],
+    "fingerprints": null,
+    "visual_match": null,
+    "cloaking": null,
     "rdap": {
       "created": "2026-11-21T12:00:00Z",
       "registrar": "Example Registrar Inc.",

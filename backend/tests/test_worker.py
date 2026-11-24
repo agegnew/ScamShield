@@ -57,9 +57,10 @@ def test_private_address_is_blocked_and_not_enriched(client, monkeypatch):
 def test_worker_saves_fetcher_evidence(client, monkeypatch):
     monkeypatch.setattr(safety, "_resolve", _public_dns)
 
-    def fake_fetch(url):
+    def fake_fetch(url, profile="mobile_ae"):
         return Evidence(
             url=url,
+            profile=profile,
             final_url="https://landing.test/",
             title="Fake landing",
             fetched_at=datetime.now(timezone.utc),
@@ -72,6 +73,10 @@ def test_worker_saves_fetcher_evidence(client, monkeypatch):
     assert case["evidence"]["title"] == "Fake landing"
     assert case["evidence"]["final_url"] == "https://landing.test/"
     assert case["evidence"]["hosting_org"] == "Test Hosting"
+    # second visit as a foreign desktop browser ran and found the same page
+    assert case["evidence"]["cloaking"] == {"signals": [], "desktop": {
+        "final_url": "https://landing.test/", "http_status": None, "title": "Fake landing",
+        "screenshot_path": None, "fetch_error": None}}
 
 
 def test_radar_stores_new_urls_and_queues_fetches(client, monkeypatch):
@@ -97,7 +102,7 @@ def test_radar_stores_new_urls_and_queues_fetches(client, monkeypatch):
 
 
 def test_failing_job_is_retried_not_fatal(client, monkeypatch):
-    def broken(url):
+    def broken(url, profile="mobile_ae"):
         raise RuntimeError("browser crashed")
 
     monkeypatch.setattr(fetcher, "fetch", broken)

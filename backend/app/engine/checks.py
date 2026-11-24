@@ -421,6 +421,36 @@ def page_signals(ctx: Ctx) -> list[Reason]:
             )
             break
 
+    if ev.visual_match:
+        brand = next((b for b in ctx.brands if b.id == ev.visual_match.brand), None)
+        if brand:
+            ctx.brand_target = ctx.brand_target or brand.id
+            what_en = "favicon" if ev.visual_match.kind == "same_favicon" else "page template"
+            what_ar = "أيقونة" if ev.visual_match.kind == "same_favicon" else "قالب صفحة"
+            reasons.append(
+                _r(
+                    "visual_match",
+                    35,
+                    f"Page reuses the official {brand.name_en} {what_en} on a non-official domain",
+                    f"الصفحة تعيد استخدام {what_ar} {brand.name_ar} الرسمي على نطاق غير رسمي",
+                    "fingerprints",
+                )
+            )
+
+    if ev.cloaking and ev.cloaking.signals:
+        strong = {"different_destination", "forms_hidden_from_desktop", "different_page"}
+        weight = 25 if strong & set(ev.cloaking.signals) else 10
+        listed = ", ".join(s.replace("_", " ") for s in ev.cloaking.signals)
+        reasons.append(
+            _r(
+                "cloaking",
+                weight,
+                f"Shows different content to a foreign desktop visitor than to a UAE phone ({listed})",
+                f"يعرض محتوى مختلفًا لزائر من حاسوب خارج الدولة عن هاتف داخل الإمارات ({listed})",
+                "cloaking",
+            )
+        )
+
     if ctx.final_domain and ctx.final_domain != ctx.domain:
         reasons.append(
             _r(

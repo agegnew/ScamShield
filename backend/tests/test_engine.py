@@ -158,6 +158,19 @@ def test_common_arabic_word_is_not_taken_for_a_brand_name():
     assert "brand_on_wrong_domain" not in codes(engine.score("https://news.example/", evidence=ev))
 
 
+def test_visual_match_and_cloaking_raise_risk():
+    from app.contracts import CloakingCheck, VisualMatch
+
+    ev = page(
+        "https://pay-portal.example/",
+        visual_match=VisualMatch(brand="tamm", kind="same_favicon"),
+        cloaking=CloakingCheck(signals=["different_destination"]),
+    )
+    v = engine.score("https://pay-portal.example/", evidence=ev)
+    assert {"visual_match", "cloaking"} <= codes(v)
+    assert v.brand_target == "tamm"
+
+
 def test_every_reason_has_both_languages():
     ev = page(
         "https://tamm-violations.example/pay",

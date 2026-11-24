@@ -154,8 +154,10 @@ Merged into `main` and wired to the database, engine and API (`backend/app/worke
 - [x] Radar 4, Search: SerpApi organic results and ads, brand + generic service queries (EN/AR)
 - [x] Radar 5, Maps: listings with an unofficial website or a fake helpline number
 - [x] Scheduler: runs each radar on its interval, de-duplicates, queues fetches
+- [x] Site fingerprints for the scam network: Shodan favicon hash, page-template hash, screenshot dHash, tracker IDs (GA, GTM, Facebook Pixel), WhatsApp / Telegram contacts
+- [x] Visual match: page reuses an official brand's favicon or template (references: `python -m app.workers.references`)
+- [x] Cloaking check: second visit as a foreign desktop browser, compared with the UAE phone visit
 - [ ] Get a SerpApi key into `.env` (without one, Search/Maps replay saved answers, marked `replayed`)
-- [ ] **P1** — Cloaking check: mobile vs desktop fetch, flag differences
 - [ ] **00:00** — Freeze; keep `data/cache/` (radar caches) as the demo fallback
 
 ### Samri — research, creative, pitch

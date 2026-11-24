@@ -1,7 +1,8 @@
 """Page fetcher (Simon). Opens a URL the way a UAE phone user would and records what it shows.
 
-Follows shorteners, HTTP, meta-refresh and JavaScript redirects, takes a screenshot and lists form
-fields (types only, never values) and links that push remote-access apps or APK installs.
+Follows shorteners, HTTP, meta-refresh and JavaScript redirects, takes a screenshot, lists form
+fields (types only, never values) and links that push remote-access apps or APK installs, and
+fingerprints the site (favicon, template, look, trackers, contacts) to link scam networks.
 Every request, including each redirect hop, goes through the SSRF guard.
 Never raises for a dead or blocked site: the Evidence carries fetch_error instead.
 
@@ -16,20 +17,30 @@ from pathlib import Path
 from urllib.parse import urljoin
 
 from ..config import ARTIFACTS_DIR
-from ..contracts import DownloadSignal, Evidence, FormInfo, RedirectHop
+from ..contracts import DownloadSignal, Evidence, Fingerprints, FormInfo, RedirectHop
+from . import fingerprint as fp
 from .safety import UnsafeURL, Unresolvable, assert_public_url
 
 SCREENSHOT_DIR = ARTIFACTS_DIR / "screenshots"
 NAV_TIMEOUT_MS = 20_000
-SETTLE_MS = 2_500
+SETTLE_MS = 1_500
 TEXT_LIMIT = 2_000
 
-# Scam pages often show their real content only to phones with a local setup.
-PROFILE = {
-    "device": "iPhone 13",
-    "locale": "ar-AE",
-    "timezone_id": "Asia/Dubai",
-    "extra_http_headers": {"Accept-Language": "ar-AE,ar;q=0.9,en-AE;q=0.8,en;q=0.7"},
+PROFILES = {
+    # Scam pages often show their real content only to phones with a local setup.
+    "mobile_ae": {
+        "device": "iPhone 13",
+        "locale": "ar-AE",
+        "timezone_id": "Asia/Dubai",
+        "extra_http_headers": {"Accept-Language": "ar-AE,ar;q=0.9,en-AE;q=0.8,en;q=0.7"},
+    },
+    # Looks like a foreign desktop crawler: what cloaking scam kits show a clean page to.
+    "desktop_us": {
+        "device": "Desktop Chrome",
+        "locale": "en-US",
+        "timezone_id": "America/New_York",
+        "extra_http_headers": {"Accept-Language": "en-US,en;q=0.9"},
+    },
 }
 
 FORM_FIELDS_JS = """
@@ -109,25 +120,27 @@ def summarize_forms(raw_forms: list[dict], page_url: str) -> list[FormInfo]:
     return forms
 
 
-def _screenshot_path(url: str) -> Path:
+def _screenshot_path(url: str, profile: str) -> Path:
     SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    return SCREENSHOT_DIR / f"{stamp}_{hashlib.sha256(url.encode()).hexdigest()[:12]}.png"
+    suffix = "" if profile == "mobile_ae" else f"_{profile}"
+    return SCREENSHOT_DIR / f"{stamp}_{hashlib.sha256(url.encode()).hexdigest()[:12]}{suffix}.png"
 
 
-def fetch(url: str) -> Evidence:
+def fetch(url: str, profile: str = "mobile_ae") -> Evidence:
     now = datetime.now(timezone.utc)
     try:
         assert_public_url(url)
     except Unresolvable as exc:
-        return Evidence(url=url, fetched_at=now, fetch_error=f"Offline: {exc}")
+        return Evidence(url=url, profile=profile, fetched_at=now, fetch_error=f"Offline: {exc}")
     except UnsafeURL as exc:
-        return Evidence(url=url, fetched_at=now, fetch_error=f"Blocked: {exc}")
+        return Evidence(url=url, profile=profile, fetched_at=now, fetch_error=f"Blocked: {exc}")
 
     # Imported here so the API process (which never fetches) doesn't need Playwright.
     from playwright.sync_api import Error as PlaywrightError
     from playwright.sync_api import sync_playwright
 
+    setup = PROFILES[profile]
     chain: list[RedirectHop] = []
     fields: dict = {}
 
@@ -138,13 +151,22 @@ def fetch(url: str) -> Evidence:
             return route.abort("blockedbyclient")
         return route.continue_()
 
+    def favicon(context, page) -> bytes:
+        try:
+            icon_url = page.evaluate(fp.FAVICON_JS)
+            assert_public_url(icon_url)
+            resp = context.request.get(icon_url, timeout=5_000, max_redirects=3)
+            return resp.body() if resp.ok and len(resp.body()) < 500_000 else b""
+        except (PlaywrightError, UnsafeURL):
+            return b""
+
     with sync_playwright() as p:
         browser = p.chromium.launch()
         context = browser.new_context(
-            **p.devices[PROFILE["device"]],
-            locale=PROFILE["locale"],
-            timezone_id=PROFILE["timezone_id"],
-            extra_http_headers=PROFILE["extra_http_headers"],
+            **p.devices[setup["device"]],
+            locale=setup["locale"],
+            timezone_id=setup["timezone_id"],
+            extra_http_headers=setup["extra_http_headers"],
             accept_downloads=False,
             permissions=[],
         )
@@ -160,21 +182,30 @@ def fetch(url: str) -> Evidence:
             response = page.goto(url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT_MS)
             page.wait_for_timeout(SETTLE_MS)
             try:
-                page.wait_for_load_state("networkidle", timeout=5_000)
+                page.wait_for_load_state("networkidle", timeout=3_000)
             except PlaywrightError:
-                pass
-            shot = _screenshot_path(url)
+                pass  # parked and ad-heavy pages never go idle
+            shot = _screenshot_path(url, profile)
             page.screenshot(path=str(shot))
             text = page.evaluate("() => document.body ? document.body.innerText : ''") or ""
+            html = page.content()
+            png = shot.read_bytes()
             fields = {
                 "final_url": page.url,
                 "http_status": chain[-1].status if chain else (response.status if response else None),
                 "screenshot_path": shot.relative_to(ARTIFACTS_DIR).as_posix(),
-                "screenshot_sha256": hashlib.sha256(shot.read_bytes()).hexdigest(),
+                "screenshot_sha256": hashlib.sha256(png).hexdigest(),
                 "title": page.title(),
                 "text_excerpt": " ".join(text.split())[:TEXT_LIMIT],
                 "forms": summarize_forms(page.evaluate(FORM_FIELDS_JS), page.url),
                 "download_signals": download_signals(page.evaluate(LINKS_JS), text),
+                "fingerprints": Fingerprints(
+                    **fp.favicon_hashes(favicon(context, page)),
+                    dom_hash=fp.dom_hash(page.evaluate(fp.DOM_SHAPE_JS)),
+                    screenshot_dhash=fp.screenshot_dhash(png),
+                    tracking_ids=fp.tracking_ids(html),
+                    contacts=fp.contacts(text, html),
+                ),
             }
         except PlaywrightError as exc:
             fields = {
@@ -184,7 +215,7 @@ def fetch(url: str) -> Evidence:
         finally:
             browser.close()
 
-    return Evidence(url=url, fetched_at=now, redirect_chain=chain, **fields)
+    return Evidence(url=url, profile=profile, fetched_at=now, redirect_chain=chain, **fields)
 
 
 if __name__ == "__main__":

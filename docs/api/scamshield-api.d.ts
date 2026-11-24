@@ -459,6 +459,29 @@ export interface components {
             /** Reasons */
             reasons?: components["schemas"]["Reason"][];
         };
+        /**
+         * CloakingCheck
+         * @description Second visit as a foreign desktop browser, compared with the UAE phone visit.
+         */
+        CloakingCheck: {
+            /**
+             * Signals
+             * @description desktop_blocked | different_destination | forms_hidden_from_desktop | different_page
+             */
+            signals?: string[];
+            desktop?: components["schemas"]["DesktopVisit"] | null;
+        };
+        /** Contacts */
+        Contacts: {
+            /** Phones */
+            phones?: string[];
+            /** Whatsapp */
+            whatsapp?: string[];
+            /** Telegram */
+            telegram?: string[];
+            /** Emails */
+            emails?: string[];
+        };
         /** Decision */
         Decision: {
             /**
@@ -486,6 +509,19 @@ export interface components {
             /** Reason */
             reason: string;
         };
+        /** DesktopVisit */
+        DesktopVisit: {
+            /** Final Url */
+            final_url?: string | null;
+            /** Http Status */
+            http_status?: number | null;
+            /** Title */
+            title?: string | null;
+            /** Screenshot Path */
+            screenshot_path?: string | null;
+            /** Fetch Error */
+            fetch_error?: string | null;
+        };
         /**
          * DownloadSignal
          * @description A link or text pushing a remote-access app or an APK install.
@@ -508,6 +544,12 @@ export interface components {
         Evidence: {
             /** Url */
             url: string;
+            /**
+             * Profile
+             * @description Browser profile used for the visit
+             * @default mobile_ae
+             */
+            profile: string;
             /** Final Url */
             final_url?: string | null;
             /** Redirect Chain */
@@ -535,6 +577,9 @@ export interface components {
             forms?: components["schemas"]["FormInfo"][];
             /** Download Signals */
             download_signals?: components["schemas"]["DownloadSignal"][];
+            fingerprints?: components["schemas"]["Fingerprints"] | null;
+            visual_match?: components["schemas"]["VisualMatch"] | null;
+            cloaking?: components["schemas"]["CloakingCheck"] | null;
             rdap?: components["schemas"]["Rdap"] | null;
             /** Ip */
             ip?: string | null;
@@ -560,6 +605,35 @@ export interface components {
              * @description Set when the page could not be loaded; the engine still scores the URL
              */
             fetch_error?: string | null;
+        };
+        /**
+         * Fingerprints
+         * @description Traits that link sites run by the same people (scam network).
+         */
+        Fingerprints: {
+            /**
+             * Favicon Mmh3
+             * @description Shodan favicon hash: search http.favicon.hash:<value>
+             */
+            favicon_mmh3?: number | null;
+            /** Favicon Sha256 */
+            favicon_sha256?: string | null;
+            /**
+             * Dom Hash
+             * @description Page template (tag structure) hash
+             */
+            dom_hash?: string | null;
+            /**
+             * Screenshot Dhash
+             * @description 64-bit look-alike hash of the page
+             */
+            screenshot_dhash?: string | null;
+            /**
+             * Tracking Ids
+             * @description e.g. google_analytics:G-AB12
+             */
+            tracking_ids?: string[];
+            contacts?: components["schemas"]["Contacts"];
         };
         /**
          * FormInfo
@@ -601,7 +675,7 @@ export interface components {
              * Type
              * @enum {string}
              */
-            type: "same_ip" | "same_registration_day" | "same_final_host";
+            type: "same_ip" | "same_registration_day" | "same_final_host" | "same_favicon" | "same_template" | "same_tracker" | "same_contact";
             /** Detail */
             detail: string;
         };
@@ -840,6 +914,23 @@ export interface components {
              * Format: date-time
              */
             scored_at: string;
+        };
+        /**
+         * VisualMatch
+         * @description The page reuses an official brand site's favicon or template on a non-official host.
+         */
+        VisualMatch: {
+            /** Brand */
+            brand: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "same_favicon" | "same_template";
+            /** Reference Url */
+            reference_url?: string | null;
+            /** Reference Screenshot */
+            reference_screenshot?: string | null;
         };
     };
     responses: never;

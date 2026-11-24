@@ -41,6 +41,19 @@ def build_graph(cases: list[Case]) -> Graph:
             groups[("same_final_host", f"Same final host {hostname(ev.final_url)}")].append(
                 case.id
             )
+        fp = ev.fingerprints
+        if fp is None:
+            continue
+        # Fingerprints from Simon's fetcher: the same favicon, page template, tracker account
+        # or contact across domains points to one operator (a hypothesis, not proof).
+        if fp.favicon_mmh3 is not None:
+            groups[("same_favicon", f"Same favicon (Shodan hash {fp.favicon_mmh3})")].append(case.id)
+        if fp.dom_hash:
+            groups[("same_template", f"Same page template {fp.dom_hash}")].append(case.id)
+        for tracker in fp.tracking_ids:
+            groups[("same_tracker", f"Same tracking ID {tracker}")].append(case.id)
+        for handle in fp.contacts.whatsapp + fp.contacts.telegram:
+            groups[("same_contact", f"Same contact {handle}")].append(case.id)
 
     edges = [
         GraphEdge(source=a, target=b, type=edge_type, detail=detail)

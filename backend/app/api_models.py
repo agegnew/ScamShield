@@ -11,7 +11,15 @@ from .contracts import Candidate, Evidence, Label, Reason, Source, Verdict
 
 CaseStatus = Literal["new", "confirmed", "dismissed"]
 CheckVerdict = Literal["FRAUD", "SUSPICIOUS", "LEGIT", "UNKNOWN"]
-EdgeType = Literal["same_ip", "same_registration_day", "same_final_host"]
+EdgeType = Literal[
+    "same_ip",
+    "same_registration_day",
+    "same_final_host",
+    "same_favicon",
+    "same_template",
+    "same_tracker",
+    "same_contact",
+]
 
 
 class Health(BaseModel):

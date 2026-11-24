@@ -69,11 +69,12 @@ After `export_contract`, regenerate the UI types from the repo root:
 | `app/workers/enrich.py` | **Simon** | RDAP, `.ae` WHOIS, DNS, IP → ASN + hosting + abuse contact, shared-hosting flag |
 | `app/workers/radar/*.py` | **Simon** | `lookalikes`, `ct` (crt.sh), `nrd` (new domains), `search`, `maps` (+ `serp.py` helpers) |
 | `app/brand_match.py` | **Simon** | Which brand a host names (used by radars and engine) |
+| `app/workers/evidence.py`, `fingerprint.py`, `cloaking.py`, `references.py` | **Simon** | Evidence collector, site fingerprints, desktop-vs-phone cloaking check, visual match against official sites |
 | `app/workers/safety.py`, `pipeline.py`, `runner.py` | Agegnew | SSRF guard, job handlers, worker loop |
 | `app/engine/` | Agegnew + Claude | Detection engine: `core.py` (score), `checks.py` (rules), `model.py` + `features.py` (URL model), `feeds.py` (PhishTank/OpenPhish, refreshed hourly by the worker), `lists.py` |
 | `app/db.py`, `repo.py`, `jobs.py` | Agegnew | Tables, case storage, job queue |
 | `app/routes/`, `api_models.py`, `auth.py` | Agegnew | HTTP API |
-| `app/graph.py`, `takedown.py`, `messages.py` | Agegnew | Network graph, takedown email, EN/AR text |
+| `app/graph.py`, `takedown.py`, `messages.py` | Agegnew | Network graph (IP, registration day, favicon, template, tracker, contact), takedown email, EN/AR text |
 | `app/mock/data.py` | Agegnew | Demo cases |
 | `../data/brands.json` | **Samri** | Brand registry |
 | `../data/scam_themes.json` | **Samri** | Scam types that don't copy one brand: keywords + search queries |

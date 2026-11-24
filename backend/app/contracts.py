@@ -145,6 +145,53 @@ class DownloadSignal(BaseModel):
     text: str | None = None
 
 
+class Contacts(BaseModel):
+    phones: list[str] = Field(default_factory=list)
+    whatsapp: list[str] = Field(default_factory=list)
+    telegram: list[str] = Field(default_factory=list)
+    emails: list[str] = Field(default_factory=list)
+
+
+class Fingerprints(BaseModel):
+    """Traits that link sites run by the same people (scam network)."""
+
+    favicon_mmh3: int | None = Field(
+        default=None, description="Shodan favicon hash: search http.favicon.hash:<value>"
+    )
+    favicon_sha256: str | None = None
+    dom_hash: str | None = Field(default=None, description="Page template (tag structure) hash")
+    screenshot_dhash: str | None = Field(default=None, description="64-bit look-alike hash of the page")
+    tracking_ids: list[str] = Field(default_factory=list, description="e.g. google_analytics:G-AB12")
+    contacts: Contacts = Field(default_factory=Contacts)
+
+
+class VisualMatch(BaseModel):
+    """The page reuses an official brand site's favicon or template on a non-official host."""
+
+    brand: str
+    kind: Literal["same_favicon", "same_template"]
+    reference_url: str | None = None
+    reference_screenshot: str | None = None
+
+
+class DesktopVisit(BaseModel):
+    final_url: str | None = None
+    http_status: int | None = None
+    title: str | None = None
+    screenshot_path: str | None = None
+    fetch_error: str | None = None
+
+
+class CloakingCheck(BaseModel):
+    """Second visit as a foreign desktop browser, compared with the UAE phone visit."""
+
+    signals: list[str] = Field(
+        default_factory=list,
+        description="desktop_blocked | different_destination | forms_hidden_from_desktop | different_page",
+    )
+    desktop: DesktopVisit | None = None
+
+
 class Rdap(BaseModel):
     created: datetime | None = None
     registrar: str | None = None
@@ -155,6 +202,7 @@ class Evidence(BaseModel):
     """What the fetcher and enrichment saw for one URL."""
 
     url: str
+    profile: str = Field(default="mobile_ae", description="Browser profile used for the visit")
     final_url: str | None = None
     redirect_chain: list[RedirectHop] = Field(default_factory=list)
     http_status: int | None = None
@@ -169,6 +217,9 @@ class Evidence(BaseModel):
     text_excerpt: str | None = Field(default=None, description="First ~2000 chars of visible text")
     forms: list[FormInfo] = Field(default_factory=list)
     download_signals: list[DownloadSignal] = Field(default_factory=list)
+    fingerprints: Fingerprints | None = None
+    visual_match: VisualMatch | None = None
+    cloaking: CloakingCheck | None = None
     rdap: Rdap | None = None
     ip: str | None = None
     asn: int | None = None

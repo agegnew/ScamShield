@@ -9,15 +9,14 @@ from .. import jobs
 from ..brands import load_registry
 from ..engine import feeds
 from ..repo import CaseRepo
-from . import enrich as enrichment
-from . import fetcher
+from . import evidence as collector
 from .radar import SOURCES
 
 log = logging.getLogger("scamshield.pipeline")
 
 
 def run_fetch(session: Session, url: str) -> None:
-    """Fetch + enrich + score one URL and save the result on its case.
+    """Fetch + enrich + visual match + cloaking check, then score and save on the case.
 
     The fetcher checks every request against the SSRF guard and returns Evidence with
     fetch_error for offline or blocked sites; enrichment still adds WHOIS/DNS for offline ones.
@@ -28,7 +27,7 @@ def run_fetch(session: Session, url: str) -> None:
         log.warning("fetch job for unknown URL %s, skipping", url)
         return
 
-    evidence = enrichment.enrich(fetcher.fetch(url))
+    evidence = collector.collect(url)
     verdict = detection.score(url, evidence=evidence, candidate=case.candidate)
     repo.save_analysis(case.id, evidence, verdict)
     log.info("scored %s -> %s %s", url, verdict.verdict.value, verdict.score)
