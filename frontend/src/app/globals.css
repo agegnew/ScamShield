@@ -288,3 +288,12 @@ a {
   transform-origin: center;
   animation: blip-ping 2.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
+
+/* Network: dashes travel along each link toward the shared fingerprint */
+@keyframes link-flow {
+  to { stroke-dashoffset: -24; }
+}
+.link-flow {
+  stroke-dasharray: 3 9;
+  animation: link-flow 1.4s linear infinite;
+}

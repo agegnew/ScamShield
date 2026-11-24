@@ -15,7 +15,8 @@ import { cn, fmtAgo } from "@/lib/utils";
 
 export type ScopeItem = CaseSummary & { brand_category?: string | null };
 
-const COLOR = { FRAUD: "#ff6b6b", SUSPICIOUS: "#f5b93f", LEGIT: "#34d399" } as const;
+export const SCOPE_COLOR = { FRAUD: "#ff6b6b", SUSPICIOUS: "#f5b93f", LEGIT: "#34d399" } as const;
+const COLOR = SCOPE_COLOR;
 const ICON = { FRAUD: Ban, SUSPICIOUS: TriangleAlert, LEGIT: ShieldCheck } as const;
 
 // One-word sector names for the scope's edge; the full name is in the hover card and the filter chips.

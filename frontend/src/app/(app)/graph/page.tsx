@@ -1,61 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { ChevronRight, LayoutGrid, Share2 } from "lucide-react";
-import { useGraph, type Graph } from "@/lib/api";
+import { useCallback, useMemo, useState } from "react";
+import { ArrowUpRight, ChevronDown, ChevronRight, Search, X } from "lucide-react";
+import { useBrands, useGraph, type Graph } from "@/lib/api";
 import { useLang } from "@/lib/i18n";
-import { isLocalDemo, toCampaigns } from "@/lib/campaigns";
+import { isLocalDemo, toCampaigns, type Campaign } from "@/lib/campaigns";
+import { L } from "@/lib/radar";
 import { cn } from "@/lib/utils";
-import { verdictHex, VerdictChip } from "@/components/ui/verdict";
-import { ErrorState, Panel, PanelTitle, Skeleton } from "@/components/ui/primitives";
+import { shortBrand } from "@/components/ui/verdict";
+import { ErrorState, Panel, Skeleton } from "@/components/ui/primitives";
+import { SCOPE_COLOR } from "@/components/radar/RadarScope";
+import { Constellation, EDGE_ICON, EDGE_WHY, hubsOf, shortDetail, VerdictPill, type EdgeType } from "@/components/network/Constellation";
 
-/* A small deterministic force layout: enough nodes to show the idea, no library needed. */
-function layout(g: Graph, w: number, h: number) {
-  const n = g.nodes.length;
-  const pos = g.nodes.map((_, i) => {
-    const a = (i / Math.max(1, n)) * Math.PI * 2;
-    return { x: w / 2 + Math.cos(a) * Math.min(w, h) * 0.32, y: h / 2 + Math.sin(a) * Math.min(w, h) * 0.32, vx: 0, vy: 0 };
-  });
-  const idx = new Map(g.nodes.map((nd, i) => [nd.id, i]));
-  for (let iter = 0; iter < 300; iter++) {
-    for (let i = 0; i < n; i++)
-      for (let j = i + 1; j < n; j++) {
-        const dx = pos[j].x - pos[i].x;
-        const dy = pos[j].y - pos[i].y;
-        const d2 = Math.max(100, dx * dx + dy * dy);
-        const f = 9000 / d2;
-        const d = Math.sqrt(d2);
-        pos[i].vx -= (dx / d) * f;
-        pos[i].vy -= (dy / d) * f;
-        pos[j].vx += (dx / d) * f;
-        pos[j].vy += (dy / d) * f;
-      }
-    for (const e of g.edges) {
-      const a = idx.get(e.source);
-      const b = idx.get(e.target);
-      if (a === undefined || b === undefined) continue;
-      const dx = pos[b].x - pos[a].x;
-      const dy = pos[b].y - pos[a].y;
-      const d = Math.max(1, Math.hypot(dx, dy));
-      const f = (d - 130) * 0.02;
-      pos[a].vx += (dx / d) * f;
-      pos[a].vy += (dy / d) * f;
-      pos[b].vx -= (dx / d) * f;
-      pos[b].vy -= (dy / d) * f;
-    }
-    for (const p of pos) {
-      p.vx += (w / 2 - p.x) * 0.003;
-      p.vy += (h / 2 - p.y) * 0.003;
-      p.x = Math.max(60, Math.min(w - 60, p.x + p.vx * 0.5));
-      // Leave room under the bottom row for the label (circle radius up to 26 + label offset 14).
-      p.y = Math.max(40, Math.min(h - 56, p.y + p.vy * 0.5));
-      p.vx *= 0.6;
-      p.vy *= 0.6;
-    }
-  }
-  return pos;
-}
+/* Scam network: operations (sites tied together by a shared fingerprint) drawn as constellations,
+   then every site still working alone, grouped by the brand it copies. */
+
+type Node = Graph["nodes"][number];
+const EDGE_TYPES: EdgeType[] = ["same_template", "same_ip", "same_favicon", "same_contact", "same_tracker", "same_registration_day", "same_final_host"];
+const colorOf = (v: string) => SCOPE_COLOR[v as keyof typeof SCOPE_COLOR] ?? "#b7b2ad";
 
 function DomainName({ domain, className }: { domain: string; className?: string }) {
   const { t } = useLang();
@@ -71,235 +34,363 @@ function DomainName({ domain, className }: { domain: string; className?: string 
 }
 
 export default function GraphPage() {
-  const { t } = useLang();
+  const { t, lang, pick } = useLang();
   const { data: full, error, isLoading, mutate } = useGraph();
-  const [view, setView] = useState<"groups" | "map">("groups");
+  const { data: brands } = useBrands();
   const { campaigns, unlinked } = useMemo(() => toCampaigns(full), [full]);
+  const brandName = useCallback(
+    (id: string | null) => {
+      if (!id) return null;
+      const b = brands?.find((x) => x.id === id);
+      return b ? shortBrand(pick(b as unknown as Record<string, unknown>, "name")) : id;
+    },
+    [brands, pick],
+  );
+
+  const linked = campaigns.reduce((n, c) => n + c.nodes.length, 0);
+  const typeCounts = useMemo(() => {
+    const m = new Map<EdgeType, number>();
+    for (const e of full?.edges ?? []) m.set(e.type, (m.get(e.type) ?? 0) + 1);
+    return m;
+  }, [full]);
+
+  if (error) return <ErrorState error={error} onRetry={() => mutate()} />;
 
   return (
-    <div className="mx-auto max-w-6xl">
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-3 pt-2">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-ink">{t("graphTitle")}</h1>
-          <p className="mt-1 max-w-2xl text-muted">{t("graphSub")}</p>
-        </div>
-        <div role="tablist" aria-label={t("graphTitle")} className="inline-flex rounded-full bg-surface-2 p-1">
-          {(
+    <div className="mx-auto max-w-7xl">
+      {/* Headline: the finding, not the page name */}
+      <header className="rise-in pt-2">
+        <p className="inline-flex items-center gap-2 text-sm font-bold text-primary">
+          <span aria-hidden className="radar-dot inline-block size-2 rounded-full bg-accent" />
+          {t("graphTitle")}
+        </p>
+        {isLoading || !full ? (
+          <Skeleton className="mt-3 h-10 w-2/3" />
+        ) : (
+          <h1 className="mt-2 max-w-4xl text-3xl font-extrabold leading-tight tracking-tight text-ink sm:text-4xl">
+            {campaigns.length ? (
+              <>
+                <span className="text-[#ff6b6b]">
+                  {campaigns.length === 1
+                    ? L(["{n} sites are run by the same people.", "{n} مواقع تديرها الجهة نفسها."], lang).replace("{n}", String(linked))
+                    : L(["{n} sites belong to {k} operations.", "{n} موقعًا تنتمي إلى {k} عمليات."], lang).replace("{n}", String(linked)).replace("{k}", String(campaigns.length))}
+                </span>{" "}
+                <span className="text-ink-2">{L(["{m} more work alone, for now.", "و{m} موقعًا آخر يعمل منفردًا حتى الآن."], lang).replace("{m}", unlinked.length.toLocaleString("en"))}</span>
+              </>
+            ) : (
+              L(["No shared infrastructure yet.", "لا توجد بنية مشتركة بعد."], lang)
+            )}
+          </h1>
+        )}
+        <p className="mt-3 max-w-3xl text-ink-2">
+          {L(
             [
-              ["groups", t("viewGroups"), LayoutGrid],
-              ["map", t("viewMap"), Share2],
-            ] as const
-          ).map(([v, label, Icon]) => (
-            <button
-              key={v}
-              role="tab"
-              type="button"
-              aria-selected={view === v}
-              onClick={() => setView(v)}
-              className={cn("inline-flex h-9 items-center gap-1.5 rounded-full px-4 text-sm font-bold", view === v ? "bg-surface text-ink shadow-sm" : "text-muted")}
-            >
-              <Icon aria-hidden className="size-4" />
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
+              "Scammers reuse their tools. When two fake sites share a server, a page template, an icon or a phone number, we tie them together, so police can take down the whole operation instead of one site at a time.",
+              "المحتالون يعيدون استخدام أدواتهم. عندما يتشارك موقعان مزيفان خادمًا أو قالب صفحة أو أيقونة أو رقم هاتف نربطهما معًا، لتتمكن الشرطة من إيقاف العملية كلها لا موقعًا واحدًا في كل مرة.",
+            ],
+            lang,
+          )}
+        </p>
+      </header>
 
-      {error ? (
-        <ErrorState error={error} onRetry={() => mutate()} />
-      ) : isLoading || !full ? (
-        <Skeleton className="h-[520px] rounded-[16px]" />
-      ) : view === "groups" ? (
-        <Groups campaigns={campaigns} unlinked={unlinked} />
+      {/* The seven fingerprints we compare */}
+      <section aria-label={L(["How sites get linked", "كيف تُربط المواقع"], lang)} className="mt-6">
+        <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4 xl:grid-cols-7">
+          {EDGE_TYPES.map((ty) => {
+            const Icon = EDGE_ICON[ty];
+            const n = typeCounts.get(ty) ?? 0;
+            return (
+              <li key={ty} title={L(EDGE_WHY[ty], lang)} className={cn("ops-panel flex items-center gap-2.5 rounded-2xl border border-line bg-surface px-3 py-2.5", n === 0 && "opacity-55")}>
+                <span className={cn("grid size-9 shrink-0 place-items-center rounded-xl", n ? "bg-primary/15 text-primary" : "bg-surface-2 text-muted")}>
+                  <Icon aria-hidden className="size-[18px]" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-xs font-bold leading-tight text-ink-2">{t(`edge_${ty}` as Parameters<typeof t>[0])}</span>
+                  <span className="ltr block text-lg font-extrabold leading-tight tabular-nums text-ink">
+                    {n} <span className="text-xs font-bold text-muted">{L(n === 1 ? ["link", "رابط"] : ["links", "روابط"], lang)}</span>
+                  </span>
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      {isLoading || !full ? (
+        <Skeleton className="mt-6 h-[480px] rounded-[20px]" />
       ) : (
-        <MapView full={full} campaigns={campaigns} unlinked={unlinked} />
+        <>
+          <section className="mt-8">
+            <h2 className="text-xl font-extrabold text-ink">{L(["Operations", "العمليات"], lang)}</h2>
+            <p className="mt-1 text-sm text-muted">{L(["Point at a site or a fingerprint to see it. Click a site to open the case.", "أشر إلى موقع أو بصمة لرؤيتها. انقر على موقع لفتح الحالة."], lang)}</p>
+            {campaigns.length === 0 ? (
+              <p className="mt-3 rounded-[20px] border border-dashed border-line-2 p-8 text-center text-sm text-muted">{t("noEdges")}</p>
+            ) : (
+              <div className="mt-4 flex flex-col gap-5">
+                {campaigns.map((c, i) => (
+                  <Operation key={i} index={i} c={c} brandName={brandName} />
+                ))}
+              </div>
+            )}
+          </section>
+
+          {unlinked.length > 0 && <Alone nodes={unlinked} brandName={brandName} />}
+        </>
       )}
     </div>
   );
 }
 
-function Groups({ campaigns, unlinked }: ReturnType<typeof toCampaigns>) {
-  const { t } = useLang();
+/* ---- one operation: constellation + dossier ---- */
+
+function Operation({ index, c, brandName }: { index: number; c: Campaign; brandName: (id: string | null) => string | null }) {
+  const { t, lang } = useLang();
+  const hubs = useMemo(() => hubsOf(c), [c]);
+  const brandsHit = [...new Set(c.nodes.map((n) => brandName(n.brand_target)).filter(Boolean))] as string[];
+  const verdicts = (["FRAUD", "SUSPICIOUS", "LEGIT"] as const).map((v) => [v, c.nodes.filter((n) => n.verdict === v).length] as const).filter(([, n]) => n > 0);
+  const top = c.nodes[0];
+  const stats: [string, number, string][] = [
+    [L(["Sites", "مواقع"], lang), c.nodes.length, "#e3f2ec"],
+    [L(["Top risk", "أعلى خطورة"], lang), c.maxScore, colorOf(top?.verdict ?? "")],
+    [L(["Fingerprints", "بصمات"], lang), hubs.length, "#2ee59d"],
+  ];
+
   return (
-    <div className="flex flex-col gap-6">
-      <section>
-        <PanelTitle hint={t("campaignsSub")}>{t("campaignsTitle")}</PanelTitle>
-        {campaigns.length === 0 ? (
-          <p className="mt-3 rounded-[16px] border border-dashed border-line-2 p-8 text-center text-sm text-muted">{t("noEdges")}</p>
-        ) : (
-          <div className="mt-3 grid gap-4 lg:grid-cols-2">
-            {campaigns.map((c, i) => {
-              const details = [...new Map(c.edges.map((e) => [`${e.type}|${e.detail}`, e])).values()];
+    <div className="rise-in" style={{ animationDelay: `${index * 80}ms` }}>
+      <Panel className="ops-glow grid overflow-visible p-0 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="relative border-b border-line p-3 sm:p-6 lg:border-b-0 lg:border-e">
+          <Constellation campaign={c} brandName={brandName} />
+        </div>
+
+        <div className="flex flex-col p-5">
+          <p className="text-xs font-bold text-muted">{L(["Operation {n}", "العملية {n}"], lang).replace("{n}", String(index + 1))}</p>
+          <h3 className="mt-1 text-xl font-extrabold leading-snug text-ink">
+            {brandsHit.length ? L(["Copies {b}", "تقلّد {b}"], lang).replace("{b}", brandsHit.slice(0, 3).join(lang === "ar" ? "، " : ", ")) : L(["No brand named", "بدون علامة"], lang)}
+          </h3>
+
+          <dl className="mt-4 grid grid-cols-3 gap-2 text-center">
+            {stats.map(([label, n, col]) => (
+              <div key={label} className="flex flex-col-reverse rounded-xl bg-surface-2 px-2 py-2.5">
+                <dt className="text-[11px] font-bold text-muted">{label}</dt>
+                <dd className="ltr text-2xl font-extrabold tabular-nums" style={{ color: col }}>
+                  {n}
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <div className="mt-3 flex flex-wrap gap-3">
+            {verdicts.map(([v, n]) => (
+              <span key={v} className="inline-flex items-center gap-1.5 text-xs font-bold text-ink-2">
+                <VerdictPill verdict={v} />
+                <span className="ltr tabular-nums">{n}</span>
+              </span>
+            ))}
+          </div>
+
+          <h4 className="mt-5 text-sm font-extrabold text-ink">{L(["What ties them together", "ما يربطها معًا"], lang)}</h4>
+          <ul className="mt-2 flex flex-col gap-2">
+            {hubs.map((h) => {
+              const Icon = EDGE_ICON[h.type];
               return (
-                <Panel key={i} className="p-4 sm:p-5">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h2 className="text-lg font-extrabold text-ink">
-                      {t("campaign", { n: i + 1 })} <span className="text-muted">·</span> <span className="text-ink-2">{t("campaignDomains", { n: c.nodes.length })}</span>
-                    </h2>
-                    <div className="flex flex-wrap gap-1.5">
-                      {c.types.map((ty) => (
-                        <span key={ty} className="rounded-full bg-primary-soft px-2.5 py-1 text-xs font-bold text-primary">
-                          {t(`edge_${ty}` as Parameters<typeof t>[0])}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <ul className="mt-3 flex flex-col">
-                    {c.nodes.map((n, j) => (
-                      <li key={n.id} className={cn(j > 0 && "border-t border-line")}>
-                        <Link href={`/cases/${n.id}`} className="group flex items-center gap-3 rounded-xl px-2 py-2.5 hover:bg-surface-2">
-                          <VerdictChip verdict={n.verdict} size="sm" />
-                          <span className="ltr text-xs font-bold tabular-nums text-muted">{n.score}</span>
-                          <DomainName domain={n.domain} className="min-w-0 flex-1 truncate text-sm font-extrabold text-ink" />
-                          <ChevronRight aria-hidden className="size-4 text-muted rtl:rotate-180" />
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                  <details className="group mt-2 border-t border-line pt-2">
-                    <summary className="cursor-pointer list-none text-sm font-bold text-ink-2 hover:text-ink">
-                      {t(details.length === 1 ? "link1" : "links", { n: details.length })}
-                    </summary>
-                    <ul className="mt-2 flex flex-col gap-1.5">
-                      {details.map((e, k) => (
-                        <li key={k} className="flex flex-wrap items-baseline gap-2 text-xs">
-                          <span className="rounded-full bg-surface-2 px-2 py-0.5 font-bold text-ink-2">{t(`edge_${e.type}` as Parameters<typeof t>[0])}</span>
-                          <span className="ltr break-all text-muted">{e.detail}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
-                </Panel>
+                <li key={h.key} className="flex gap-2.5 rounded-xl border border-line bg-surface-2/60 p-2.5">
+                  <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
+                    <Icon aria-hidden className="size-4" />
+                  </span>
+                  <span className="min-w-0 text-xs">
+                    <span className="block font-extrabold text-ink">
+                      {t(`edge_${h.type}` as Parameters<typeof t>[0])} <span className="ltr font-bold text-muted">· {shortDetail(h.detail)}</span>
+                    </span>
+                    <span className="mt-0.5 block leading-snug text-ink-2">{L(EDGE_WHY[h.type], lang)}</span>
+                  </span>
+                </li>
               );
             })}
-          </div>
-        )}
-      </section>
+          </ul>
 
-      {unlinked.length > 0 && (
-        <section>
-          <PanelTitle hint={t("unlinkedSub")}>
-            {t("unlinkedTitle")} <span className="ltr text-muted tabular-nums">({unlinked.length})</span>
-          </PanelTitle>
-          <ul className="mt-3 grid gap-x-4 rounded-[16px] border border-line bg-surface p-2 sm:grid-cols-2 lg:grid-cols-3">
-            {unlinked.map((n) => (
+          <h4 className="mt-5 text-sm font-extrabold text-ink">{L(["Sites", "المواقع"], lang)}</h4>
+          <ul className="mt-1 flex flex-col">
+            {c.nodes.map((n) => (
               <li key={n.id}>
-                <Link href={`/cases/${n.id}`} className="flex items-center gap-2.5 rounded-xl px-2 py-2 hover:bg-surface-2">
-                  <VerdictChip verdict={n.verdict} size="sm" />
+                <Link href={`/cases/${n.id}`} className="group flex items-center gap-2.5 rounded-lg px-1.5 py-1.5 hover:bg-surface-2">
+                  <span aria-hidden className="size-2 shrink-0 rounded-full" style={{ background: colorOf(n.verdict), boxShadow: `0 0 8px ${colorOf(n.verdict)}` }} />
                   <DomainName domain={n.domain} className="min-w-0 flex-1 truncate text-sm font-bold text-ink" />
-                  <span className="ltr text-xs tabular-nums text-muted">{n.score}</span>
+                  <span className="ltr text-xs font-bold tabular-nums" style={{ color: colorOf(n.verdict) }}>
+                    {n.score}
+                  </span>
+                  <ChevronRight aria-hidden className="size-4 text-muted rtl:rotate-180" />
                 </Link>
               </li>
             ))}
           </ul>
-        </section>
-      )}
+
+          {top && (
+            <Link href={`/cases/${top.id}`} className="mt-5 inline-flex items-center justify-center gap-1.5 rounded-full bg-primary px-4 py-2.5 text-sm font-extrabold text-primary-ink hover:brightness-110">
+              {L(["Open the highest-risk case", "افتح الحالة الأعلى خطورة"], lang)}
+              <ArrowUpRight aria-hidden className="size-4 rtl:-scale-x-100" />
+            </Link>
+          )}
+        </div>
+      </Panel>
     </div>
   );
 }
 
-/* The map draws only linked domains, so the groups stand out; lone domains stay in the side list. */
-function MapView({ full, campaigns, unlinked }: { full: Graph } & ReturnType<typeof toCampaigns>) {
-  const { t } = useLang();
-  const [sel, setSel] = useState<string | null>(null);
-  const W = 860;
-  const H = 520;
-  const data = useMemo<Graph>(() => {
-    const ids = new Set(campaigns.flatMap((c) => c.nodes.map((n) => n.id)));
-    return { nodes: full.nodes.filter((n) => ids.has(n.id)), edges: full.edges.filter((e) => ids.has(e.source) && ids.has(e.target)) };
-  }, [full, campaigns]);
-  const pos = useMemo(() => layout(data, W, H), [data]);
-  const isLoading = false;
+/* ---- lone sites: a mosaic by brand, one dot per site ---- */
 
-  const idx = new Map(data.nodes.map((n, i) => [n.id, i]));
-  const connected = new Set(sel ? (data?.edges ?? []).filter((e) => e.source === sel || e.target === sel).flatMap((e) => [e.source, e.target]) : []);
-  const selEdges = sel ? (data?.edges ?? []).filter((e) => e.source === sel || e.target === sel) : [];
-  const selNode = data?.nodes.find((n) => n.id === sel);
+function Alone({ nodes, brandName }: { nodes: Node[]; brandName: (id: string | null) => string | null }) {
+  const { lang } = useLang();
+  const [q, setQ] = useState("");
+  const [open, setOpen] = useState<string | null>(null);
+  const [all, setAll] = useState(false);
+
+  const tiles = useMemo(() => {
+    const m = new Map<string, Node[]>();
+    for (const n of nodes) {
+      const k = n.brand_target ?? "";
+      m.set(k, [...(m.get(k) ?? []), n]);
+    }
+    const fraud = (l: Node[]) => l.filter((n) => n.verdict === "FRAUD").length;
+    return [...m.entries()]
+      .map(([k, list]) => ({ k, name: k ? brandName(k) ?? k : L(["No brand named", "بدون علامة"], lang), list: [...list].sort((a, b) => b.score - a.score) }))
+      .sort((a, b) => fraud(b.list) - fraud(a.list) || b.list.length - a.list.length);
+  }, [nodes, brandName, lang]);
+
+  const hits = q.trim() ? nodes.filter((n) => n.domain.toLowerCase().includes(q.trim().toLowerCase())).slice(0, 60) : null;
+  const shown = all ? tiles : tiles.slice(0, 12);
 
   return (
-    <div>
-      {isLoading ? (
-        <Skeleton className="h-[520px] rounded-[16px]" />
-      ) : (
-        <div className="grid gap-4 lg:grid-cols-[1fr_20rem]">
-          <Panel className="overflow-hidden p-2">
-            <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label={t("graphTitle")} style={{ direction: "ltr" }}>
-              {data.edges.map((e, i) => {
-                const a = idx.get(e.source);
-                const b = idx.get(e.target);
-                if (a === undefined || b === undefined) return null;
-                const hot = sel === e.source || sel === e.target;
-                return <line key={i} x1={pos[a].x} y1={pos[a].y} x2={pos[b].x} y2={pos[b].y} stroke={hot ? "var(--primary)" : "var(--line-2)"} strokeWidth={hot ? 3 : 1.5} strokeOpacity={sel && !hot ? 0.3 : 1} />;
-              })}
-              {data.nodes.map((n, i) => {
-                const dim = sel && sel !== n.id && !connected.has(n.id);
-                const r = 14 + (n.score / 100) * 12;
-                return (
-                  <g key={n.id} transform={`translate(${pos[i].x},${pos[i].y})`} opacity={dim ? 0.3 : 1} className="cursor-pointer" onClick={() => setSel(sel === n.id ? null : n.id)} tabIndex={0} role="button" aria-label={`${n.domain}: ${t(n.verdict)} ${n.score}`} onKeyDown={(e) => e.key === "Enter" && setSel(sel === n.id ? null : n.id)}>
-                    <circle r={r} fill={verdictHex[n.verdict]} fillOpacity={0.15} stroke={verdictHex[n.verdict]} strokeWidth={sel === n.id ? 4 : 2} />
-                    <text y={r + 14} textAnchor="middle" fontSize={11} fontWeight={700} fill="var(--ink)">
-                      {/* Long hacked-site names would run into their neighbours; the side list has the full name. */}
-                      {isLocalDemo(n.domain) ? t("localDemo") : n.domain.length > 20 ? `${n.domain.slice(0, 17)}…` : n.domain}
-                    </text>
-                  </g>
-                );
-              })}
-            </svg>
-          </Panel>
-
-          <Panel className="p-4">
-            {selNode ? (
-              <>
-                <VerdictChip verdict={selNode.verdict} />
-                <h2 className="mt-2 break-all text-lg font-extrabold">
-                  <DomainName domain={selNode.domain} />
-                </h2>
-                <Link href={`/cases/${selNode.id}`} className="text-sm font-bold text-primary underline">
-                  {t("openCase")}
-                </Link>
-                <p className="mt-4 text-xs font-bold text-muted">{t(selEdges.length === 1 ? "link1" : "links", { n: selEdges.length })}</p>
-                <ul className="mt-2 flex flex-col gap-2">
-                  {selEdges.map((e, i) => {
-                    const other = data.nodes.find((n) => n.id === (e.source === sel ? e.target : e.source));
-                    return (
-                      <li key={i} className="rounded-xl bg-surface-2 p-2.5 text-sm">
-                        <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs font-bold text-primary">{t(`edge_${e.type}`)}</span>
-                        <p className="mt-1 font-bold">{other && <DomainName domain={other.domain} />}</p>
-                        <p className="ltr text-xs text-muted">{e.detail}</p>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </>
-            ) : (
-              <>
-                <PanelTitle>{t(data.edges.length === 1 ? "link1" : "links", { n: data.edges.length })}</PanelTitle>
-                {data.edges.length === 0 ? (
-                  <p className="mt-2 text-sm text-muted">{t("noEdges")}</p>
-                ) : (
-                  <ul className="mt-3 flex flex-col gap-1.5">
-                    {data.nodes.map((n) => (
-                      <li key={n.id}>
-                        <button type="button" onClick={() => setSel(n.id)} className={cn("flex w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-start hover:bg-surface-2")}>
-                          <DomainName domain={n.domain} className="truncate text-sm font-bold" />
-                          <span className="ltr text-xs tabular-nums" style={{ color: verdictHex[n.verdict] }}>
-                            {n.score}
-                          </span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {unlinked.length > 0 && (
-                  <p className="mt-4 border-t border-line pt-3 text-xs text-muted">
-                    {t("unlinkedTitle")}: <span className="font-bold tabular-nums">{unlinked.length}</span>
-                  </p>
-                )}
-              </>
+    <section className="mt-10">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="min-w-0">
+          <h2 className="text-xl font-extrabold text-ink">
+            {L(["Working alone", "تعمل منفردة"], lang)} <span className="ltr text-muted tabular-nums">({nodes.length.toLocaleString("en")})</span>
+          </h2>
+          <p className="mt-1 max-w-2xl text-sm text-muted">
+            {L(
+              [
+                "Not tied to other sites yet, grouped by the brand they copy. Each dot is one site: point at it to see the name, click to open it.",
+                "غير مرتبطة بمواقع أخرى بعد، مجمّعة حسب العلامة التي تقلّدها. كل نقطة موقع: أشر إليها لرؤية الاسم وانقر لفتحها.",
+              ],
+              lang,
             )}
-          </Panel>
+          </p>
         </div>
+        <label className="relative w-full sm:w-72">
+          <span className="sr-only">{L(["Find a domain", "ابحث عن نطاق"], lang)}</span>
+          <Search aria-hidden className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={L(["Find a domain", "ابحث عن نطاق"], lang)}
+            className="h-10 w-full rounded-full border border-line-2 bg-surface ps-9 pe-9 text-sm font-semibold text-ink placeholder:text-muted focus:border-primary"
+          />
+          {q && (
+            <button type="button" onClick={() => setQ("")} aria-label={L(["Clear", "مسح"], lang)} className="absolute end-2 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full text-muted hover:bg-surface-2">
+              <X aria-hidden className="size-4" />
+            </button>
+          )}
+        </label>
+      </div>
+
+      {hits ? (
+        <Panel className="mt-4 p-2">
+          {hits.length === 0 ? <p className="p-6 text-center text-sm text-muted">{L(["No domain matches.", "لا يوجد نطاق مطابق."], lang)}</p> : <SiteList list={hits} />}
+        </Panel>
+      ) : (
+        <>
+          <ul className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {shown.map((tile) => {
+              const isOpen = open === tile.k;
+              const f = tile.list.filter((n) => n.verdict === "FRAUD").length;
+              const s = tile.list.filter((n) => n.verdict === "SUSPICIOUS").length;
+              const total = tile.list.length;
+              return (
+                <li key={tile.k || "none"} className={cn("ops-panel rounded-[18px] border bg-surface p-4 transition-colors", isOpen ? "border-primary/50 sm:col-span-2 xl:col-span-3" : "border-line hover:border-line-2")}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-base font-extrabold text-ink">{tile.name}</p>
+                      <p className="mt-0.5 text-xs font-bold tabular-nums text-muted">
+                        {f > 0 && (
+                          <span className="text-[#ff6b6b]">
+                            {f} {L(["fraud", "احتيال"], lang)}
+                          </span>
+                        )}
+                        {f > 0 && s > 0 && " · "}
+                        {s > 0 && (
+                          <span className="text-[#f5b93f]">
+                            {s} {L(["suspicious", "مشبوه"], lang)}
+                          </span>
+                        )}
+                        {(f > 0 || s > 0) && " · "}
+                        {total} {L(["sites", "مواقع"], lang)}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setOpen(isOpen ? null : tile.k)}
+                      aria-expanded={isOpen}
+                      className="inline-flex shrink-0 items-center gap-1 rounded-full border border-line-2 px-3 py-1.5 text-xs font-bold text-ink-2 hover:bg-surface-2"
+                    >
+                      {isOpen ? L(["Hide", "إخفاء"], lang) : L(["List", "القائمة"], lang)}
+                      <ChevronDown aria-hidden className={cn("size-3.5 transition-transform", isOpen && "rotate-180")} />
+                    </button>
+                  </div>
+                  {/* Verdict split */}
+                  <div aria-hidden className="mt-3 flex h-1.5 gap-0.5 overflow-hidden rounded-full">
+                    {f > 0 && <span style={{ flex: f, background: "#ff6b6b" }} />}
+                    {s > 0 && <span style={{ flex: s, background: "#f5b93f" }} />}
+                    {total - f - s > 0 && <span style={{ flex: total - f - s, background: "#34d399" }} />}
+                  </div>
+                  {/* One dot per site */}
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {tile.list.slice(0, isOpen ? 400 : 48).map((n) => (
+                      <Link
+                        key={n.id}
+                        href={`/cases/${n.id}`}
+                        tabIndex={-1}
+                        aria-hidden
+                        title={`${n.domain} · ${n.score}`}
+                        className="size-3 rounded-full transition-transform hover:scale-150"
+                        style={{ background: colorOf(n.verdict), boxShadow: n.verdict === "FRAUD" ? "0 0 8px #ff6b6b99" : undefined }}
+                      />
+                    ))}
+                    {!isOpen && total > 48 && <span className="ltr text-xs font-bold text-muted">+{total - 48}</span>}
+                  </div>
+                  {isOpen && (
+                    <div className="mt-4 border-t border-line pt-2">
+                      <SiteList list={tile.list} />
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+          {tiles.length > 12 && (
+            <button type="button" onClick={() => setAll(!all)} className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline">
+              {all ? L(["Show fewer brands", "اعرض علامات أقل"], lang) : L(["Show all {n} brands", "اعرض كل العلامات ({n})"], lang).replace("{n}", String(tiles.length))}
+              <ChevronDown aria-hidden className={cn("size-4", all && "rotate-180")} />
+            </button>
+          )}
+        </>
       )}
-    </div>
+    </section>
+  );
+}
+
+function SiteList({ list }: { list: Node[] }) {
+  return (
+    <ul className="grid gap-x-4 sm:grid-cols-2 lg:grid-cols-3">
+      {list.map((n) => (
+        <li key={n.id}>
+          <Link href={`/cases/${n.id}`} className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-surface-2">
+            <span aria-hidden className="size-2 shrink-0 rounded-full" style={{ background: colorOf(n.verdict) }} />
+            <DomainName domain={n.domain} className="min-w-0 flex-1 truncate text-sm font-bold text-ink" />
+            <span className="ltr text-xs font-bold tabular-nums" style={{ color: colorOf(n.verdict) }}>
+              {n.score}
+            </span>
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 }
