@@ -1,12 +1,97 @@
-# ScamShield — MVP Plan & Team Assignments
+# ScamShield
 
-**Updated:** 24 Nov 2026 (kickoff day). **Code freeze:** 00:00. **Submit by:** 06:00 Wed 25 Nov (hard deadline 08:00).
+**Finds UAE scam websites before they find victims.** Team CipherGuard · 42 Abu Dhabi × Abu Dhabi Police hackathon, November 2026.
 
-We win with a working engine that finds UAE-brand scams on its own (Search, Maps, new lookalike domains), scores every URL with reasons in Arabic and English, and exports police-ready evidence.
+ScamShield watches for new websites, certificates, search results and Maps listings that imitate UAE government services, banks and delivery companies. It opens each one the way a UAE resident's phone would, scores it FRAUD / SUSPICIOUS / LEGIT with reasons in Arabic and English, and packages police-ready evidence for a takedown.
 
-> The design docs in `ScamShield-AI-Documentation/` were written before the kickoff. Where they conflict with this file, this file wins.
+> Team plan, task lists and timeline: [docs/PLAN.md](docs/PLAN.md).
 
-## Getting started
+## The problem
+
+Residents receive SMS and WhatsApp links, search ads and Maps listings for "TAMM traffic fines with 90% discount", "UAE PASS verification", "Emirates Post parcel fee" or a "bank customer care" number. The pages copy the real brand, ask for card details, OTP codes or Emirates ID, and often stay online for days. Police and brand owners usually learn about them from victims, after the money is gone.
+
+## What ScamShield does
+
+| | |
+| --- | --- |
+| **Finds them first** (no one pastes anything) | Five radars: lookalike domains of 23 UAE brands that exist in DNS (typos, homoglyphs, brand + bait word), new TLS certificates naming a brand (Certificate Transparency, crt.sh), newly registered domains (daily list), Google Search results and ads, and Google Maps listings with an unofficial website or a fake helpline number |
+| **Looks like a victim** | A headless browser with a UAE phone profile (Arabic, Asia/Dubai) follows short links and redirects, takes a screenshot (SHA-256), reads the text and the form fields (password, card, OTP, Emirates ID), and spots remote-access app and APK pushes. A second visit as a foreign desktop browser detects **cloaking** |
+| **Knows who is behind it** | WHOIS/RDAP (including `.ae`), DNS, IP → ASN, hosting provider and abuse contacts; shared platforms (Vercel, Netlify, …) are recognised so their old WHOIS never makes a scam look trustworthy |
+| **Decides and explains** | A detection engine scores 0–100 with reasons in **English and Arabic**: official-domain allowlist, popular sites, phishing feeds, a URL model, brand lookalikes and typosquats, URL shape, Arabic/English scam wording (10 UAE scam types), page signals, domain age, visual match against the real brand sites, cloaking and the Maps helpline check |
+| **Connects the dots** | A scam-network graph links domains that share an IP, registration day, final host, favicon, page template, tracker ID or WhatsApp/phone contact |
+| **Hands police the evidence** | One-click **PDF evidence report** (A4, English + Arabic: verdict, reasons, screenshot + hash, redirect chain, WHOIS, hosting, related domains, analyst decisions), a JSON evidence bundle, and a takedown email in English and Arabic addressed to the registrar and the host |
+| **Fits the workflow** | Analyst and admin roles (JWT login); every confirm/dismiss is logged with who, when and why. A public citizen checker answers "is this link or phone number safe?" in plain Arabic or English. **Batch mode** scores a file of URLs into a CSV |
+
+## Results
+
+### Held-out test set (URL only)
+
+**11,134 URLs** whose sites never appear in training: 3,000 phishing (PhishTank, OpenPhish, Phishing.Database, PhiUSIIL) and 8,134 legitimate (deep pages of 4,000 popular sites + 230 UAE official pages). URL only, no page fetch.
+
+| Counted as positive | Feeds | Precision | Recall | False-positive rate | F1 | UAE official pages flagged |
+| --- | --- | --- | --- | --- | --- | --- |
+| FRAUD or SUSPICIOUS (score ≥ 30) | off | **0.942** | **0.778** | 1.8% | 0.852 | **0 of 230** |
+| FRAUD or SUSPICIOUS (score ≥ 30) | on | 0.944 | 0.826 | 1.8% | 0.881 | 0 of 230 |
+| FRAUD only (score ≥ 70) | off | 0.995 | 0.514 | 0.09% | 0.678 | 0 of 230 |
+
+"Feeds off" is the honest number: the test set's phishing URLs come from the same feeds, so with lookups on, part of the recall is lookup, not detection. FRAUD is the near-certain tier (7 false positives in 8,134 legitimate URLs); SUSPICIOUS widens the net for analysts. The thresholds come from a sweep on this set: 25 would gain 1.9 points of recall for a 2.1% false-positive rate, 35 would cut false positives by 0.3 points for 1.6 points of recall.
+
+Most misses are phishing homepages with ordinary names (`http://www.jolifm.com`) that a URL alone cannot reveal; the page fetch (screenshot, forms, brand text, domain age) catches those. Reproduce from `backend/`: `python -m scripts.build_dataset`, `python -m scripts.train_url_model`, `python -m scripts.evaluate [--feeds]`.
+
+### Live checks with the full page fetch (24 Nov 2026)
+
+| URL | Verdict | Why |
+| --- | --- | --- |
+| `moi-portal.com` | FRAUD 75 | Domain and page both claim to be the Ministry of Interior, which owns `moi.gov.ae` |
+| `tamm-service.site` | SUSPICIOUS 60 | TAMM lookalike that only shows a parked-domain page: watched, not yet reported |
+| Phishing kits on hacked `.ae` business sites (`sunnysoldesign.ae`, `rallysteelworks.ae`, `baitalarablaundry.ae`) | FRAUD | Reported phishing URL; a years-old domain no longer counts in its favour |
+| `bit.ly` short link from a phishing feed | FRAUD 100 | Followed to the destination |
+| `tamm.abudhabi`, `rta.ae`, `emiratesnbd.com`, `adpolice.gov.ae` | LEGIT 0 | Official domains |
+| Local demo pages: fake TAMM fine payment, fake Emirates NBD login, a motoring blog | FRAUD 100, FRAUD 100, LEGIT 27 | Card + OTP + Emirates ID form, brand on a lookalike domain; the blog only mentions the brands |
+
+## How it works
+
+```mermaid
+flowchart LR
+  R[Radar<br/>lookalikes · crt.sh · new domains<br/>Search + ads · Maps] --> Q[(Job queue<br/>Postgres)]
+  I[Analyst scan · citizen check<br/>batch CSV · API] --> Q
+  Q --> F[Fetch + enrich<br/>UAE phone browser, redirects, screenshot,<br/>forms, WHOIS/RDAP, DNS, ASN, hosting,<br/>fingerprints, cloaking, visual match]
+  B[Brand registry<br/>23 UAE brands, helplines,<br/>10 scam themes EN/AR] --> R
+  B --> E
+  F --> E[Detection engine<br/>score 0-100 + reasons EN/AR]
+  E --> D[(Cases, evidence,<br/>decisions, users)]
+  D --> A[API + dashboard<br/>radar feed · case page · graph<br/>citizen checker · accuracy]
+  D --> X[PDF report · JSON bundle<br/>takedown email EN/AR]
+```
+
+1. A **radar** source (or a person, or the batch tool) adds a URL. It gets a URL-only verdict at once and a fetch job in the queue.
+2. A **worker** opens it through an SSRF guard (every request and redirect is checked; private addresses are refused), then enriches it with ownership and hosting data.
+3. The **engine** turns URL + evidence into a verdict. Every reason carries a weight, an English and an Arabic sentence, and the evidence it points at.
+4. Analysts review cases, confirm or dismiss them, and export the report and takedown request.
+
+Workers scale horizontally (`docker compose up --scale worker=3`); user scans always run before radar finds.
+
+## Tech choices, tools, APIs and data
+
+| Area | Choice | Why |
+| --- | --- | --- |
+| API | Python 3.11, FastAPI, Pydantic, SQLAlchemy | Typed contracts shared by every part; OpenAPI + TypeScript types for the UI |
+| Storage + queue | PostgreSQL (SQLite for local runs), a jobs table with `SKIP LOCKED` | One dependency; no Redis needed |
+| Page fetching | Playwright (Chromium), phone profile `ar-AE` / Asia/Dubai | Sees what a UAE resident sees, including JavaScript redirects |
+| URL model | scikit-learn: character 3–5-grams (hashed) + hand-made URL features → logistic regression (2 MB) | Fast (~1 ms/URL), works for sites that are already offline |
+| Lookalikes | dnstwist permutations + DNS checks | Finds registered lookalikes nobody has reported yet |
+| Ownership and hosting | RDAP (rdap.org), `.ae` WHOIS (aeDA), Team Cymru IP→ASN, RDAP abuse contacts | Free, no keys; gives takedown addresses |
+| Discovery sources | crt.sh (Certificate Transparency), whoisds.com daily new domains, SerpApi (Google Search + Maps, optional key) | Early detection: certificates and registrations appear before victims do |
+| Phishing feeds | PhishTank, OpenPhish (refreshed hourly) | Known-bad lookups |
+| Fingerprints | Favicon hash (Shodan mmh3), DOM-template hash, screenshot dHash, tracker IDs, WhatsApp/Telegram contacts | Scam-network graph and visual match against official sites |
+| Reports | fpdf2 + HarfBuzz text shaping, Noto Sans / Noto Sans Arabic (OFL) | Correct Arabic in a pure-Python PDF, no browser needed in the API |
+| Auth | JWT (PyJWT), scrypt password hashes | Admin and analyst roles, audit log |
+| Data we built | `data/brands.json` (23 UAE brands: official domains, helplines, EN/AR names), `data/scam_themes.json` (10 UAE scam types, EN/AR wording and search queries), `data/references.json` (10 official-site fingerprints) | UAE relevance: the engine, radar and helpline check all read them |
+| Training/test data | PhishTank, OpenPhish, Phishing.Database, PhiUSIIL; Tranco top sites, crawled deep pages; 230 UAE official pages | Test sites never appear in training |
+
+## Build and run
+
+**Docker (recommended)**
 
 ```bash
 git clone https://github.com/agegnew/ScamShield.git
@@ -15,224 +100,63 @@ cp .env.example .env
 docker compose up --build        # Postgres + API + page worker + radar
 ```
 
-API docs at http://localhost:8000/docs. No Docker? See [`backend/README.md`](backend/README.md) (runs on SQLite).
+- API and interactive docs: http://localhost:8000/docs
+- Log in as `admin` / `admin123` or `analyst` / `analyst123` (change them with `SCAMSHIELD_ADMIN_PASSWORD` / `SCAMSHIELD_ANALYST_PASSWORD`).
+- The API starts with 8 labelled sample cases (`SCAMSHIELD_MODE=mock`). For real data set `SCAMSHIELD_MODE=live` and `SCAMSHIELD_SEED_DEMO=1` in `.env`: the database then starts with the real cases scanned for the demo (`data/demo/`), and the radar adds new ones as it runs.
+- Optional: `SERPAPI_KEY` turns on the Search and Maps radars.
 
-| Person | Work in | Start with |
-| --- | --- | --- |
-| Nati | `frontend/` — create the Next.js app there | [`docs/api/README.md`](docs/api/README.md), TypeScript types in [`docs/api/scamshield-api.d.ts`](docs/api/scamshield-api.d.ts), sample JSON in `docs/api/mock/` |
-| Agegnew | `backend/app/` (API, DB, engine) | [`backend/app/engine/core.py`](backend/app/engine/core.py) |
-| Simon | `backend/app/workers/` | [`fetcher.py`](backend/app/workers/fetcher.py), [`enrich.py`](backend/app/workers/enrich.py), [`radar/`](backend/app/workers/radar/) (lookalikes, ct, nrd, search, maps) |
-| Samri | `data/scam_themes.json`, `data/brands.json`, `data/logos/` | Run `python -m scripts.validate_data` (from `backend/`) before committing |
+**Without Docker:** see [backend/README.md](backend/README.md) (SQLite, `uvicorn` + `python -m app.workers.runner`). Tests: `pytest -q` in `backend/` (145 tests).
 
-Pull before you push, keep commits small, and edit only files your lane owns ([ownership table](backend/README.md#who-owns-what)).
+**API contract for the dashboard:** [docs/api/README.md](docs/api/README.md), with TypeScript types and sample JSON for every endpoint.
+<!-- TODO(Nati): add the frontend/ run steps here once the dashboard is in the repo. -->
 
-## How we are judged
+### Batch mode (for a list of URLs)
 
-| Weight | Criterion | What judges check |
-| --- | --- | --- |
-| 30% | Detection accuracy | Precision and recall on a **hidden test set** of fraud and legit URLs. Few false positives on real banks and government sites. Handles redirects, URL shorteners and cloaking |
-| 25% | Early detection and coverage | Newly registered domains, lookalike domains, fresh ads. **Both** Search and Maps, including fake business pages and fake helpline numbers |
-| 20% | Explainability and actionability | Risk score with clear reasons. Evidence: screenshots, WHOIS, hosting data, timestamps. Exportable for takedown |
-| 15% | UAE relevance and innovation | Arabic/bilingual. UAE banks, TAMM, UAE PASS, traffic fines. Visual similarity, LLM analysis, scam-domain network |
-| 10% | Feasibility and presentation | Live demo, scalable design, route to a police pilot, honest about limits |
+From `backend/`:
 
-## MVP scope
-
-At code freeze all seven P0 items run end to end on a laptop, on live data or on clearly labelled fixtures.
-
-**P0 — must ship**
-
-1. **Auto-discovery radar:** lookalike domains of UAE brands, new TLS certificates (crt.sh), Google Search results and ads, Google Maps listings. Nobody pastes anything.
-2. **Detection engine:** every URL gets FRAUD / SUSPICIOUS / LEGIT, a 0–100 score and reasons in English and Arabic, even when the site is already offline.
-3. **Evidence:** screenshot, redirect chain, WHOIS/RDAP, IP and hosting provider, timestamps. Shown on the case page, exported as PDF plus a takedown request.
-4. **Dashboard (EN/AR, full RTL, accessible):** radar feed, cases list, case page, accuracy page.
-5. **Citizen checker:** public page. Paste a link or a phone number, get a plain-language verdict in Arabic or English.
-6. **Users:** admin and analyst roles; analysts confirm or dismiss a case, logged with who, when and why.
-7. **Batch mode + accuracy report:** a list of URLs in, a CSV of verdicts out; our measured precision and recall.
-
-**P1 — only after Gate 3 (21:00), in this order**
-
-1. Scam network graph: domains linked by shared IP, registrar, registration day, favicon or redirect target.
-2. Cloaking check: compare a mobile and a desktop fetch.
-3. LLM vision check: does the page imitate a brand's look on the wrong domain.
-4. Read-aloud verdict on the citizen page, Arabic and English.
-
-**Cut — roadmap slide only:** Chrome extension, phone companion, AR/QR camera, Rescue, SafePay, Redis queues, live push updates.
-
-## Accuracy (measured)
-
-Full engine on a held-out test set of **11,134 URLs** whose sites never appear in training: 3,000 phishing (PhishTank, OpenPhish, Phishing.Database, PhiUSIIL) and 8,134 legit (deep pages of 4,000 popular sites + 230 UAE official pages). URL only, no page fetch, phishing-feed lookups **off** so the number reflects detection, not lookup.
-
-| Precision | Recall | False-positive rate | F1 | UAE official pages flagged |
-| --- | --- | --- | --- | --- |
-| 0.942 | 0.778 | 1.8% | 0.852 | 0 of 230 |
-
-With feed lookups on, recall is 0.824 at the same false-positive rate. The misses are mostly phishing homepages with ordinary names (`http://www.jolifm.com`), which a URL alone cannot reveal; the page fetch (screenshot, forms, brand text, domain age) catches those. Reproduce: `python -m scripts.build_dataset`, `python -m scripts.train_url_model`, `python -m scripts.evaluate` (from `backend/`).
-
-## How it fits together
-
-```mermaid
-flowchart TD
-  subgraph RADAR["Auto-discovery radar · Simon"]
-    L[Lookalikes<br/>typo variants]
-    C[New certs<br/>crt.sh]
-    N[New domains<br/>daily list]
-    S[Search<br/>organic + ads]
-    M[Maps<br/>phone check]
-  end
-  D[Direct input · API<br/>paste URL, citizen check, batch CSV]
-  B[Brand registry · Samri<br/>domains, helplines, EN/AR keywords]
-  F[Fetch + enrich · Simon<br/>shorteners, redirects, screenshot, forms,<br/>WHOIS/RDAP, DNS, IP, ASN, hosting]
-  E[Detection engine · Agegnew + Claude Code<br/>allowlist → threat feeds → URL model → brand lookalike<br/>→ AR/EN scam words → helpline check<br/>→ verdict, score, reasons EN/AR]
-  DB[Database + API · Agegnew<br/>cases, verdicts, evidence, users, graph links]
-  X[Exports · Agegnew<br/>PDF report, takedown email + JSON]
-  subgraph UI["Screens · Nati · EN/AR, accessible"]
-    U1[Radar feed]
-    U2[Case page]
-    U3[Citizen checker]
-    U4[Accuracy page]
-  end
-  B --> RADAR
-  B --> E
-  RADAR --> F
-  D --> F
-  F --> E
-  E --> DB
-  DB --> X
-  DB --> UI
+```bash
+python -m scripts.batch urls.txt -o verdicts.csv                 # URL only: ~11,000 URLs in 25 s
+python -m scripts.batch urls.txt -o verdicts.csv --mode whois    # + domain age and hosting (~5 URLs/s)
+python -m scripts.batch urls.csv -o verdicts.csv --mode full     # + page fetch with screenshots (slow)
 ```
 
-The brand registry feeds both the radar and the engine; every screen reads from one API.
+Input: a `.txt` file with one URL per line, or a `.csv` with a `url` column. Output: `url, verdict, flagged, score, brand_target, final_url, reason_codes, reasons_en, reasons_ar, error` (UTF-8 with BOM, opens in Excel). `flagged` is 1 for FRAUD or SUSPICIOUS. If the input has a `label` column, precision and recall are printed. The same is available as `POST /api/batch` (`?format=csv`).
 
-## Who owns what
+### Demo pages
 
-| Person | Role | Owns | First handoff |
-| --- | --- | --- | --- |
-| Nati | UI/UX and accessibility | Dashboard, citizen checker, EN/AR RTL, design system | UI shell on mock data — 13:00 |
-| Agegnew (+ Claude Code) | Backend, DB, users, engine | API, database, roles, detection engine, URL model, accuracy eval, PDF/takedown | API contract + mock JSON — 11:45 |
-| Simon | Workers and discovery | Job runner, fetcher, enrichment, radar (lookalikes, crt.sh, Search, Maps) | First real URL fetched + screenshot — 13:00 |
-| Samri | Research, creative, pitch | Scam themes + UAE brand registry, branding, demo pages, deck, video, demo script | scam_themes.json + brands.json v1 — 15:00 |
+[demo-pages/](demo-pages/README.md) holds a fake TAMM fine-payment page, a fake Emirates NBD login and a harmless blog, served only on the demo laptop (`docker compose --profile demo up` with `SCAMSHIELD_DEMO_HOSTS` set). They are never put online.
 
-Everyone works on mock data until 17:00 so nobody waits on anyone.
+## Repository
 
-## Task lists
+| Path | What |
+| --- | --- |
+| `backend/app/engine/` | Detection engine: checks, combination rules, URL model, phishing feeds |
+| `backend/app/workers/` | Fetcher, enrichment, fingerprints, cloaking, visual match, SSRF guard, the five radars, job runner |
+| `backend/app/routes/`, `auth.py`, `report.py`, `takedown.py`, `graph.py` | HTTP API, login and roles, PDF report, takedown email, scam-network graph |
+| `backend/scripts/` | Dataset build, model training, evaluation, batch mode, demo seeding, contract export |
+| `backend/tests/` | 145 tests (`pytest -m live` adds real-network checks) |
+| `data/` | Brand registry, scam themes, official-site references, held-out test set, demo snapshot |
+| `docs/api/` | API contract (OpenAPI, TypeScript types, sample JSON) |
+| `demo-pages/` | Local-only demo scam pages |
+| `branding/`, `docs/pitch/` | Brand kit, real UAE scam stories for the pitch |
 
-### Nati — UI/UX and accessibility
+## Honest limitations
 
-- [ ] **11:45** — Agree screens and API shapes with Agegnew (see Shared contracts)
-- [ ] **13:00** — App shell: Next.js + Tailwind + shadcn/ui, EN/AR switch with full RTL, navigation, login page
-- [ ] **15:00** — Radar feed: live list of auto-discovered URLs, source badge (Lookalike / New cert / New domain / Search / Ad / Maps), verdict chip, brand targeted
-- [ ] **17:00** — Case page: verdict + score, reasons in EN/AR, screenshot, redirect timeline, WHOIS + hosting, confirm/dismiss, Export PDF and takedown
-- [ ] **19:00** — Citizen checker (public, mobile-first): paste a link or phone number → big plain-language verdict + what to do next
-- [ ] **20:00** — Cases list (filter by verdict, source, brand) + accuracy page (precision, recall, confusion matrix)
-- [ ] **21:00** — Accessibility pass: WCAG AA contrast, keyboard-only run, visible focus, screen-reader labels, verdict shown by icon + text not colour alone, text-size toggle
-- [ ] **P1** — Network graph view; read-aloud verdict (browser speech, Arabic + English)
-- [ ] **00:00–02:00** — Polish for the video; operate the laptop during the demo
+- **Search and Maps need a SerpApi key** (free plan: 100 searches a month). Without one those two radars only replay answers saved on an earlier run (marked `replayed`), so they find nothing new; lookalikes, certificates and new domains are free and always on.
+- **The URL model alone misses phishing on ordinary-looking domains**; the page fetch catches more, but a site that is already offline can only be judged on its URL, WHOIS and feeds.
+- **Cloaking:** we compare a UAE phone visit with a foreign desktop visit, but a kit that blocks all automated browsers or data-centre IPs can still hide from us.
+- **crt.sh is often slow or down**; the radar falls back to the last good answer.
+- **No LLM or image-similarity model yet:** visual match compares favicons and page templates against 10 official sites, not the rendered look of every brand.
+- **The accuracy numbers are on public phishing feeds**, which are global; UAE-specific scams are a small part of them. The 230 UAE official pages and the live checks above are our UAE evidence.
 
-### Agegnew (+ Claude Code) — backend, DB, users, engine
+## Route to a police pilot
 
-- [x] **11:45** — Repo + FastAPI skeleton; publish the API contract and mock JSON for Nati
-- [x] **13:00** — Database (SQLite through SQLAlchemy, Postgres in Docker): users, brands, candidates, scans, verdicts, cases, decisions, domain links
-- [ ] **14:00** — Users: admin and analyst roles, login (JWT), seeded accounts; every confirm/dismiss logged with who, when, why
-- [x] **15:00** — Datasets: phishing from PhishTank, OpenPhish, Phishing.Database, PhiUSIIL; legit *deep pages* crawled from 4,000 popular sites + UAE official sites; test sites never appear in training
-- [x] **17:00** — Engine v1, cheapest layer first: allowlist → threat feeds → URL model → brand impersonation → Arabic/English scam keywords → helpline check → score + reasons EN/AR. `POST /api/batch`. First precision/recall on the held-out set (see Accuracy)
-- [ ] **19:00** — PDF evidence report + takedown export (JSON + prefilled abuse email to registrar and host)
-- [ ] **21:00** — Graph edges (shared IP, registrar, registration day, favicon, redirect target); thresholds tuned on the held-out set toward low false positives
-- [ ] **P1** — LLM vision check for borderline cases
-- [ ] **00:00** — Freeze; seed demo data; final accuracy numbers to Samri for the deck
+1. Run one radar + worker instance inside the police network against the 23 brands, with analysts confirming cases.
+2. Send takedown requests from the generated emails; measure time from registration to detection to takedown.
+3. Add brand owners' own lookalike lists and the police's reported-scam data as feeds and training data.
+4. Scale workers horizontally; add more brands and the Arabic scam wording as new campaigns appear.
 
-### Simon — workers and discovery
+## Team CipherGuard
 
-Merged into `main` and wired to the database, engine and API (`backend/app/workers/`). All five radars write cases that appear in the radar feed.
-
-- [x] Job runner + SSRF guard (every request and redirect hop checked)
-- [x] Fetcher (Playwright, UAE phone profile `ar-AE`): shorteners, HTTP/JS redirects, screenshot + SHA-256, page text, form field kinds (password, card, OTP, Emirates ID), remote-access / APK links
-- [x] Enrichment: RDAP, `.ae` WHOIS (aeDA), DNS, IP → ASN + hosting + abuse contact; `shared_hosting` for free platforms
-- [x] Radar 1, lookalikes: typo, ASCII-homoglyph and brand+bait-word domains that exist in DNS
-- [x] Radar 2, new certificates (crt.sh), cached when crt.sh is down
-- [x] Radar 3, newly registered domains (whoisds daily list) naming a brand
-- [x] Radar 4, Search: SerpApi organic results and ads, brand + generic service queries (EN/AR)
-- [x] Radar 5, Maps: listings with an unofficial website or a fake helpline number
-- [x] Scheduler: runs each radar on its interval, de-duplicates, queues fetches
-- [x] Site fingerprints for the scam network: Shodan favicon hash, page-template hash, screenshot dHash, tracker IDs (GA, GTM, Facebook Pixel), WhatsApp / Telegram contacts
-- [x] Visual match: page reuses an official brand's favicon or template (references: `python -m app.workers.references`)
-- [x] Cloaking check: second visit as a foreign desktop browser, compared with the UAE phone visit
-- [ ] Get a SerpApi key into `.env` (without one, Search/Maps replay saved answers, marked `replayed`)
-- [ ] **00:00** — Freeze; keep `data/cache/` (radar caches) as the demo fallback
-
-### Samri — research, creative, pitch
-
-Your two data files are the first thing everyone else needs: the engine, the lookalike radar, the search radar and the helpline check all read them. Edit them directly on GitHub or locally, then run `python -m scripts.validate_data` from `backend/` (it also runs in the tests).
-
-- [x] **15:00 — FIRST: `data/scam_themes.json` v1.** Done: 10 themes, 11–15 EN and 8–13 AR keywords each, 5–9 search queries, 4–5 sources. Scams that don't copy one brand, so the brand list can't catch them. A starter file with 10 themes is already there; expand each one from real ADP / police / TDRA warnings in the news:
-    - Themes: traffic fines and "90% discount" offers, parcel delivery and customs fees ("Dh3 delivery"), visa / residency / domestic workers, fake job offers, property listings, investment and salary-day offers, event tickets and shop deals, fake consumer protection and refunds, account verification / OTP requests, remote-access app installs (AnyDesk, TeamViewer, APK)
-    - For each theme: 5–15 English and Arabic **keywords** that appear on scam pages (the engine flags them), 3–5 **search queries** in English and Arabic (Simon's search radar runs them), and the **source links** you used
-- [x] **15:00** — `data/brands.json` v1.1, 23 brands: Samri's verified helplines and domains + Simon's `domain_tokens` and Abu Dhabi Customs ([notes](data/BRANDS-NOTES.md); still to do: logo files, confirm the Darb helpline): TAMM, UAE PASS, ICP, MOI, RTA fines, Dubai Police, **Abu Dhabi Police** (`adpolice.gov.ae`; Aman 8002626, SMS 2828, 999), **Darb**, **Consumer Protection**, Salik, Emirates Post, Aramex, DEWA, e&, du, Emirates NBD, ADCB, FAB, DIB, Mashreq, ADIB, RAKBANK. For each: official domains, official helplines (copied from the official site), EN/AR names and keywords, logo file in `data/logos/`
-- [x] **15:30** — Branding: confirm product and team name, logo, colours, icon → Nati ([brand kit](branding/BRANDING.md))
-- [x] **16:00** — Open questions decided by the team (no organizer available; see the end of this file); 8 real UAE scam stories + 3 backups for the deck in [docs/pitch/uae-scam-stories.md](docs/pitch/uae-scam-stories.md)
-- [x] **16:00** — Two local demo scam pages (fake traffic-fine payment, fake bank login) + one legit control, made with AI tools; Simon serves them locally, never online → [demo-pages/](demo-pages/README.md)
-- [ ] **20:00** — Deck draft (14 slides with speaker notes reported done, but not in the repo yet: add it under `docs/pitch/`; accuracy numbers and the demo score are `[__]` placeholders until 05:00): problem, solution, live demo, architecture, accuracy, UAE focus, police pilot route, honest limitations, team
-- [ ] **22:00** — Demo script (3 min) + Q&A cheat sheet
-- [ ] **00:00–03:00** — Record and edit the 1-minute demo video
-- [ ] **05:00** — Final deck with real accuracy numbers; rehearse the 5-minute version
-
-## Shared contracts (agree by 11:45)
-
-Fixed in the first hour so all four lanes build in parallel. Change one only after telling the whole team.
-
-**Source of truth is code:** [`backend/app/contracts.py`](backend/app/contracts.py) for the shared formats, [`docs/api/README.md`](docs/api/README.md) for the API (with sample JSON for every endpoint).
-
-| Contract | From → to | Fields |
-| --- | --- | --- |
-| `brands.json` | Samri → everyone | id, name_en, name_ar, category, official_domains[], helplines[], keywords_en[], keywords_ar[], logo |
-| `scam_themes.json` | Samri → engine, search radar | id, name_en, name_ar, keywords_en[], keywords_ar[], search_queries_en[], search_queries_ar[], sources[] |
-| Candidate | Simon → DB | url, source (lookalike, ct, nrd, search, search_ad, maps, manual, citizen, batch), query, discovered_at, extra {listing_name, phone, address, brand, details} |
-| Evidence | Simon → engine | url, final_url, redirect_chain[{url, status}], http_status, screenshot_path, screenshot_sha256, title, text_excerpt, forms[{action, input_types[], field_hints[], sensitive[]}], download_signals[{kind, href, text}], rdap {created, registrar, abuse_email}, ip, asn, hosting_org, hosting_abuse_email, shared_hosting, fetched_at, fetch_error |
-| Verdict | Engine → API/UI | url, verdict, score, brand_target, reasons[{code, weight, text_en, text_ar, evidence_ref}], model_version, scored_at |
-| API | Agegnew → Nati | See [`docs/api/README.md`](docs/api/README.md) — 14 endpoints, mock data live now |
-
-## Timeline and gates
-
-| Time (UAE) | Milestone | Done means |
-| --- | --- | --- |
-| 11:00–11:45 | Sync | Contracts, repo and brand list agreed |
-| 13:00 | **Gate 1 — foundations** | API and DB serve mock data; brands.json v1 exists; fetcher screenshots one URL; UI shell runs in English and Arabic |
-| 17:00 | **Gate 2 — first slice** | One discovered URL flows radar → fetch → engine → UI; first precision/recall number |
-| 21:00 | **Gate 3 — P0 complete** | All seven P0 items work end to end |
-| 00:00 | **Code freeze** | Bug fixes only after this |
-| 00:00–02:00 | Rehearse | Cold-start demo run; record video footage |
-| 02:00–05:00 | Package | README, deck, 1-minute video edit |
-| 06:00 | **Submit** on Podium+ | Repo link, deck, video |
-| 08:00 | Hard deadline | Late submissions are not pre-screened |
-
-## Kill rules
-
-A missed gate cuts scope; it never moves the freeze.
-
-- **13:00, SerpApi key not working:** Search and Maps run on recorded results, labelled as such; the radar leans on lookalikes and crt.sh, which are free.
-- **17:00, no end-to-end slice:** everyone stops new work and fixes the slice; all P1 cancelled.
-- **17:00, URL model not beating the rules on the held-out set:** drop the model, keep rules + threat feeds.
-- **crt.sh slow or down:** use the results cached from the last good pull.
-- **LLM slow or expensive:** switch it off; templated EN/AR reasons stay.
-- **21:00, P0 not complete:** no P1 starts.
-- **00:00:** freeze, whatever state we are in.
-
-## Demo story (3 minutes)
-
-1. **Problem and solution, under 1 minute:** UAE residents meet fake fine-payment and UAE PASS pages through search and Maps; ScamShield finds them first.
-2. **Radar feed:** UAE PASS and TAMM lookalike domains registered this week, found with no human input.
-3. **Case page:** FRAUD, its score, reasons in Arabic and English, screenshot, WHOIS, hosting, timestamps.
-4. **Maps:** a "bank customer care" listing whose phone is not the official helpline.
-5. **Action:** export the PDF and takedown email; show the network graph of sibling domains (if P1 shipped).
-6. **Citizen checker:** on a phone, in Arabic, paste a link, get a plain verdict read aloud.
-7. **Close:** precision and recall on our held-out set, one honest limitation, the route to a police pilot.
-
-## Open questions
-
-No organizer was available to answer, so the team decided these itself (24 Nov 2026). If an organizer later says otherwise, their answer wins.
-
-- [x] **How is the hidden test set run? Do we need a hosted URL?** → **Decided: a list, no hosted URL.** Judges hand us a file of URLs; we run the batch CLI locally and send back a CSV of verdicts. `POST /api/batch` stays ready in case they want to call an API, and the demo runs from a laptop. We will only set up a public tunnel if a judge asks for a link.
-- [x] **Is the pitch 5 or 10 minutes?** → **Decided: build for 5 minutes.** The 5-minute version is the main one: problem, live demo, results, ask. A 10-minute version only adds a longer demo (citizen checker + takedown report) and the architecture slide, so nothing has to be rewritten if we get 10.
-- [x] **Do we have a SerpApi key and an LLM key?** → **Decided: build as if we have neither.** Lookalikes and crt.sh are free and run without keys. If someone has a SerpApi key, add it to `.env` and run the search and Maps radars once to save cached results for the demo. The LLM stays off (P1).
-- [x] Team: final team name — CipherGuard
-- [ ] Team: member names for the submission. This needs each member to confirm their own name, so it can't be decided for them.
+Agegnew (backend, database, detection engine) · Nati (UI/UX and accessibility) · Simon (workers and discovery) · Samri (research, brand data, pitch).
+<!-- TODO: full member names as registered for the hackathon. -->
