@@ -160,6 +160,7 @@ class Metrics(BaseModel):
     fpr: float
     f1: float
     evaluated_at: datetime
+    by_source: dict[str, dict[str, int]] | None = None
 
 
 class Takedown(BaseModel):

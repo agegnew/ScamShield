@@ -13,3 +13,6 @@ node_modules/
 .next/
 
 kickoff/
+
+data/datasets/raw/
+data/datasets/train.csv

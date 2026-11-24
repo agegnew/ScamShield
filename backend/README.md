@@ -44,6 +44,9 @@ pytest -q        # from backend/ or the repo root
 | --- | --- |
 | `python -m scripts.validate_data` | Checks `data/brands.json` and `data/scam_themes.json` (run before committing them) |
 | `python -m scripts.export_contract` | Rewrites `docs/api/openapi.json` + `docs/api/mock/*.json` after any API change |
+| `python -m scripts.build_dataset` | Downloads phishing feeds + Tranco, crawls legit deep pages, writes `data/datasets/{train,test,test_uae_legit}.csv` (~10 min) |
+| `python -m scripts.train_url_model` | Trains `models/url_model.joblib` (2 MB) and writes `models/top_domains.txt` (~1 min) |
+| `python -m scripts.evaluate [--feeds] [--save]` | Scores the held-out test set; `--save` writes `eval/latest.json`, served by `GET /api/metrics` |
 
 After `export_contract`, regenerate the UI types from the repo root:
 `npx openapi-typescript docs/api/openapi.json -o docs/api/scamshield-api.d.ts`
@@ -65,7 +68,7 @@ After `export_contract`, regenerate the UI types from the repo root:
 | `app/workers/enrich.py` | **Simon** | RDAP/WHOIS, DNS, IP → ASN + hosting |
 | `app/workers/radar/*.py` | **Simon** | Lookalikes, crt.sh, Google Search, Google Maps |
 | `app/workers/safety.py`, `pipeline.py`, `runner.py` | Agegnew | SSRF guard, job handlers, worker loop |
-| `app/engine/` | Agegnew + Claude | Detection engine |
+| `app/engine/` | Agegnew + Claude | Detection engine: `core.py` (score), `checks.py` (rules), `model.py` + `features.py` (URL model), `feeds.py` (PhishTank/OpenPhish, refreshed hourly by the worker), `lists.py` |
 | `app/db.py`, `repo.py`, `jobs.py` | Agegnew | Tables, case storage, job queue |
 | `app/routes/`, `api_models.py`, `auth.py` | Agegnew | HTTP API |
 | `app/graph.py`, `takedown.py`, `messages.py` | Agegnew | Network graph, takedown email, EN/AR text |

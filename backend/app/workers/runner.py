@@ -11,6 +11,7 @@ import time
 from .. import jobs
 from ..config import WORKER_POLL_SECONDS
 from ..db import SessionLocal, init_db
+from ..engine import feeds
 from .pipeline import HANDLERS
 from .radar import SOURCES
 
@@ -25,6 +26,9 @@ def schedule_radar(next_due: dict[str, float]) -> None:
                 continue
             jobs.enqueue(session, jobs.RADAR, {"source": name}, dedupe_key=f"radar:{name}")
             next_due[name] = now + source.interval_minutes * 60
+        if now >= next_due.get("_feeds", 0):
+            jobs.enqueue(session, jobs.FEEDS, {}, dedupe_key="feeds")
+            next_due["_feeds"] = now + feeds.REFRESH_MINUTES * 60
 
 
 def run_once() -> bool:

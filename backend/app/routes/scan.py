@@ -57,7 +57,7 @@ def batch(
                 reason_codes=[r.code for r in verdict.reasons],
             )
         )
-    result = BatchResponse(model_version=detection.MODEL_VERSION, items=items)
+    result = BatchResponse(model_version=detection.core.model_version(), items=items)
     if format == "json":
         return result
 

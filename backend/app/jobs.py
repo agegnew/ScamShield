@@ -10,6 +10,7 @@ from .db import JobRow, utcnow
 
 FETCH = "fetch"  # payload: {"url": str}
 RADAR = "radar"  # payload: {"source": RadarSource.name}
+FEEDS = "feeds"  # payload: {} — refresh phishing feeds
 
 STALE_AFTER = timedelta(minutes=10)
 

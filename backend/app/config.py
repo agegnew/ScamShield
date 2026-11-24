@@ -8,6 +8,10 @@ VERSION = "0.2.0"
 MODE = os.getenv("SCAMSHIELD_MODE", "mock")
 BRANDS_PATH = Path(os.getenv("SCAMSHIELD_BRANDS", str(REPO_DIR / "data" / "brands.json")))
 THEMES_PATH = Path(os.getenv("SCAMSHIELD_THEMES", str(REPO_DIR / "data" / "scam_themes.json")))
+MODELS_DIR = Path(os.getenv("SCAMSHIELD_MODELS", str(BACKEND_DIR / "models")))
+FEEDS_DIR = Path(os.getenv("SCAMSHIELD_FEEDS", str(REPO_DIR / "data" / "datasets" / "raw")))
+# Turn off to measure the engine without phishing feeds (honest evaluation).
+USE_FEEDS = os.getenv("SCAMSHIELD_USE_FEEDS", "1") == "1"
 ARTIFACTS_DIR = Path(os.getenv("SCAMSHIELD_ARTIFACTS", str(BACKEND_DIR / "artifacts")))
 CORS_ORIGINS = [
     origin.strip()

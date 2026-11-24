@@ -1,0 +1,42 @@
+{
+  "mode": "live",
+  "dataset": "held-out test (sites never seen in training): 3000 phishing (openphish, phishing_db, phishtank, phiusiil) + 8134 legit (crawl_deep, uae_official); URL only, no page fetch; phishing feeds off",
+  "model_version": "engine-1/url-model",
+  "n_fraud": 3000,
+  "n_legit": 8134,
+  "tp": 2334,
+  "fp": 145,
+  "tn": 7989,
+  "fn": 666,
+  "precision": 0.9415,
+  "recall": 0.778,
+  "fpr": 0.0178,
+  "f1": 0.852,
+  "evaluated_at": "2026-11-24T09:55:02.970488+00:00",
+  "by_source": {
+    "crawl_deep": {
+      "correct": 7759,
+      "total": 7904
+    },
+    "openphish": {
+      "correct": 249,
+      "total": 296
+    },
+    "phishtank": {
+      "correct": 350,
+      "total": 448
+    },
+    "phishing_db": {
+      "correct": 785,
+      "total": 903
+    },
+    "phiusiil": {
+      "correct": 950,
+      "total": 1353
+    },
+    "uae_official": {
+      "correct": 230,
+      "total": 230
+    }
+  }
+}

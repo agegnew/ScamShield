@@ -9,6 +9,7 @@ from .. import engine as detection
 from .. import jobs
 from ..brands import load_registry
 from ..contracts import Evidence
+from ..engine import feeds
 from ..repo import CaseRepo
 from . import enrich as enrichment
 from . import fetcher, safety
@@ -55,4 +56,5 @@ def run_radar(session: Session, source_name: str) -> int:
 HANDLERS = {
     jobs.FETCH: lambda session, payload: run_fetch(session, payload["url"]),
     jobs.RADAR: lambda session, payload: run_radar(session, payload["source"]),
+    jobs.FEEDS: lambda session, payload: feeds.refresh(),
 }

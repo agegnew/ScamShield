@@ -16,5 +16,6 @@ RUN pip install -r requirements-worker.txt \
     && python -m playwright install --with-deps chromium
 
 COPY app ./app
+COPY models ./models
 
 CMD ["python", "-m", "app.workers.runner"]

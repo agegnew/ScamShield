@@ -55,6 +55,10 @@ class Brand(BaseModel):
     )
     keywords_en: list[str] = Field(default_factory=list)
     keywords_ar: list[str] = Field(default_factory=list)
+    domain_tokens: list[str] = Field(
+        default_factory=list,
+        description="Strings that betray this brand inside a scam domain, e.g. 'enbd'. 4+ chars",
+    )
     logo: str | None = Field(default=None, description="Path under data/logos/")
 
 

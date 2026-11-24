@@ -1,21 +1,21 @@
 {
-  "case_id": "c-aa6f090c",
+  "case_id": "c-a71f3108",
   "status": "queued",
   "verdict": {
     "url": "https://new-site.test/login",
     "verdict": "SUSPICIOUS",
-    "score": 50,
+    "score": 61,
     "brand_target": null,
     "reasons": [
       {
-        "code": "engine_incomplete",
-        "weight": 0,
-        "text_en": "Not scored yet: the detection engine is still being built",
-        "text_ar": "لم يتم التقييم بعد: محرك الكشف قيد البناء",
-        "evidence_ref": null
+        "code": "url_model",
+        "weight": 61,
+        "text_en": "URL pattern looks like phishing (94% by our URL model)",
+        "text_ar": "نمط الرابط يشبه روابط التصيّد (94٪ حسب نموذج الروابط)",
+        "evidence_ref": "url"
       }
     ],
-    "model_version": "engine-0",
-    "scored_at": "2026-11-24T09:28:36.702806Z"
+    "model_version": "engine-1/url-model",
+    "scored_at": "2026-11-24T09:55:04.806216Z"
   }
 }

@@ -47,7 +47,8 @@ export interface paths {
         };
         /**
          * Metrics
-         * @description Accuracy on the held-out test set. In mock mode the numbers are layout samples.
+         * @description Accuracy on the held-out test set (scripts/evaluate.py --save).
+         *     Falls back to clearly-labelled sample numbers if no evaluation has been saved.
          */
         get: operations["metrics_api_metrics_get"];
         put?: never;
@@ -318,6 +319,11 @@ export interface components {
             keywords_en?: string[];
             /** Keywords Ar */
             keywords_ar?: string[];
+            /**
+             * Domain Tokens
+             * @description Strings that betray this brand inside a scam domain, e.g. 'enbd'. 4+ chars
+             */
+            domain_tokens?: string[];
             /**
              * Logo
              * @description Path under data/logos/
@@ -652,6 +658,12 @@ export interface components {
              * Format: date-time
              */
             evaluated_at: string;
+            /** By Source */
+            by_source?: {
+                [key: string]: {
+                    [key: string]: number;
+                };
+            } | null;
         };
         /** RadarFeed */
         RadarFeed: {

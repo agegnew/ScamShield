@@ -59,6 +59,16 @@ At code freeze all seven P0 items run end to end on a laptop, on live data or on
 
 **Cut — roadmap slide only:** Chrome extension, phone companion, AR/QR camera, Rescue, SafePay, Redis queues, live push updates.
 
+## Accuracy (measured)
+
+Full engine on a held-out test set of **11,134 URLs** whose sites never appear in training: 3,000 phishing (PhishTank, OpenPhish, Phishing.Database, PhiUSIIL) and 8,134 legit (deep pages of 4,000 popular sites + 230 UAE official pages). URL only, no page fetch, phishing-feed lookups **off** so the number reflects detection, not lookup.
+
+| Precision | Recall | False-positive rate | F1 | UAE official pages flagged |
+| --- | --- | --- | --- | --- |
+| 0.942 | 0.778 | 1.8% | 0.852 | 0 of 230 |
+
+With feed lookups on, recall is 0.824 at the same false-positive rate. The misses are mostly phishing homepages with ordinary names (`http://www.jolifm.com`), which a URL alone cannot reveal; the page fetch (screenshot, forms, brand text, domain age) catches those. Reproduce: `python -m scripts.build_dataset`, `python -m scripts.train_url_model`, `python -m scripts.evaluate` (from `backend/`).
+
 ## How it fits together
 
 ```mermaid
@@ -123,8 +133,8 @@ Everyone works on mock data until 17:00 so nobody waits on anyone.
 - [x] **11:45** — Repo + FastAPI skeleton; publish the API contract and mock JSON for Nati
 - [x] **13:00** — Database (SQLite through SQLAlchemy, Postgres in Docker): users, brands, candidates, scans, verdicts, cases, decisions, domain links
 - [ ] **14:00** — Users: admin and analyst roles, login (JWT), seeded accounts; every confirm/dismiss logged with who, when, why
-- [ ] **15:00** — Datasets: phishing URLs from OpenPhish, URLhaus, PhishTank; legit *deep pages* (not only homepages) from top sites and UAE banks/government; 70/30 train/held-out split
-- [ ] **17:00** — Engine v1, cheapest layer first: allowlist → threat feeds → URL model → brand impersonation → Arabic/English scam keywords → helpline check → score + reasons EN/AR. Batch CLI + `POST /api/batch`. First precision/recall on the held-out set
+- [x] **15:00** — Datasets: phishing from PhishTank, OpenPhish, Phishing.Database, PhiUSIIL; legit *deep pages* crawled from 4,000 popular sites + UAE official sites; test sites never appear in training
+- [x] **17:00** — Engine v1, cheapest layer first: allowlist → threat feeds → URL model → brand impersonation → Arabic/English scam keywords → helpline check → score + reasons EN/AR. `POST /api/batch`. First precision/recall on the held-out set (see Accuracy)
 - [ ] **19:00** — PDF evidence report + takedown export (JSON + prefilled abuse email to registrar and host)
 - [ ] **21:00** — Graph edges (shared IP, registrar, registration day, favicon, redirect target); thresholds tuned on the held-out set toward low false positives
 - [ ] **P1** — LLM vision check for borderline cases

@@ -58,7 +58,7 @@
           "system"
         ],
         "summary": "Metrics",
-        "description": "Accuracy on the held-out test set. In mock mode the numbers are layout samples.",
+        "description": "Accuracy on the held-out test set (scripts/evaluate.py --save).\nFalls back to clearly-labelled sample numbers if no evaluation has been saved.",
         "operationId": "metrics_api_metrics_get",
         "responses": {
           "200": {
@@ -818,6 +818,14 @@
             },
             "type": "array",
             "title": "Keywords Ar"
+          },
+          "domain_tokens": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Domain Tokens",
+            "description": "Strings that betray this brand inside a scam domain, e.g. 'enbd'. 4+ chars"
           },
           "logo": {
             "anyOf": [
@@ -1677,6 +1685,23 @@
             "type": "string",
             "format": "date-time",
             "title": "Evaluated At"
+          },
+          "by_source": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "additionalProperties": {
+                    "type": "integer"
+                  },
+                  "type": "object"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "By Source"
           }
         },
         "type": "object",
