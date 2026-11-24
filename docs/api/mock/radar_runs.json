@@ -1,10 +1,10 @@
 [
   {
-    "id": "run-20261124-212509-d67b",
+    "id": "run-20261124-213003-38c2",
     "trigger": "manual",
     "started_by": "admin",
     "status": "running",
-    "started_at": "2026-11-24T21:25:09.792200Z",
+    "started_at": "2026-11-24T21:30:03.198636Z",
     "finished_at": null,
     "brands": [
       "tamm"
@@ -60,7 +60,11 @@
       "checked": 0,
       "total": 0
     },
-    "verdicts": {},
+    "verdicts": {
+      "FRAUD": 0,
+      "SUSPICIOUS": 0,
+      "LEGIT": 0
+    },
     "error": null
   }
 ]

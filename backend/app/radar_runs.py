@@ -248,7 +248,7 @@ def finish_if_done(session: Session, row: RadarRunRow | None) -> None:
 def to_model(session: Session, row: RadarRunRow) -> RadarRun:
     pages, pending = _pages(session, row)
     final_ids = [i for i in row.case_ids or [] if i not in pending]
-    verdicts: dict[str, int] = {}
+    verdicts = {"FRAUD": 0, "SUSPICIOUS": 0, "LEGIT": 0}  # always all three, so the UI can show "0 fraud"
     if final_ids:
         for (verdict,) in session.execute(select(CaseRow.verdict).where(CaseRow.id.in_(final_ids))):
             verdicts[verdict] = verdicts.get(verdict, 0) + 1

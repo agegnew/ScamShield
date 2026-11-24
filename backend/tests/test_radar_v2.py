@@ -85,7 +85,7 @@ def test_run_finds_checks_riskiest_first_and_finishes(client, analyst_headers, m
     assert (lookalikes["status"], lookalikes["found"], lookalikes["new"]) == ("done", 2, 2)
     assert (lookalikes["checked"], lookalikes["total"]) == (2, 2)
     assert run["pages"] == {"checked": 0, "total": 3}
-    assert run["verdicts"] == {}
+    assert run["verdicts"] == {"FRAUD": 0, "SUSPICIOUS": 0, "LEGIT": 0}  # all three, even at zero
 
     with SessionLocal() as session:  # riskiest URL is checked first
         first = session.scalars(select(JobRow).where(JobRow.type == jobs.FETCH).order_by(JobRow.id)).first()
