@@ -4,7 +4,8 @@ Run from backend/ (uses DATABASE_URL like the API; SQLite file by default):
   python -m scripts.seed_demo scan ../data/demo/urls.txt     # add URLs as cases, fetch + score them now
   python -m scripts.seed_demo fetch                          # fetch + score every case still without evidence
                                                              # (e.g. what the radar found)
-  python -m scripts.seed_demo export ../data/demo            # write cases.json + their screenshots
+  python -m scripts.seed_demo export ../data/demo --also ../data/demo/urls.txt --min-score 30 --max 25
+                                                             # write cases.json + their screenshots
   python -m scripts.seed_demo load ../data/demo              # load a snapshot (skips URLs already stored)
 
 The API loads data/demo/ by itself on start when SCAMSHIELD_SEED_DEMO=1.
@@ -107,11 +108,31 @@ def cmd_fetch(args) -> int:
     return 0
 
 
+def _slim(case):
+    """Keep the desktop (cloaking) screenshot only when the two visits really differed."""
+    cl = case.evidence.cloaking if case.evidence else None
+    if cl and cl.desktop and cl.desktop.screenshot_path and not cl.signals:
+        desktop = cl.desktop.model_copy(update={"screenshot_path": None})
+        evidence = case.evidence.model_copy(update={"cloaking": cl.model_copy(update={"desktop": desktop})})
+        return case.model_copy(update={"evidence": evidence})
+    return case
+
+
 def cmd_export(args) -> int:
+    """Curated URLs (--also) always; other cases from --min-score up, highest score first, at most --max."""
     out: Path = args.dir
     (out / "screenshots").mkdir(parents=True, exist_ok=True)
+    keep = set()
+    if args.also:
+        keep = {normalize_url(u) for u, _ in read_urls(args.also)}
     with SessionLocal() as session:
-        cases = [c for c in CaseRepo(session).all() if c.evidence is not None and c.verdict.score >= args.min_score]
+        analysed = [c for c in CaseRepo(session).all() if c.evidence is not None]
+    curated = [c for c in analysed if c.candidate.url in keep]
+    others = sorted(
+        (c for c in analysed if c.candidate.url not in keep and c.verdict.score >= args.min_score),
+        key=lambda c: -c.verdict.score,
+    )
+    cases = [_slim(c) for c in curated + others[: args.max or None]]
     copied = 0
     for case in cases:
         for rel in screenshots_of(case):
@@ -121,7 +142,7 @@ def cmd_export(args) -> int:
                 copied += 1
     data = [c.model_dump(mode="json") for c in cases]
     (out / SNAPSHOT).write_text(json.dumps(data, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    print(f"exported {len(cases)} cases and {copied} screenshots to {out}")
+    print(f"exported {len(cases)} cases ({len(curated)} curated) and {copied} screenshots to {out}")
     return 0
 
 
@@ -145,7 +166,9 @@ def main(argv: list[str] | None = None) -> int:
     p.set_defaults(func=cmd_fetch)
     p = sub.add_parser("export", help="write analysed cases + screenshots to a folder")
     p.add_argument("dir", type=Path)
-    p.add_argument("--min-score", type=int, default=0)
+    p.add_argument("--min-score", type=int, default=0, help="other cases need at least this score")
+    p.add_argument("--max", type=int, default=0, help="at most this many other cases, highest score first")
+    p.add_argument("--also", type=Path, help="URL file whose cases are always exported (e.g. urls.txt)")
     p.set_defaults(func=cmd_export)
     p = sub.add_parser("load", help="load a snapshot folder into the database")
     p.add_argument("dir", type=Path)
