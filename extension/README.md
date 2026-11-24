@@ -22,7 +22,7 @@ Brings ScamShield into the browser. Works in Chrome, Edge and Brave on desktop (
 | --- | --- |
 | `POST /api/check` | Popup (full address of the current tab, started by the user) and badge (site origin only, cached 30 min) |
 | `GET /api/brands` | Brand names and official domains for the form warning (cached; works offline) |
-| `GET /api/blocklist` | Confirmed scam domains, synced every 10 minutes into Chrome's blocking rules. Expected shape: `{"domains": [{"domain": "moi-portal.com", "brand_target": "moi", "score": 75}]}`. Until the endpoint exists, nothing is blocked and the other two parts still work |
+| `GET /api/blocklist` | Confirmed scam domains, synced every 10 minutes into Chrome's blocking rules. Expected shape: `{"domains": [{"domain": "moi-portal.com", "brand_target": "moi", "score": 75}]}`. Until the endpoint exists, the extension uses the demo list in `mock-blocklist.json` (Settings says so); the first answer from the server replaces it for good |
 
 ## Privacy
 

@@ -97,22 +97,26 @@ function blockRule(entry, index) {
   };
 }
 
-async function applyBlocklist(entries) {
+async function applyBlocklist(entries, source) {
   const existing = await chrome.declarativeNetRequest.getDynamicRules();
   await chrome.declarativeNetRequest.updateDynamicRules({
     removeRuleIds: existing.map((rule) => rule.id),
     addRules: entries.map(blockRule),
   });
   const byDomain = Object.fromEntries(entries.map((e) => [e.domain.toLowerCase(), e]));
-  await chrome.storage.local.set({ blocklist: byDomain, blocklistAt: Date.now() });
+  await chrome.storage.local.set({ blocklist: byDomain, blocklistAt: Date.now(), blocklistSource: source });
 }
 
 async function syncBlocklist() {
   try {
     const data = await api("/api/blocklist");
-    await applyBlocklist(data.domains || []);
+    await applyBlocklist(data.domains || [], "server");
   } catch {
-    // Server unreachable or endpoint missing: keep the rules already installed.
+    // No /api/blocklist yet: use the bundled demo list, but never replace a list that came from the server.
+    const { blocklistSource } = await chrome.storage.local.get("blocklistSource");
+    if (blocklistSource === "server") return;
+    const mock = await (await fetch(chrome.runtime.getURL("mock-blocklist.json"))).json();
+    await applyBlocklist(mock.domains, "demo");
   }
 }
 

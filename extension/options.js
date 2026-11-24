@@ -2,9 +2,11 @@ const input = document.getElementById("api");
 const status = document.getElementById("status");
 
 async function showSync() {
-  const { blocklist = {}, blocklistAt, brands = [] } = await chrome.storage.local.get(["blocklist", "blocklistAt", "brands"]);
+  const { blocklist = {}, blocklistAt, blocklistSource, brands = [] } =
+    await chrome.storage.local.get(["blocklist", "blocklistAt", "blocklistSource", "brands"]);
+  const source = blocklistSource === "demo" ? " (demo list: the server has no blocklist yet)" : "";
   document.getElementById("sync").textContent = blocklistAt
-    ? `${Object.keys(blocklist).length} blocked scam domains and ${brands.length} UAE brands, synced ${new Date(blocklistAt).toLocaleString()}.`
+    ? `${Object.keys(blocklist).length} blocked scam domains${source} and ${brands.length} UAE brands, synced ${new Date(blocklistAt).toLocaleString()}.`
     : `${brands.length} UAE brands loaded. Blocklist not synced yet.`;
 }
 
