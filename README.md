@@ -21,7 +21,7 @@ API docs at http://localhost:8000/docs. No Docker? See [`backend/README.md`](bac
 | --- | --- | --- |
 | Nati | `frontend/` — create the Next.js app there | [`docs/api/README.md`](docs/api/README.md), TypeScript types in [`docs/api/scamshield-api.d.ts`](docs/api/scamshield-api.d.ts), sample JSON in `docs/api/mock/` |
 | Agegnew | `backend/app/` (API, DB, engine) | [`backend/app/engine/core.py`](backend/app/engine/core.py) |
-| Simon | `backend/app/workers/` | [`fetcher.py`](backend/app/workers/fetcher.py), [`enrich.py`](backend/app/workers/enrich.py), [`radar/`](backend/app/workers/radar/) — each file's docstring says what to build |
+| Simon | `backend/app/workers/` | [`fetcher.py`](backend/app/workers/fetcher.py), [`enrich.py`](backend/app/workers/enrich.py), [`radar/`](backend/app/workers/radar/) (lookalikes, ct, nrd, search, maps) |
 | Samri | `data/scam_themes.json`, `data/brands.json`, `data/logos/` | Run `python -m scripts.validate_data` (from `backend/`) before committing |
 
 Pull before you push, keep commits small, and edit only files your lane owns ([ownership table](backend/README.md#who-owns-what)).
@@ -76,6 +76,7 @@ flowchart TD
   subgraph RADAR["Auto-discovery radar · Simon"]
     L[Lookalikes<br/>typo variants]
     C[New certs<br/>crt.sh]
+    N[New domains<br/>daily list]
     S[Search<br/>organic + ads]
     M[Maps<br/>phone check]
   end
@@ -142,18 +143,20 @@ Everyone works on mock data until 17:00 so nobody waits on anyone.
 
 ### Simon — workers and discovery
 
-Free sources (lookalikes, crt.sh) come first so discovery works even without a SerpApi key.
+Merged into `main` and wired to the database, engine and API (`backend/app/workers/`). All five radars write cases that appear in the radar feed.
 
-- [ ] **12:00** — Job runner: worker loop over a jobs table (no Redis); SSRF guard blocks private and internal IPs
-- [ ] **13:00** — Fetcher (Playwright): expand shorteners, follow redirects, screenshot, title, page text, form field types (never values), timings
-- [ ] **14:30** — Enrichment: RDAP/WHOIS (created date, registrar, abuse email), DNS, IP → ASN + hosting provider
-- [ ] **15:30** — Radar 1, lookalikes: typo, homoglyph and brand+keyword variants (e.g. `tamm-fines-pay`) of every domain in brands.json; keep the registered ones
-- [ ] **16:30** — Radar 2, new certificates: crt.sh search for brand keywords
-- [ ] **18:00** — Radar 3, Search: SerpApi Google, English + Arabic queries ("pay traffic fine", "دفع المخالفات"), organic results and ads
-- [ ] **19:30** — Radar 4, Maps: SerpApi Google Maps listings for brand names; compare website and phone with the official domain and helpline
-- [ ] **20:30** — Scheduler: radar runs every few minutes, de-duplicates, sends new URLs to the engine
+- [x] Job runner + SSRF guard (every request and redirect hop checked)
+- [x] Fetcher (Playwright, UAE phone profile `ar-AE`): shorteners, HTTP/JS redirects, screenshot + SHA-256, page text, form field kinds (password, card, OTP, Emirates ID), remote-access / APK links
+- [x] Enrichment: RDAP, `.ae` WHOIS (aeDA), DNS, IP → ASN + hosting + abuse contact; `shared_hosting` for free platforms
+- [x] Radar 1, lookalikes: typo, ASCII-homoglyph and brand+bait-word domains that exist in DNS
+- [x] Radar 2, new certificates (crt.sh), cached when crt.sh is down
+- [x] Radar 3, newly registered domains (whoisds daily list) naming a brand
+- [x] Radar 4, Search: SerpApi organic results and ads, brand + generic service queries (EN/AR)
+- [x] Radar 5, Maps: listings with an unofficial website or a fake helpline number
+- [x] Scheduler: runs each radar on its interval, de-duplicates, queues fetches
+- [ ] Get a SerpApi key into `.env` (without one, Search/Maps replay saved answers, marked `replayed`)
 - [ ] **P1** — Cloaking check: mobile vs desktop fetch, flag differences
-- [ ] **00:00** — Freeze; save cached radar results as the demo fallback
+- [ ] **00:00** — Freeze; keep `data/cache/` (radar caches) as the demo fallback
 
 ### Samri — research, creative, pitch
 
@@ -181,8 +184,8 @@ Fixed in the first hour so all four lanes build in parallel. Change one only aft
 | --- | --- | --- |
 | `brands.json` | Samri → everyone | id, name_en, name_ar, category, official_domains[], helplines[], keywords_en[], keywords_ar[], logo |
 | `scam_themes.json` | Samri → engine, search radar | id, name_en, name_ar, keywords_en[], keywords_ar[], search_queries_en[], search_queries_ar[], sources[] |
-| Candidate | Simon → DB | url, source (lookalike, ct, nrd, search, search_ad, maps, manual, citizen, batch), query, discovered_at, extra {listing_name, phone, address} |
-| Evidence | Simon → engine | url, final_url, redirect_chain[{url, status}], http_status, screenshot_path, title, text_excerpt, forms[{action, input_types[], field_hints[]}], rdap {created, registrar, abuse_email}, ip, asn, hosting_org, hosting_abuse_email, shared_hosting, fetched_at, fetch_error |
+| Candidate | Simon → DB | url, source (lookalike, ct, nrd, search, search_ad, maps, manual, citizen, batch), query, discovered_at, extra {listing_name, phone, address, brand, details} |
+| Evidence | Simon → engine | url, final_url, redirect_chain[{url, status}], http_status, screenshot_path, screenshot_sha256, title, text_excerpt, forms[{action, input_types[], field_hints[], sensitive[]}], download_signals[{kind, href, text}], rdap {created, registrar, abuse_email}, ip, asn, hosting_org, hosting_abuse_email, shared_hosting, fetched_at, fetch_error |
 | Verdict | Engine → API/UI | url, verdict, score, brand_target, reasons[{code, weight, text_en, text_ar, evidence_ref}], model_version, scored_at |
 | API | Agegnew → Nati | See [`docs/api/README.md`](docs/api/README.md) — 14 endpoints, mock data live now |
 

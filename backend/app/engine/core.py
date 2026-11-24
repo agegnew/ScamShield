@@ -22,7 +22,7 @@ from ..messages import official_domain_reason
 from ..themes import load_themes
 from ..urls import hostname, registrable_domain
 from . import model
-from .checks import CHECKS, Ctx
+from .checks import CHECKS, Ctx, helpline, is_maps_listing_link
 from .lists import platform_of
 
 FRAUD_AT = 70
@@ -98,7 +98,12 @@ def score(
         themes=load_themes().themes,
         use_feeds=USE_FEEDS if use_feeds is None else use_feeds,
     )
-    reasons = [reason for check in CHECKS for reason in check(ctx)]
+    checks = CHECKS
+    if is_maps_listing_link(url, host, candidate):
+        # The URL is only the Google Maps page of a listing without a website: judging
+        # google.com would say nothing; the listing's phone is the evidence.
+        checks = (helpline,)
+    reasons = [reason for check in checks for reason in check(ctx)]
     points = max(0, min(100, sum(r.weight for r in reasons)))
     reasons.sort(key=lambda r: abs(r.weight), reverse=True)
     return Verdict(

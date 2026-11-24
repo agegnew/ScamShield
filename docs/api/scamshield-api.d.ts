@@ -358,6 +358,18 @@ export interface components {
             phone?: string | null;
             /** Address */
             address?: string | null;
+            /**
+             * Brand
+             * @description Brand.id the radar matched, if any
+             */
+            brand?: string | null;
+            /**
+             * Details
+             * @description Radar metadata, e.g. lookalike variant, certificate issuer, search position, Maps flags. details.replayed=true means it came from a saved SerpApi answer
+             */
+            details?: {
+                [key: string]: unknown;
+            };
         };
         /** Case */
         Case: {
@@ -475,6 +487,21 @@ export interface components {
             reason: string;
         };
         /**
+         * DownloadSignal
+         * @description A link or text pushing a remote-access app or an APK install.
+         */
+        DownloadSignal: {
+            /**
+             * Kind
+             * @description remote_access_link | remote_access_text | app_download_link
+             */
+            kind: string;
+            /** Href */
+            href?: string | null;
+            /** Text */
+            text?: string | null;
+        };
+        /**
          * Evidence
          * @description What the fetcher and enrichment saw for one URL.
          */
@@ -492,6 +519,11 @@ export interface components {
              * @description Relative to the artifacts dir; served at /artifacts/<path>
              */
             screenshot_path?: string | null;
+            /**
+             * Screenshot Sha256
+             * @description Hash of the screenshot file, for the evidence chain
+             */
+            screenshot_sha256?: string | null;
             /** Title */
             title?: string | null;
             /**
@@ -501,6 +533,8 @@ export interface components {
             text_excerpt?: string | null;
             /** Forms */
             forms?: components["schemas"]["FormInfo"][];
+            /** Download Signals */
+            download_signals?: components["schemas"]["DownloadSignal"][];
             rdap?: components["schemas"]["Rdap"] | null;
             /** Ip */
             ip?: string | null;
@@ -544,6 +578,11 @@ export interface components {
              * @description Lower-cased name/label/placeholder words, e.g. ['card number', 'cvv', 'otp']
              */
             field_hints?: string[];
+            /**
+             * Sensitive
+             * @description Sensitive data asked for: password, card, otp, emirates_id, phone, email
+             */
+            sensitive?: string[];
         };
         /** Graph */
         Graph: {

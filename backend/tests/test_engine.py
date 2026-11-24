@@ -124,6 +124,40 @@ def test_feed_match_only_when_feeds_enabled(monkeypatch):
     assert "threat_feed" not in codes(engine.score("https://bad.example/login", use_feeds=False))
 
 
+def test_maps_listing_link_is_judged_on_its_phone_not_on_google():
+    cand = Candidate(
+        url="https://www.google.com/maps/place/?q=place_id:abc",
+        source=Source.MAPS,
+        discovered_at=NOW,
+        extra=CandidateExtra(
+            listing_name="Emirates NBD Customer Service", phone="+97145550199", brand="emiratesnbd"
+        ),
+    )
+    v = engine.score(cand.url, candidate=cand)
+    assert codes(v) == {"helpline_mismatch"}
+    assert v.verdict == Label.SUSPICIOUS
+    assert v.brand_target == "emiratesnbd"
+
+
+def test_download_signals_and_emirates_id_field():
+    from app.contracts import DownloadSignal
+
+    ev = page(
+        "https://help.example/",
+        download_signals=[DownloadSignal(kind="remote_access_link", href="https://anydesk.com", text="AnyDesk")],
+        forms=[FormInfo(input_types=["text"], sensitive=["emirates_id"])],
+    )
+    v = engine.score("https://help.example/", evidence=ev)
+    assert {"remote_access", "credential_form"} <= codes(v)
+    assert any("Emirates ID" in r.text_en for r in v.reasons)
+
+
+def test_common_arabic_word_is_not_taken_for_a_brand_name():
+    # 'تم' is TAMM's Arabic name but also the everyday word 'was / done'.
+    ev = page("https://news.example/", text_excerpt="تم افتتاح المتجر الجديد اليوم")
+    assert "brand_on_wrong_domain" not in codes(engine.score("https://news.example/", evidence=ev))
+
+
 def test_every_reason_has_both_languages():
     ev = page(
         "https://tamm-violations.example/pay",

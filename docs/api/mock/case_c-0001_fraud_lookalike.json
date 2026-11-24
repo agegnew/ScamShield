@@ -10,7 +10,9 @@
     "extra": {
       "listing_name": null,
       "phone": null,
-      "address": null
+      "address": null,
+      "brand": null,
+      "details": {}
     }
   },
   "evidence": {
@@ -19,6 +21,7 @@
     "redirect_chain": [],
     "http_status": 200,
     "screenshot_path": "mock/screenshot.svg",
+    "screenshot_sha256": null,
     "title": "TAMM | Pay Traffic Fines",
     "text_excerpt": "Your traffic fine of AED 1,250 is overdue. Pay now to avoid a 50% penalty and vehicle impound. Enter your card details to settle the fine.",
     "forms": [
@@ -34,9 +37,11 @@
           "expiry",
           "cvv",
           "otp"
-        ]
+        ],
+        "sensitive": []
       }
     ],
+    "download_signals": [],
     "rdap": {
       "created": "2026-11-21T12:00:00Z",
       "registrar": "Example Registrar Inc.",

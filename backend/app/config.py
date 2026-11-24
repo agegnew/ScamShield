@@ -1,8 +1,13 @@
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 REPO_DIR = BACKEND_DIR.parent
+
+# Local runs read the repo's .env (docker-compose passes it in as env_file).
+load_dotenv(REPO_DIR / ".env")
 
 VERSION = "0.2.0"
 MODE = os.getenv("SCAMSHIELD_MODE", "mock")
@@ -29,6 +34,8 @@ DATABASE_URL = os.getenv(
 SEED_MOCK = os.getenv("SCAMSHIELD_SEED_MOCK", "1" if MODE == "mock" else "0") == "1"
 
 WORKER_POLL_SECONDS = float(os.getenv("SCAMSHIELD_WORKER_POLL", "2"))
+# Radar caches (crt.sh answers, daily new-domain lists, saved SerpApi answers).
+CACHE_DIR = Path(os.getenv("SCAMSHIELD_CACHE", str(REPO_DIR / "data" / "cache")))
 JOB_MAX_ATTEMPTS = int(os.getenv("SCAMSHIELD_JOB_MAX_ATTEMPTS", "3"))
 
 SERPAPI_KEY = os.getenv("SERPAPI_KEY", "")

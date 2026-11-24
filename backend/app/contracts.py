@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -93,6 +93,14 @@ class CandidateExtra(BaseModel):
     listing_name: str | None = None  # Maps listing title
     phone: str | None = None  # Maps listing phone
     address: str | None = None
+    brand: str | None = Field(default=None, description="Brand.id the radar matched, if any")
+    details: dict[str, Any] = Field(
+        default_factory=dict,
+        description=(
+            "Radar metadata, e.g. lookalike variant, certificate issuer, search position, "
+            "Maps flags. details.replayed=true means it came from a saved SerpApi answer"
+        ),
+    )
 
 
 class Candidate(BaseModel):
@@ -123,6 +131,18 @@ class FormInfo(BaseModel):
         default_factory=list,
         description="Lower-cased name/label/placeholder words, e.g. ['card number', 'cvv', 'otp']",
     )
+    sensitive: list[str] = Field(
+        default_factory=list,
+        description="Sensitive data asked for: password, card, otp, emirates_id, phone, email",
+    )
+
+
+class DownloadSignal(BaseModel):
+    """A link or text pushing a remote-access app or an APK install."""
+
+    kind: str = Field(description="remote_access_link | remote_access_text | app_download_link")
+    href: str | None = None
+    text: str | None = None
 
 
 class Rdap(BaseModel):
@@ -142,9 +162,13 @@ class Evidence(BaseModel):
         default=None,
         description="Relative to the artifacts dir; served at /artifacts/<path>",
     )
+    screenshot_sha256: str | None = Field(
+        default=None, description="Hash of the screenshot file, for the evidence chain"
+    )
     title: str | None = None
     text_excerpt: str | None = Field(default=None, description="First ~2000 chars of visible text")
     forms: list[FormInfo] = Field(default_factory=list)
+    download_signals: list[DownloadSignal] = Field(default_factory=list)
     rdap: Rdap | None = None
     ip: str | None = None
     asn: int | None = None

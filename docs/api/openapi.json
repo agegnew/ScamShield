@@ -923,6 +923,24 @@
               }
             ],
             "title": "Address"
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand",
+            "description": "Brand.id the radar matched, if any"
+          },
+          "details": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Details",
+            "description": "Radar metadata, e.g. lookalike variant, certificate issuer, search position, Maps flags. details.replayed=true means it came from a saved SerpApi answer"
           }
         },
         "type": "object",
@@ -1239,6 +1257,43 @@
         ],
         "title": "DecisionRequest"
       },
+      "DownloadSignal": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "title": "Kind",
+            "description": "remote_access_link | remote_access_text | app_download_link"
+          },
+          "href": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Href"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind"
+        ],
+        "title": "DownloadSignal",
+        "description": "A link or text pushing a remote-access app or an APK install."
+      },
       "Evidence": {
         "properties": {
           "url": {
@@ -1286,6 +1341,18 @@
             "title": "Screenshot Path",
             "description": "Relative to the artifacts dir; served at /artifacts/<path>"
           },
+          "screenshot_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Screenshot Sha256",
+            "description": "Hash of the screenshot file, for the evidence chain"
+          },
           "title": {
             "anyOf": [
               {
@@ -1315,6 +1382,13 @@
             },
             "type": "array",
             "title": "Forms"
+          },
+          "download_signals": {
+            "items": {
+              "$ref": "#/components/schemas/DownloadSignal"
+            },
+            "type": "array",
+            "title": "Download Signals"
           },
           "rdap": {
             "anyOf": [
@@ -1430,6 +1504,14 @@
             "type": "array",
             "title": "Field Hints",
             "description": "Lower-cased name/label/placeholder words, e.g. ['card number', 'cvv', 'otp']"
+          },
+          "sensitive": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Sensitive",
+            "description": "Sensitive data asked for: password, card, otp, emirates_id, phone, email"
           }
         },
         "type": "object",

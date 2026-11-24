@@ -10,7 +10,9 @@
     "extra": {
       "listing_name": null,
       "phone": null,
-      "address": null
+      "address": null,
+      "brand": null,
+      "details": {}
     }
   },
   "evidence": null,

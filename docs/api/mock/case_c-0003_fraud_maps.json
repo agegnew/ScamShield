@@ -10,7 +10,9 @@
     "extra": {
       "listing_name": "Emirates NBD Customer Care 24/7",
       "phone": "04 555 0199",
-      "address": "Al Barsha, Dubai"
+      "address": "Al Barsha, Dubai",
+      "brand": null,
+      "details": {}
     }
   },
   "evidence": {
@@ -19,6 +21,7 @@
     "redirect_chain": [],
     "http_status": 200,
     "screenshot_path": "mock/screenshot.svg",
+    "screenshot_sha256": null,
     "title": "Emirates NBD Support - Card Unblocking 24/7",
     "text_excerpt": "Card blocked? Call our 24/7 support line or enter your card details below and an agent will unblock it within minutes.",
     "forms": [
@@ -31,9 +34,11 @@
         "field_hints": [
           "card number",
           "mobile number"
-        ]
+        ],
+        "sensitive": []
       }
     ],
+    "download_signals": [],
     "rdap": {
       "created": "2026-11-15T12:00:00Z",
       "registrar": "Sample Registrar LLC",

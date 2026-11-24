@@ -7,6 +7,7 @@ import os
 import re
 from dataclasses import dataclass, field
 
+from ..brand_match import match_token
 from ..brands import normalize_uae_phone
 from ..contracts import Brand, Candidate, Evidence, Reason, ScamTheme
 from ..urls import domain_label
@@ -56,6 +57,16 @@ def _brand_tokens(brand: Brand) -> set[str]:
     tokens = {t.lower() for t in brand.domain_tokens}
     tokens |= {domain_label(d).lower() for d in brand.official_domains}
     return {t for t in tokens if len(t) >= 3}
+
+
+def is_maps_listing_link(url: str, host: str, candidate: Candidate | None) -> bool:
+    """A Maps candidate whose URL is just the Google Maps page of the listing (no website)."""
+    return (
+        candidate is not None
+        and candidate.source.value == "maps"
+        and host.endswith("google.com")
+        and "/maps" in url
+    )
 
 
 def _token_in(token: str, text: str) -> bool:
@@ -136,26 +147,26 @@ def url_model(ctx: Ctx) -> list[Reason]:
 
 
 def brand_lookalike(ctx: Ctx) -> list[Reason]:
+    by_id = {b.id: b for b in ctx.brands}
     for host in dict.fromkeys((ctx.host, ctx.final_host)):
+        hit = match_token(host)
+        if hit and hit[0] in by_id:
+            brand, token = by_id[hit[0]], hit[1]
+            official = brand.official_domains[0]
+            ctx.brand_target = brand.id
+            return [
+                _r(
+                    "lookalike_domain",
+                    35,
+                    f"Domain uses '{token}' ({brand.name_en}) but is not the official {official}",
+                    f"النطاق يستخدم «{token}» ({brand.name_ar}) لكنه ليس النطاق الرسمي {official}",
+                    "url",
+                )
+            ]
         label = domain_label(host).lower()
         for brand in ctx.brands:
             if _is_official(brand, host):
                 continue
-            official = brand.official_domains[0]
-            for token in sorted(_brand_tokens(brand), key=len, reverse=True):
-                if _token_in(token, host):
-                    ctx.brand_target = brand.id
-                    return [
-                        _r(
-                            "lookalike_domain",
-                            35,
-                            f"Domain uses '{token}' ({brand.name_en}) but is not the official "
-                            f"{official}",
-                            f"النطاق يستخدم «{token}» ({brand.name_ar}) لكنه ليس النطاق الرسمي "
-                            f"{official}",
-                            "url",
-                        )
-                    ]
             for off in brand.official_domains:
                 off_label = domain_label(off).lower()
                 if len(off_label) < 5 or label == off_label:
@@ -301,6 +312,19 @@ def scam_themes_in_url(ctx: Ctx) -> list[Reason]:
 # ---- Page checks (need Evidence from the fetcher) ---------------------------
 
 
+def _page_names(brand: Brand) -> list[str]:
+    """Brand names to look for in page text. Short ones ('du', Arabic 'تم' = 'was') are too common."""
+    names = [brand.name_en.split(" (")[0].lower(), brand.name_ar]
+    names += [domain_label(d).lower() for d in brand.official_domains]
+    return [n for n in dict.fromkeys(names) if len(n.replace(" ", "")) >= 4]
+
+
+def _name_in_page(name: str, text: str, raw_text: str) -> bool:
+    if name.isascii():
+        return re.search(rf"(?<![a-z0-9]){re.escape(name)}(?![a-z0-9])", text) is not None
+    return re.search(rf"(?<!\w){re.escape(name)}(?!\w)", raw_text) is not None
+
+
 def page_signals(ctx: Ctx) -> list[Reason]:
     ev = ctx.evidence
     if ev is None or ev.fetch_error:
@@ -309,21 +333,46 @@ def page_signals(ctx: Ctx) -> list[Reason]:
     raw_text = f"{ev.title or ''} {ev.text_excerpt or ''}"
     text = raw_text.lower()
 
+    remote = next((s for s in ev.download_signals if s.kind.startswith("remote_access")), None)
+    if remote:
+        what = remote.text or remote.href or "remote access"
+        reasons.append(
+            _r(
+                "remote_access",
+                30,
+                f"Page pushes a remote-access app ('{what}')",
+                f"الصفحة تدفع لتثبيت تطبيق تحكم عن بعد («{what}»)",
+                "download_signals",
+            )
+        )
+    apk = next((s for s in ev.download_signals if s.kind == "app_download_link"), None)
+    if apk:
+        reasons.append(
+            _r(
+                "app_download",
+                20,
+                f"Page asks you to install an app outside the app store ('{apk.text or apk.href}')",
+                f"الصفحة تطلب تثبيت تطبيق من خارج متجر التطبيقات («{apk.text or apk.href}»)",
+                "download_signals",
+            )
+        )
+
     theme_reasons = []
     for theme in ctx.themes:
         kw = _theme_hits(text, theme, url_mode=False)
         if not kw:
             continue
         if theme.id == "remote_access":
-            reasons.append(
-                _r(
-                    "remote_access",
-                    30,
-                    f"Page asks you to install a remote-access app or APK ('{kw}')",
-                    f"الصفحة تطلب تثبيت تطبيق تحكم عن بعد أو ملف APK («{kw}»)",
-                    "text_excerpt",
+            if not remote:
+                reasons.append(
+                    _r(
+                        "remote_access",
+                        30,
+                        f"Page asks you to install a remote-access app or APK ('{kw}')",
+                        f"الصفحة تطلب تثبيت تطبيق تحكم عن بعد أو ملف APK («{kw}»)",
+                        "text_excerpt",
+                    )
                 )
-            )
         else:
             theme_reasons.append(
                 _r(
@@ -339,12 +388,15 @@ def page_signals(ctx: Ctx) -> list[Reason]:
     asks_en, asks_ar = [], []
     for form in ev.forms:
         hints = " ".join(form.field_hints).lower()
-        if "password" in form.input_types or "password" in hints:
+        kinds = set(form.sensitive)
+        if "password" in form.input_types or "password" in hints or "password" in kinds:
             asks_en.append("a password"), asks_ar.append("كلمة المرور")
-        if re.search(r"card|cvv|cvc|expiry|credit", hints):
+        if "card" in kinds or re.search(r"card|cvv|cvc|expiry|credit", hints):
             asks_en.append("card details"), asks_ar.append("بيانات البطاقة")
-        if re.search(r"otp|one.time|verification code|sms code", hints):
+        if "otp" in kinds or re.search(r"otp|one.time|verification code|sms code", hints):
             asks_en.append("a one-time code"), asks_ar.append("رمز التحقق")
+        if "emirates_id" in kinds:
+            asks_en.append("your Emirates ID"), asks_ar.append("رقم الهوية الإماراتية")
     if asks_en:
         en = ", ".join(dict.fromkeys(asks_en))
         ar = " و".join(dict.fromkeys(asks_ar))
@@ -355,10 +407,7 @@ def page_signals(ctx: Ctx) -> list[Reason]:
     for brand in ctx.brands:
         if _is_official(brand, ctx.final_host):
             continue
-        names = [brand.name_en.lower(), brand.name_ar] + [
-            domain_label(d).lower() for d in brand.official_domains if len(domain_label(d)) >= 4
-        ]
-        hit = next((n for n in names if n and n in (text if n.isascii() else raw_text)), None)
+        hit = next((n for n in _page_names(brand) if _name_in_page(n, text, raw_text)), None)
         if hit:
             ctx.brand_target = ctx.brand_target or brand.id
             reasons.append(
@@ -424,9 +473,13 @@ def helpline(ctx: Ctx) -> list[Reason]:
     for brand in ctx.brands:
         if not brand.helplines:
             continue
-        names = [brand.name_en.lower()] + list(_brand_tokens(brand))
-        if not any(n and _token_in(n, listing) for n in names):
-            continue
+        if cand.extra.brand:
+            if brand.id != cand.extra.brand:  # the radar already knows which brand it named
+                continue
+        else:
+            names = [brand.name_en.split(" (")[0].lower()] + list(_brand_tokens(brand))
+            if not any(n and len(n.strip("-")) >= 3 and _token_in(n.strip("-"), listing) for n in names):
+                continue
         if phone in {normalize_uae_phone(h) for h in brand.helplines}:
             return []
         ctx.brand_target = ctx.brand_target or brand.id

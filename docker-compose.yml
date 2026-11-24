@@ -5,6 +5,7 @@ x-backend-env: &backend-env
   SCAMSHIELD_BRANDS: /data/brands.json
   SCAMSHIELD_THEMES: /data/scam_themes.json
   SCAMSHIELD_FEEDS: /data/datasets/raw
+  SCAMSHIELD_CACHE: /data/cache
   SCAMSHIELD_ARTIFACTS: /artifacts
 
 services:
@@ -54,7 +55,7 @@ services:
     environment: *backend-env
     volumes:
       - ./backend/app:/app/app
-      - ./data:/data:ro
+      - ./data:/data  # writable: radar caches and hourly phishing-feed refresh
       - ./backend/artifacts:/artifacts
     depends_on:
       api:

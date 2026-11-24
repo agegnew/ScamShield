@@ -17,6 +17,10 @@ class UnsafeURL(ValueError):
     pass
 
 
+class Unresolvable(UnsafeURL):
+    """The host has no DNS record: often a scam domain already taken down."""
+
+
 def assert_public_url(url: str) -> list[str]:
     """Return the host's public IPs, or raise UnsafeURL."""
     parts = urlsplit(url)
@@ -38,11 +42,11 @@ def assert_public_url(url: str) -> list[str]:
     try:
         infos = _resolve(host, port, type=socket.SOCK_STREAM)
     except (socket.gaierror, UnicodeError) as exc:
-        raise UnsafeURL(f"cannot resolve {host}") from exc
+        raise Unresolvable(f"cannot resolve {host}") from exc
 
     ips = sorted({info[4][0] for info in infos})
     if not ips:
-        raise UnsafeURL(f"cannot resolve {host}")
+        raise Unresolvable(f"cannot resolve {host}")
     for ip in ips:
         addr = ipaddress.ip_address(ip.split("%")[0])
         if addr.version == 6 and addr.ipv4_mapped:

@@ -10,7 +10,9 @@
     "extra": {
       "listing_name": null,
       "phone": null,
-      "address": null
+      "address": null,
+      "brand": null,
+      "details": {}
     }
   },
   "evidence": {
@@ -28,6 +30,7 @@
     ],
     "http_status": 200,
     "screenshot_path": "mock/screenshot.svg",
+    "screenshot_sha256": null,
     "title": "TAMM - Traffic Violations Payment",
     "text_excerpt": "You have 2 unpaid traffic violations. Pay within 24 hours to avoid black points. Enter card details and the code sent by SMS.",
     "forms": [
@@ -42,9 +45,11 @@
           "card number",
           "cvv",
           "otp"
-        ]
+        ],
+        "sensitive": []
       }
     ],
+    "download_signals": [],
     "rdap": {
       "created": "2026-11-21T16:00:00Z",
       "registrar": "Example Registrar Inc.",

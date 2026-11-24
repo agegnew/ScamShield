@@ -30,7 +30,7 @@ uvicorn app.main:app --reload --port 8000     # API
 python -m app.workers.runner                  # worker, in a second terminal
 ```
 
-The worker needs Playwright only once Simon's fetcher uses it: `pip install -r requirements-worker.txt` then `playwright install chromium`.
+The worker needs its own packages and a browser: `pip install -r requirements-worker.txt` then `playwright install chromium` (`requirements-dev.txt` includes both sets). `.ae` WHOIS uses the `whois` command (in the Docker image).
 
 ## Test
 
@@ -64,9 +64,10 @@ After `export_contract`, regenerate the UI types from the repo root:
 | Path | Owner | What it is |
 | --- | --- | --- |
 | `app/contracts.py` | everyone (ask first) | Shared formats: Brand, Candidate, Evidence, Verdict |
-| `app/workers/fetcher.py` | **Simon** | Playwright: redirects, screenshot, text, forms |
-| `app/workers/enrich.py` | **Simon** | RDAP/WHOIS, DNS, IP → ASN + hosting |
-| `app/workers/radar/*.py` | **Simon** | Lookalikes, crt.sh, Google Search, Google Maps |
+| `app/workers/fetcher.py` | **Simon** | Playwright (UAE phone profile): redirects, screenshot, text, form field kinds, remote-access/APK links |
+| `app/workers/enrich.py` | **Simon** | RDAP, `.ae` WHOIS, DNS, IP → ASN + hosting + abuse contact, shared-hosting flag |
+| `app/workers/radar/*.py` | **Simon** | `lookalikes`, `ct` (crt.sh), `nrd` (new domains), `search`, `maps` (+ `serp.py` helpers) |
+| `app/brand_match.py` | **Simon** | Which brand a host names (used by radars and engine) |
 | `app/workers/safety.py`, `pipeline.py`, `runner.py` | Agegnew | SSRF guard, job handlers, worker loop |
 | `app/engine/` | Agegnew + Claude | Detection engine: `core.py` (score), `checks.py` (rules), `model.py` + `features.py` (URL model), `feeds.py` (PhishTank/OpenPhish, refreshed hourly by the worker), `lists.py` |
 | `app/db.py`, `repo.py`, `jobs.py` | Agegnew | Tables, case storage, job queue |
@@ -76,7 +77,7 @@ After `export_contract`, regenerate the UI types from the repo root:
 | `../data/brands.json` | **Samri** | Brand registry |
 | `../data/scam_themes.json` | **Samri** | Scam types that don't copy one brand: keywords + search queries |
 
-Each of Simon's files starts with a docstring that says exactly what to build. `tests/test_worker.py` shows how to test a source or the fetcher without the network.
+Try one piece on its own: `python -m app.workers.fetcher https://example.com`, `python -m app.workers.enrich https://example.com`, `python -m app.workers.radar.lookalikes tamm` (also `ct`, `nrd`, `search`, `maps`). `tests/test_discovery.py` tests them without the network; `pytest -m live` runs real-network checks.
 
 ## Settings
 
