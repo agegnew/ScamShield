@@ -198,7 +198,8 @@
     "name_ar": "شرطة أبوظبي",
     "category": "police",
     "official_domains": [
-      "adpolice.gov.ae"
+      "adpolice.gov.ae",
+      "adpolice.ae"
     ],
     "helplines": [
       "8002626",
@@ -758,6 +759,739 @@
       "customs-uae",
       "uae-customs",
       "customsuae"
+    ],
+    "logo": null
+  },
+  {
+    "id": "cbd",
+    "name_en": "Commercial Bank of Dubai (CBD)",
+    "name_ar": "بنك دبي التجاري",
+    "category": "bank",
+    "official_domains": [
+      "cbd.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "commercial bank of dubai",
+      "cbd online banking",
+      "card blocked"
+    ],
+    "keywords_ar": [
+      "بنك دبي التجاري",
+      "إيقاف البطاقة"
+    ],
+    "domain_tokens": [
+      "cbdbank",
+      "cbd-bank",
+      "cbd-uae",
+      "cbd-online"
+    ],
+    "logo": null
+  },
+  {
+    "id": "emiratesislamic",
+    "name_en": "Emirates Islamic",
+    "name_ar": "الإمارات الإسلامي",
+    "category": "bank",
+    "official_domains": [
+      "emiratesislamic.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "emirates islamic",
+      "online banking",
+      "update your details"
+    ],
+    "keywords_ar": [
+      "الإمارات الإسلامي",
+      "تحديث البيانات"
+    ],
+    "domain_tokens": [
+      "emiratesislamic",
+      "emirates-islamic"
+    ],
+    "logo": null
+  },
+  {
+    "id": "nbf",
+    "name_en": "National Bank of Fujairah (NBF)",
+    "name_ar": "بنك الفجيرة الوطني",
+    "category": "bank",
+    "official_domains": [
+      "nbf.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "national bank of fujairah",
+      "nbf online banking"
+    ],
+    "keywords_ar": [
+      "بنك الفجيرة الوطني"
+    ],
+    "domain_tokens": [
+      "nbfbank",
+      "nbf-bank",
+      "nbf-uae"
+    ],
+    "logo": null
+  },
+  {
+    "id": "sib",
+    "name_en": "Sharjah Islamic Bank",
+    "name_ar": "مصرف الشارقة الإسلامي",
+    "category": "bank",
+    "official_domains": [
+      "sib.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "sharjah islamic bank",
+      "online banking"
+    ],
+    "keywords_ar": [
+      "مصرف الشارقة الإسلامي"
+    ],
+    "domain_tokens": [
+      "sharjahislamic",
+      "sharjah-islamic",
+      "sibbank",
+      "sib-bank"
+    ],
+    "logo": null
+  },
+  {
+    "id": "ajmanbank",
+    "name_en": "Ajman Bank",
+    "name_ar": "مصرف عجمان",
+    "category": "bank",
+    "official_domains": [
+      "ajmanbank.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "ajman bank",
+      "online banking"
+    ],
+    "keywords_ar": [
+      "مصرف عجمان"
+    ],
+    "domain_tokens": [
+      "ajmanbank",
+      "ajman-bank"
+    ],
+    "logo": null
+  },
+  {
+    "id": "alhilalbank",
+    "name_en": "Al Hilal Bank",
+    "name_ar": "مصرف الهلال",
+    "category": "bank",
+    "official_domains": [
+      "alhilalbank.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "al hilal bank",
+      "online banking"
+    ],
+    "keywords_ar": [
+      "مصرف الهلال"
+    ],
+    "domain_tokens": [
+      "alhilalbank",
+      "alhilal-bank",
+      "hilalbank"
+    ],
+    "logo": null
+  },
+  {
+    "id": "wio",
+    "name_en": "Wio Bank",
+    "name_ar": "بنك ويو",
+    "category": "bank",
+    "official_domains": [
+      "wio.io"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "wio bank",
+      "wio business"
+    ],
+    "keywords_ar": [
+      "بنك ويو"
+    ],
+    "domain_tokens": [
+      "wiobank",
+      "wio-bank",
+      "wio-uae"
+    ],
+    "logo": null
+  },
+  {
+    "id": "bankofsharjah",
+    "name_en": "Bank of Sharjah",
+    "name_ar": "بنك الشارقة",
+    "category": "bank",
+    "official_domains": [
+      "bankofsharjah.com"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "bank of sharjah",
+      "online banking"
+    ],
+    "keywords_ar": [
+      "بنك الشارقة"
+    ],
+    "domain_tokens": [
+      "bankofsharjah",
+      "bank-of-sharjah"
+    ],
+    "logo": null
+  },
+  {
+    "id": "mohre",
+    "name_en": "Ministry of Human Resources and Emiratisation (MOHRE)",
+    "name_ar": "وزارة الموارد البشرية والتوطين",
+    "category": "government",
+    "official_domains": [
+      "mohre.gov.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "mohre",
+      "work permit",
+      "labour contract",
+      "domestic worker visa"
+    ],
+    "keywords_ar": [
+      "وزارة الموارد البشرية والتوطين",
+      "تصريح عمل",
+      "عقد عمل",
+      "تأشيرة عاملة منزلية"
+    ],
+    "domain_tokens": [
+      "mohre-",
+      "-mohre",
+      "mohreuae",
+      "mohre-uae"
+    ],
+    "logo": null
+  },
+  {
+    "id": "gdrfa",
+    "name_en": "GDRFA Dubai (residency and visas)",
+    "name_ar": "الإدارة العامة للإقامة وشؤون الأجانب دبي",
+    "category": "government",
+    "official_domains": [
+      "gdrfad.gov.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "gdrfa dubai",
+      "visa status",
+      "residence visa",
+      "entry permit"
+    ],
+    "keywords_ar": [
+      "الإقامة وشؤون الأجانب",
+      "حالة التأشيرة",
+      "تأشيرة إقامة"
+    ],
+    "domain_tokens": [
+      "gdrfa",
+      "gdrfad"
+    ],
+    "logo": null
+  },
+  {
+    "id": "dubaicustoms",
+    "name_en": "Dubai Customs",
+    "name_ar": "جمارك دبي",
+    "category": "government",
+    "official_domains": [
+      "dubaicustoms.gov.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "dubai customs",
+      "customs fee",
+      "parcel held"
+    ],
+    "keywords_ar": [
+      "جمارك دبي",
+      "رسوم جمركية",
+      "طرد محتجز"
+    ],
+    "domain_tokens": [
+      "dubaicustoms",
+      "dubai-customs"
+    ],
+    "logo": null
+  },
+  {
+    "id": "fta",
+    "name_en": "Federal Tax Authority (EmaraTax)",
+    "name_ar": "الهيئة الاتحادية للضرائب",
+    "category": "government",
+    "official_domains": [
+      "tax.gov.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "federal tax authority",
+      "vat refund",
+      "emaratax"
+    ],
+    "keywords_ar": [
+      "الهيئة الاتحادية للضرائب",
+      "استرداد ضريبة القيمة المضافة"
+    ],
+    "domain_tokens": [
+      "emaratax",
+      "fta-uae",
+      "uae-fta",
+      "ftauae"
+    ],
+    "logo": null
+  },
+  {
+    "id": "mohap",
+    "name_en": "Ministry of Health and Prevention (MOHAP)",
+    "name_ar": "وزارة الصحة ووقاية المجتمع",
+    "category": "government",
+    "official_domains": [
+      "mohap.gov.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "ministry of health",
+      "health card",
+      "medical fitness"
+    ],
+    "keywords_ar": [
+      "وزارة الصحة ووقاية المجتمع",
+      "البطاقة الصحية",
+      "اللياقة الطبية"
+    ],
+    "domain_tokens": [
+      "mohap"
+    ],
+    "logo": null
+  },
+  {
+    "id": "shjpolice",
+    "name_en": "Sharjah Police",
+    "name_ar": "شرطة الشارقة",
+    "category": "police",
+    "official_domains": [
+      "shjpolice.gov.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "sharjah police",
+      "sharjah traffic fine",
+      "fine discount"
+    ],
+    "keywords_ar": [
+      "شرطة الشارقة",
+      "مخالفات الشارقة"
+    ],
+    "domain_tokens": [
+      "shjpolice",
+      "sharjahpolice",
+      "sharjah-police",
+      "shj-police"
+    ],
+    "logo": null
+  },
+  {
+    "id": "ajmanpolice",
+    "name_en": "Ajman Police",
+    "name_ar": "شرطة عجمان",
+    "category": "police",
+    "official_domains": [
+      "ajmanpolice.gov.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "ajman police",
+      "ajman traffic fine"
+    ],
+    "keywords_ar": [
+      "شرطة عجمان",
+      "مخالفات عجمان"
+    ],
+    "domain_tokens": [
+      "ajmanpolice",
+      "ajman-police"
+    ],
+    "logo": null
+  },
+  {
+    "id": "rakpolice",
+    "name_en": "Ras Al Khaimah Police",
+    "name_ar": "شرطة رأس الخيمة",
+    "category": "police",
+    "official_domains": [
+      "rakpolice.gov.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "rak police",
+      "ras al khaimah traffic fine"
+    ],
+    "keywords_ar": [
+      "شرطة رأس الخيمة",
+      "مخالفات رأس الخيمة"
+    ],
+    "domain_tokens": [
+      "rakpolice",
+      "rak-police"
+    ],
+    "logo": null
+  },
+  {
+    "id": "parkin",
+    "name_en": "Parkin (Dubai public parking)",
+    "name_ar": "باركن",
+    "category": "transport",
+    "official_domains": [
+      "parkin.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "parkin dubai",
+      "parking fine",
+      "parking ticket payment"
+    ],
+    "keywords_ar": [
+      "باركن",
+      "مخالفة مواقف"
+    ],
+    "domain_tokens": [
+      "parkin-",
+      "-parkin",
+      "parkinpay",
+      "parkin-dubai"
+    ],
+    "logo": null
+  },
+  {
+    "id": "talabat",
+    "name_en": "Talabat",
+    "name_ar": "طلبات",
+    "category": "delivery",
+    "official_domains": [
+      "talabat.com"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "talabat",
+      "talabat voucher",
+      "talabat pro free"
+    ],
+    "keywords_ar": [
+      "طلبات",
+      "قسيمة طلبات"
+    ],
+    "domain_tokens": [
+      "talabat"
+    ],
+    "logo": null
+  },
+  {
+    "id": "noon",
+    "name_en": "noon",
+    "name_ar": "نون",
+    "category": "shopping",
+    "official_domains": [
+      "noon.com"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "noon uae",
+      "noon gift card",
+      "noon offer"
+    ],
+    "keywords_ar": [
+      "نون الإمارات",
+      "بطاقة هدايا نون"
+    ],
+    "domain_tokens": [
+      "noon-",
+      "-noon",
+      "noonuae",
+      "noon-uae"
+    ],
+    "logo": null
+  },
+  {
+    "id": "dubaidutyfree",
+    "name_en": "Dubai Duty Free",
+    "name_ar": "سوق دبي الحرة",
+    "category": "shopping",
+    "official_domains": [
+      "dubaidutyfree.com"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "dubai duty free",
+      "millennium millionaire",
+      "raffle winner"
+    ],
+    "keywords_ar": [
+      "سوق دبي الحرة",
+      "الفائز بالسحب"
+    ],
+    "domain_tokens": [
+      "dubaidutyfree",
+      "dubai-duty-free",
+      "dubaiduty"
+    ],
+    "logo": null
+  },
+  {
+    "id": "luluhypermarket",
+    "name_en": "Lulu Hypermarket",
+    "name_ar": "لولو هايبرماركت",
+    "category": "shopping",
+    "official_domains": [
+      "luluhypermarket.com"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "lulu hypermarket",
+      "lulu anniversary gift",
+      "lulu voucher"
+    ],
+    "keywords_ar": [
+      "لولو هايبرماركت",
+      "هدية لولو"
+    ],
+    "domain_tokens": [
+      "luluhypermarket",
+      "lulu-hypermarket",
+      "lulu-uae",
+      "lulu-offer",
+      "lulu-gift"
+    ],
+    "logo": null
+  },
+  {
+    "id": "carrefouruae",
+    "name_en": "Carrefour UAE",
+    "name_ar": "كارفور الإمارات",
+    "category": "shopping",
+    "official_domains": [
+      "carrefouruae.com"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "carrefour uae",
+      "carrefour gift voucher",
+      "carrefour survey"
+    ],
+    "keywords_ar": [
+      "كارفور الإمارات",
+      "قسيمة كارفور"
+    ],
+    "domain_tokens": [
+      "carrefouruae",
+      "carrefour-uae",
+      "carrefourae",
+      "carrefour-ae"
+    ],
+    "logo": null
+  },
+  {
+    "id": "sharafdg",
+    "name_en": "Sharaf DG",
+    "name_ar": "شرف دي جي",
+    "category": "shopping",
+    "official_domains": [
+      "sharafdg.com"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "sharaf dg",
+      "sharaf dg offer"
+    ],
+    "keywords_ar": [
+      "شرف دي جي"
+    ],
+    "domain_tokens": [
+      "sharafdg",
+      "sharaf-dg"
+    ],
+    "logo": null
+  },
+  {
+    "id": "emiratesairline",
+    "name_en": "Emirates airline",
+    "name_ar": "طيران الإمارات",
+    "category": "travel",
+    "official_domains": [
+      "emirates.com"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "emirates airline",
+      "emirates free tickets",
+      "skywards miles"
+    ],
+    "keywords_ar": [
+      "طيران الإمارات",
+      "تذاكر مجانية"
+    ],
+    "domain_tokens": [
+      "flyemirates",
+      "emiratesairline",
+      "emirates-airline",
+      "emiratesair",
+      "emirates-air"
+    ],
+    "logo": null
+  },
+  {
+    "id": "etihadairways",
+    "name_en": "Etihad Airways",
+    "name_ar": "الاتحاد للطيران",
+    "category": "travel",
+    "official_domains": [
+      "etihad.com"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "etihad airways",
+      "etihad guest miles",
+      "free flight"
+    ],
+    "keywords_ar": [
+      "الاتحاد للطيران",
+      "رحلة مجانية"
+    ],
+    "domain_tokens": [
+      "etihadairways",
+      "etihad-airways",
+      "etihadair",
+      "etihad-air"
+    ],
+    "logo": null
+  },
+  {
+    "id": "flydubai",
+    "name_en": "flydubai",
+    "name_ar": "فلاي دبي",
+    "category": "travel",
+    "official_domains": [
+      "flydubai.com"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "flydubai",
+      "flydubai offer",
+      "flight refund"
+    ],
+    "keywords_ar": [
+      "فلاي دبي",
+      "استرداد التذكرة"
+    ],
+    "domain_tokens": [
+      "flydubai",
+      "fly-dubai"
+    ],
+    "logo": null
+  },
+  {
+    "id": "airarabia",
+    "name_en": "Air Arabia",
+    "name_ar": "العربية للطيران",
+    "category": "travel",
+    "official_domains": [
+      "airarabia.com"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "air arabia",
+      "air arabia offer"
+    ],
+    "keywords_ar": [
+      "العربية للطيران"
+    ],
+    "domain_tokens": [
+      "airarabia",
+      "air-arabia"
+    ],
+    "logo": null
+  },
+  {
+    "id": "addc",
+    "name_en": "Abu Dhabi Distribution Company (ADDC)",
+    "name_ar": "شركة أبوظبي للتوزيع",
+    "category": "utility",
+    "official_domains": [
+      "addc.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "addc bill",
+      "electricity bill abu dhabi"
+    ],
+    "keywords_ar": [
+      "شركة أبوظبي للتوزيع",
+      "فاتورة الكهرباء"
+    ],
+    "domain_tokens": [
+      "addc"
+    ],
+    "logo": null
+  },
+  {
+    "id": "sewa",
+    "name_en": "Sharjah Electricity, Water and Gas Authority (SEWA)",
+    "name_ar": "هيئة كهرباء ومياه وغاز الشارقة",
+    "category": "utility",
+    "official_domains": [
+      "sewa.gov.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "sewa bill",
+      "sharjah electricity bill"
+    ],
+    "keywords_ar": [
+      "هيئة كهرباء ومياه وغاز الشارقة",
+      "فاتورة سيوا"
+    ],
+    "domain_tokens": [
+      "sewa-",
+      "-sewa",
+      "sewapay",
+      "sewa-bill"
+    ],
+    "logo": null
+  },
+  {
+    "id": "etihadwe",
+    "name_en": "Etihad Water and Electricity",
+    "name_ar": "الاتحاد للماء والكهرباء",
+    "category": "utility",
+    "official_domains": [
+      "etihadwe.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "etihad water and electricity",
+      "etihadwe bill"
+    ],
+    "keywords_ar": [
+      "الاتحاد للماء والكهرباء",
+      "فاتورة الكهرباء"
+    ],
+    "domain_tokens": [
+      "etihadwe",
+      "etihad-we"
     ],
     "logo": null
   }

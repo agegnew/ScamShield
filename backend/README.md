@@ -56,7 +56,7 @@ After `export_contract`, regenerate the UI types from the repo root:
 
 ## How a URL flows
 
-1. A **radar source** (`app/workers/radar/`) or `POST /api/scan` creates a case with a URL-only verdict.
+1. A **radar run** (`app/radar_runs.py`: every day at 03:00 UAE, or `POST /api/radar/run` from the "Run radar now" button) runs the radar sources (`app/workers/radar/`) one after another and records their progress; it, or `POST /api/scan`, creates a case with a URL-only verdict. A run queues page checks for its riskiest new finds first (at most `SCAMSHIELD_RADAR_MAX_FETCH`).
 2. A `fetch` job is queued in the `jobs` table.
 3. The **worker** claims it, checks the URL is public (`safety.py`), runs `fetcher.fetch()` then `enrich.enrich()`.
 4. `engine.score()` turns URL + evidence into a Verdict, saved on the case.
@@ -94,7 +94,13 @@ Try one piece on its own: `python -m app.workers.fetcher https://example.com`, `
 | `SCAMSHIELD_ARTIFACTS` | `backend/artifacts` (screenshots, served at `/artifacts/`) |
 | `SCAMSHIELD_CORS` | `http://localhost:3001,http://127.0.0.1:3001,http://localhost:3000,http://127.0.0.1:3000` (the frontend runs on 3001) |
 | `SCAMSHIELD_WORKER_POLL` | `2` seconds between empty-queue checks |
-| `SERPAPI_KEY` | empty — Search and Maps radar stay off |
+| `SERPAPI_KEY` | empty — Search and Maps radars only replay saved answers |
+| `SCAMSHIELD_SERPAPI_RUN_MAX` | `40` live searches per radar run at most |
+| `SCAMSHIELD_SERPAPI_MONTHLY` | `250` (free plan), used when SerpApi's own count can't be read |
+| `SCAMSHIELD_SERPAPI_RESERVE` | `30` searches the daily run leaves for manual runs |
+| `SCAMSHIELD_SERPAPI_FRESH_HOURS` | `20` — a saved answer younger than this is reused, not searched again |
+| `SCAMSHIELD_RADAR_DAILY` / `SCAMSHIELD_RADAR_DAILY_AT` | `1` / `03:00` (UAE time) — the daily radar run, started by a worker with `SCAMSHIELD_WORKER_SCHEDULE=1` |
+| `SCAMSHIELD_RADAR_MAX_FETCH` | `300` page checks per run, riskiest URL first; the rest keep their URL-only verdict |
 | `SCAMSHIELD_ADMIN_PASSWORD` / `SCAMSHIELD_ANALYST_PASSWORD` | `admin123` / `analyst123` — seeded accounts `admin` and `analyst`, created when the users table is empty |
 | `SCAMSHIELD_JWT_SECRET` | empty — a random secret is created once in `backend/.jwt-secret` (gitignored) |
 | `SCAMSHIELD_TOKEN_HOURS` | `12` |

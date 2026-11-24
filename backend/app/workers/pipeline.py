@@ -5,7 +5,7 @@ import logging
 from sqlalchemy.orm import Session
 
 from .. import engine as detection
-from .. import jobs
+from .. import jobs, radar_runs
 from ..brands import load_registry
 from ..engine import feeds
 from ..repo import CaseRepo
@@ -50,6 +50,9 @@ def run_radar(session: Session, source_name: str) -> int:
 HANDLERS = {
     jobs.SCAN: lambda session, payload: run_fetch(session, payload["url"]),
     jobs.FETCH: lambda session, payload: run_fetch(session, payload["url"]),
-    jobs.RADAR: lambda session, payload: run_radar(session, payload["source"]),
+    # {"run": id} = a whole radar run (button or daily schedule); {"source": name} = one source.
+    jobs.RADAR: lambda session, payload: (
+        radar_runs.execute(session, payload["run"]) if "run" in payload else run_radar(session, payload["source"])
+    ),
     jobs.FEEDS: lambda session, payload: feeds.refresh(),
 }

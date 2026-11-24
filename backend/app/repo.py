@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from . import engine as detection
 from .api_models import Case, CaseSummary, Decision
-from .brands import normalize_uae_phone
+from .brands import load_registry, normalize_uae_phone
 from .contracts import Candidate, Evidence, Source, Verdict
 from .db import CaseRow, DecisionRow, utcnow
 from .urls import hostname
@@ -114,14 +114,48 @@ class CaseRepo:
         )
         return [self._to_case(r) for r in rows], total
 
-    def radar(self, limit: int = 50) -> list[Case]:
+    def radar(
+        self,
+        limit: int = 50,
+        source: str | None = None,
+        category: str | None = None,
+        verdict: str | None = None,
+        brand: str | None = None,
+        q: str | None = None,
+    ) -> list[Case]:
+        """Newest radar finds. source "search" includes ads; category "none" = no brand named."""
+        sources = [s.value for s in RADAR_SOURCES]
+        if source:
+            sources = [source, Source.SEARCH_AD.value] if source == Source.SEARCH.value else [source]
+        conds = [CaseRow.source.in_(sources)]
+        if category == "none":
+            conds.append(CaseRow.brand_target.is_(None))
+        elif category:
+            conds.append(CaseRow.brand_target.in_([b.id for b in load_registry().brands if b.category == category]))
+        if verdict:
+            conds.append(CaseRow.verdict == verdict)
+        if brand:
+            conds.append(CaseRow.brand_target == brand)
+        if q:
+            conds.append(CaseRow.domain.icontains(q, autoescape=True))
         rows = self.s.scalars(
-            self._query()
-            .where(CaseRow.source.in_([s.value for s in RADAR_SOURCES]))
-            .order_by(CaseRow.discovered_at.desc())
-            .limit(limit)
+            self._query().where(*conds).order_by(CaseRow.discovered_at.desc()).limit(limit)
         )
         return [self._to_case(r) for r in rows]
+
+    def counts_by_category(self) -> dict[str, int]:
+        """Radar finds per brand sector; brand-less finds under "none"."""
+        category = {b.id: b.category for b in load_registry().brands}
+        out: dict[str, int] = {}
+        rows = self.s.execute(
+            select(CaseRow.brand_target, func.count())
+            .where(CaseRow.source.in_([s.value for s in RADAR_SOURCES]))
+            .group_by(CaseRow.brand_target)
+        )
+        for brand_id, n in rows:
+            key = category.get(brand_id, "none") if brand_id else "none"
+            out[key] = out.get(key, 0) + n
+        return out
 
     def counts_by_source(self) -> dict[str, int]:
         found = dict(

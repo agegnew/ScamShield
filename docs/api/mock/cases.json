@@ -10,7 +10,9 @@
       "verdict": "FRAUD",
       "score": 94,
       "brand_target": "tamm",
-      "status": "confirmed"
+      "brand_category": "government",
+      "status": "confirmed",
+      "source_details": {}
     },
     {
       "id": "c-0002",
@@ -22,7 +24,9 @@
       "verdict": "FRAUD",
       "score": 89,
       "brand_target": "uaepass",
-      "status": "new"
+      "brand_category": "government",
+      "status": "new",
+      "source_details": {}
     },
     {
       "id": "c-0003",
@@ -34,7 +38,14 @@
       "verdict": "FRAUD",
       "score": 81,
       "brand_target": "emiratesnbd",
-      "status": "new"
+      "brand_category": "bank",
+      "status": "new",
+      "source_details": {
+        "listing_name": "Emirates NBD Customer Care 24/7",
+        "phone": "04 555 0199",
+        "helpline_mismatch": true,
+        "replayed": false
+      }
     },
     {
       "id": "c-0004",
@@ -46,7 +57,12 @@
       "verdict": "SUSPICIOUS",
       "score": 58,
       "brand_target": "rta",
-      "status": "new"
+      "brand_category": "transport",
+      "status": "new",
+      "source_details": {
+        "query": "pay traffic fine dubai",
+        "replayed": false
+      }
     },
     {
       "id": "c-0005",
@@ -58,7 +74,9 @@
       "verdict": "FRAUD",
       "score": 90,
       "brand_target": "tamm",
-      "status": "new"
+      "brand_category": "government",
+      "status": "new",
+      "source_details": {}
     },
     {
       "id": "c-0006",
@@ -70,7 +88,12 @@
       "verdict": "LEGIT",
       "score": 0,
       "brand_target": null,
-      "status": "new"
+      "brand_category": null,
+      "status": "new",
+      "source_details": {
+        "query": "tamm traffic fines",
+        "replayed": false
+      }
     },
     {
       "id": "c-0007",
@@ -82,7 +105,12 @@
       "verdict": "LEGIT",
       "score": 0,
       "brand_target": null,
-      "status": "new"
+      "brand_category": null,
+      "status": "new",
+      "source_details": {
+        "query": "pay traffic fine dubai",
+        "replayed": false
+      }
     },
     {
       "id": "c-0008",
@@ -94,7 +122,9 @@
       "verdict": "SUSPICIOUS",
       "score": 42,
       "brand_target": "uaepass",
-      "status": "dismissed"
+      "brand_category": "government",
+      "status": "dismissed",
+      "source_details": {}
     }
   ],
   "total": 8

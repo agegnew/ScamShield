@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
 
@@ -34,14 +35,31 @@ def _case_or_404(repo: CaseRepo, case_id: str) -> Case:
     return case
 
 
+RadarFeedSource = Literal["lookalike", "ct", "nrd", "search", "maps"]
+FeedCategory = Literal[
+    "government", "police", "bank", "telecom", "transport", "utility", "delivery", "shopping", "travel", "none"
+]
+
+
 @router.get("/radar/feed", response_model=RadarFeed)
 def radar_feed(
     limit: int = Query(50, ge=1, le=500),
+    source: RadarFeedSource | None = Query(None, description="'search' also returns search_ad"),
+    category: FeedCategory | None = Query(None, description="Brand sector; 'none' = no brand named"),
+    verdict: Label | None = None,
+    brand: str | None = None,
+    q: str | None = Query(None, description="Substring of the domain"),
     repo: CaseRepo = Depends(get_repo),
 ) -> RadarFeed:
-    """Newest auto-discovered URLs first (manual, citizen and batch excluded)."""
+    """Newest auto-discovered URLs first (manual, citizen and batch excluded). The counts ignore
+    the filters, so tab and chip numbers stay put while filtering."""
+    found = repo.radar(
+        limit, source=source, category=category, verdict=verdict.value if verdict else None, brand=brand, q=q
+    )
     return RadarFeed(
-        items=repo.summaries(repo.radar(limit)), counts_by_source=repo.counts_by_source()
+        items=repo.summaries(found),
+        counts_by_source=repo.counts_by_source(),
+        counts_by_category=repo.counts_by_category(),
     )
 
 

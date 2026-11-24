@@ -54,9 +54,11 @@ class NewDomains(RadarSource):
         wanted = {b.id for b in brands}
         now = datetime.now(timezone.utc)
         found: list[Candidate] = []
+        self.report(0, LOOKBACK_DAYS)
         for back in range(1, LOOKBACK_DAYS + 1):
             day = date.today() - timedelta(days=back)
             domains = download(day)
+            self.report(back, LOOKBACK_DAYS)
             hits = [(d, b) for d in domains if (b := match_brand(d)) and b in wanted]
             log.info("%s: %d new domains, %d name a brand", day, len(domains), len(hits))
             found += [

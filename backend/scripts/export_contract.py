@@ -20,6 +20,8 @@ os.environ["SCAMSHIELD_ADMIN_PASSWORD"] = "admin123"
 os.environ["SCAMSHIELD_ANALYST_PASSWORD"] = "analyst123"
 os.environ["SCAMSHIELD_JWT_SECRET"] = "export-only-secret-never-used-by-a-real-api"
 os.environ["SCAMSHIELD_REQUIRE_LOGIN"] = "0"
+# Samples must not depend on (or spend) a real SerpApi key.
+os.environ["SERPAPI_KEY"] = ""
 
 from fastapi.testclient import TestClient  # noqa: E402
 
@@ -55,6 +57,12 @@ POSTS = {
     "login": ("/api/auth/login", {"username": "analyst", "password": "analyst123"}),
 }
 
+# After starting a radar run for TAMM (search and Maps show as skipped: no key in samples).
+RADAR_GETS = {
+    "radar_status": "/api/radar/status",
+    "radar_runs": "/api/radar/runs",
+}
+
 # Sent with an admin token.
 ADMIN_GETS = {
     "auth_me": "/api/auth/me",
@@ -86,7 +94,15 @@ def main() -> None:
             res = client.get(path, headers=headers)
             res.raise_for_status()
             write(MOCK / f"{name}.json", res.json())
-    total = len(GETS) + len(POSTS) + len(ADMIN_GETS)
+        # Radar run: what the button gets back, then the status the page polls while it runs.
+        res = client.post("/api/radar/run", json={"brands": ["tamm"]}, headers=headers)
+        res.raise_for_status()
+        write(MOCK / "radar_run.json", res.json())
+        for name, path in RADAR_GETS.items():
+            res = client.get(path)
+            res.raise_for_status()
+            write(MOCK / f"{name}.json", res.json())
+    total = len(GETS) + len(POSTS) + len(ADMIN_GETS) + 1 + len(RADAR_GETS)
     print(f"Wrote {total} mock files and openapi.json to {OUT}")
 
 

@@ -276,7 +276,7 @@
           "cases"
         ],
         "summary": "Radar Feed",
-        "description": "Newest auto-discovered URLs first (manual, citizen and batch excluded).",
+        "description": "Newest auto-discovered URLs first (manual, citizen and batch excluded). The counts ignore\nthe filters, so tab and chip numbers stay put while filtering.",
         "operationId": "radar_feed_api_radar_feed_get",
         "security": [
           {
@@ -295,6 +295,111 @@
               "default": 50,
               "title": "Limit"
             }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "lookalike",
+                    "ct",
+                    "nrd",
+                    "search",
+                    "maps"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "'search' also returns search_ad",
+              "title": "Source"
+            },
+            "description": "'search' also returns search_ad"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "government",
+                    "police",
+                    "bank",
+                    "telecom",
+                    "transport",
+                    "utility",
+                    "delivery",
+                    "shopping",
+                    "travel",
+                    "none"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Brand sector; 'none' = no brand named",
+              "title": "Category"
+            },
+            "description": "Brand sector; 'none' = no brand named"
+          },
+          {
+            "name": "verdict",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Label"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Verdict"
+            }
+          },
+          {
+            "name": "brand",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Brand"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Substring of the domain",
+              "title": "Q"
+            },
+            "description": "Substring of the domain"
           }
         ],
         "responses": {
@@ -739,6 +844,145 @@
         ]
       }
     },
+    "/api/radar/status": {
+      "get": {
+        "tags": [
+          "radar"
+        ],
+        "summary": "Radar Status",
+        "description": "The current run (or the last one), the daily schedule and each source's state.\nPoll every 2 s while `running`, every 30 s otherwise.",
+        "operationId": "radar_status_api_radar_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RadarStatus"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/radar/runs": {
+      "get": {
+        "tags": [
+          "radar"
+        ],
+        "summary": "Radar Runs List",
+        "description": "The last runs, newest first.",
+        "operationId": "radar_runs_list_api_radar_runs_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "default": 10,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RadarRun"
+                  },
+                  "title": "Response Radar Runs List Api Radar Runs Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/radar/run": {
+      "post": {
+        "tags": [
+          "radar"
+        ],
+        "summary": "Radar Run",
+        "description": "Start a radar run now (analyst or admin). Omit `sources` for all, `brands` for every brand.",
+        "operationId": "radar_run_api_radar_run_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/RadarRunRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RadarRunResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "A run is already going; the body is {detail, run}"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/api/scan": {
       "post": {
         "tags": [
@@ -1017,7 +1261,9 @@
               "telecom",
               "transport",
               "utility",
-              "delivery"
+              "delivery",
+              "shopping",
+              "travel"
             ],
             "title": "Category"
           },
@@ -1303,6 +1549,29 @@
             ],
             "title": "Brand Target"
           },
+          "brand_category": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "government",
+                  "police",
+                  "bank",
+                  "telecom",
+                  "transport",
+                  "utility",
+                  "delivery",
+                  "shopping",
+                  "travel"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand Category",
+            "description": "Sector of brand_target (bank, police, shopping, ...); null without a brand"
+          },
           "status": {
             "type": "string",
             "enum": [
@@ -1311,6 +1580,12 @@
               "dismissed"
             ],
             "title": "Status"
+          },
+          "source_details": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Source Details",
+            "description": "How the radar found it (docs/radar-ui.md). lookalike: variant; ct: issuer, issued_at; nrd: registered_on; search/search_ad: query, position, title, lang, replayed; maps: listing_name, phone, helpline_mismatch, rating, reviews, replayed"
           }
         },
         "type": "object",
@@ -2374,7 +2649,16 @@
               "type": "integer"
             },
             "type": "object",
-            "title": "Counts By Source"
+            "title": "Counts By Source",
+            "description": "Every case per source, ignoring the filters"
+          },
+          "counts_by_category": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Counts By Category",
+            "description": "Radar finds per brand sector, ignoring the filters; brand-less finds under 'none'"
           }
         },
         "type": "object",
@@ -2383,6 +2667,422 @@
           "counts_by_source"
         ],
         "title": "RadarFeed"
+      },
+      "RadarRun": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "trigger": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "schedule"
+            ],
+            "title": "Trigger"
+          },
+          "started_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started By"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "running",
+              "done",
+              "failed"
+            ],
+            "title": "Status"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started At"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "brands": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brands",
+            "description": "Brands this run looked for; null = all"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/RadarRunSource"
+            },
+            "type": "array",
+            "title": "Sources"
+          },
+          "pages": {
+            "$ref": "#/components/schemas/RadarRunPages"
+          },
+          "verdicts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Verdicts",
+            "description": "Final verdicts of this run's new finds so far (FRAUD, SUSPICIOUS, LEGIT)"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "trigger",
+          "started_by",
+          "status",
+          "started_at",
+          "finished_at",
+          "sources",
+          "pages"
+        ],
+        "title": "RadarRun"
+      },
+      "RadarRunPages": {
+        "properties": {
+          "checked": {
+            "type": "integer",
+            "title": "Checked",
+            "description": "Page checks finished (or given up on)"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "description": "New finds queued for a page check, highest URL risk first"
+          }
+        },
+        "type": "object",
+        "required": [
+          "checked",
+          "total"
+        ],
+        "title": "RadarRunPages"
+      },
+      "RadarRunRequest": {
+        "properties": {
+          "sources": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "lookalikes",
+                    "ct",
+                    "nrd",
+                    "search",
+                    "maps"
+                  ]
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sources",
+            "description": "Omit for all enabled sources"
+          },
+          "brands": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brands",
+            "description": "Brand ids; omit for all brands"
+          }
+        },
+        "type": "object",
+        "title": "RadarRunRequest"
+      },
+      "RadarRunResponse": {
+        "properties": {
+          "run": {
+            "$ref": "#/components/schemas/RadarRun"
+          }
+        },
+        "type": "object",
+        "required": [
+          "run"
+        ],
+        "title": "RadarRunResponse"
+      },
+      "RadarRunSource": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "enum": [
+              "lookalikes",
+              "ct",
+              "nrd",
+              "search",
+              "maps"
+            ],
+            "title": "Name"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "waiting",
+              "running",
+              "done",
+              "skipped",
+              "failed"
+            ],
+            "title": "Status"
+          },
+          "checked": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checked",
+            "description": "Names / tokens / queries checked so far"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total",
+            "description": "null while unknown"
+          },
+          "found": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Found",
+            "description": "URLs this source returned"
+          },
+          "new": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "New",
+            "description": "Of those, URLs not seen before"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note",
+            "description": "e.g. needs_key, or the error type when failed"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "status"
+        ],
+        "title": "RadarRunSource"
+      },
+      "RadarSchedule": {
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled"
+          },
+          "time": {
+            "type": "string",
+            "title": "Time",
+            "description": "Daily run time, HH:MM in `timezone`"
+          },
+          "timezone": {
+            "type": "string",
+            "title": "Timezone"
+          },
+          "next_run_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Run At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "enabled",
+          "time",
+          "timezone",
+          "next_run_at"
+        ],
+        "title": "RadarSchedule"
+      },
+      "RadarSourceInfo": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "enum": [
+              "lookalikes",
+              "ct",
+              "nrd",
+              "search",
+              "maps"
+            ],
+            "title": "Name"
+          },
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled",
+            "description": "False when the source needs a key that isn't set"
+          },
+          "needs_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Needs Key"
+          },
+          "last_run_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Run At"
+          },
+          "last_new": {
+            "type": "integer",
+            "title": "Last New",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "enabled"
+        ],
+        "title": "RadarSourceInfo"
+      },
+      "RadarStatus": {
+        "properties": {
+          "running": {
+            "type": "boolean",
+            "title": "Running"
+          },
+          "run": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RadarRun"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The current run while running, else the last one"
+          },
+          "schedule": {
+            "$ref": "#/components/schemas/RadarSchedule"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/RadarSourceInfo"
+            },
+            "type": "array",
+            "title": "Sources"
+          },
+          "searches_left": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Searches Left",
+            "description": "SerpApi searches left this month (null without a key)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "running",
+          "run",
+          "schedule",
+          "sources"
+        ],
+        "title": "RadarStatus"
       },
       "Rdap": {
         "properties": {

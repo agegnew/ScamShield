@@ -95,6 +95,24 @@ class JobRow(Base):
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
+class RadarRunRow(Base):
+    """One radar run (manual button or the daily schedule) and its live progress (radar_runs.py)."""
+
+    __tablename__ = "radar_runs"
+
+    id: Mapped[str] = mapped_column(String(32), primary_key=True)
+    trigger: Mapped[str] = mapped_column(String(16))  # 'manual' | 'schedule'
+    started_by: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    status: Mapped[str] = mapped_column(String(16), index=True)  # 'running' | 'done' | 'failed'
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True, default=utcnow)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    brands: Mapped[list | None] = mapped_column(JSON, nullable=True)  # None = all brands
+    sources: Mapped[list] = mapped_column(JSON)  # [{name, status, checked, total, found, new, note}]
+    case_ids: Mapped[list] = mapped_column(JSON, default=list)  # new cases this run found
+    fetch_ids: Mapped[list] = mapped_column(JSON, default=list)  # those queued for a page check
+    error: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+
 _is_sqlite = DATABASE_URL.startswith("sqlite")
 engine = create_engine(
     DATABASE_URL,

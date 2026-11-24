@@ -144,7 +144,7 @@ Everyone works on mock data until 17:00 so nobody waits on anyone.
 - [x] Engine fixes from Simon's live checks: page impersonation beats a normal-looking URL (moi-portal.com SUSPICIOUS 38 → FRAUD 75); parked lookalikes are SUSPICIOUS, not FRAUD (tamm-service.site 100 → 60); a reported phishing URL on a hacked old site is FRAUD
 - [x] **21:00** — Graph edges (shared IP, registration day, final host, favicon, template, tracker, contact); thresholds swept on the held-out set and kept at SUSPICIOUS ≥ 30 / FRAUD ≥ 70 (see Accuracy)
 - [ ] **Next** — LLM check for borderline cases with Claude (decided 25 Nov; key available): screenshot + page text of SUSPICIOUS pages → impersonation verdict
-- [ ] **Next** — Radar v2 backend: about 45 brands with sectors (+ `shopping`, `travel`), `brand_category` + `source_details` in the feed, `POST /api/radar/run`, `GET /api/radar/status`, daily 03:00 run, SerpApi budget cap → [radar-ui.md](radar-ui.md)
+- [x] **25 Nov** — Radar v2 backend: 53 brands in 9 sectors (+ `shopping`, `travel`; held-out accuracy unchanged), `brand_category` + `source_details` + filters in the feed, `POST /api/radar/run`, `GET /api/radar/status`, `GET /api/radar/runs`, daily 03:00 run, SerpApi budget (40 per manual run, the month spread over the days, victim-intent queries first) → [radar-ui.md](radar-ui.md)
 - [x] **00:00** — Seed demo data (`python -m scripts.seed_demo`, `data/demo/`, `SCAMSHIELD_SEED_DEMO=1`); final accuracy numbers for the deck in the README (Results)
 - [ ] **00:00** — Freeze
 

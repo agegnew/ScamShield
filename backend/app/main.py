@@ -10,7 +10,7 @@ from .db import SessionLocal, init_db
 from .demo_data import load_snapshot
 from .mock.data import build_cases
 from .repo import CaseRepo
-from .routes import cases, citizen, scan, system, users
+from .routes import cases, citizen, radar, scan, system, users
 
 
 @asynccontextmanager
@@ -53,7 +53,7 @@ async def mode_header(request: Request, call_next):
     return response
 
 
-for module in (system, users, cases, scan, citizen):
+for module in (system, users, cases, radar, scan, citizen):
     app.include_router(module.router)
 
 ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)

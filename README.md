@@ -14,7 +14,7 @@ Residents receive SMS and WhatsApp links, search ads and Maps listings for "TAMM
 
 | | |
 | --- | --- |
-| **Finds them first** (no one pastes anything) | Five radars: lookalike domains of 23 UAE brands that exist in DNS (typos, homoglyphs, brand + bait word), new TLS certificates naming a brand (Certificate Transparency, crt.sh), newly registered domains (daily list), Google Search results and ads, and Google Maps listings with an unofficial website or a fake helpline number |
+| **Finds them first** (no one pastes anything) | Five radars: lookalike domains of 53 UAE brands that exist in DNS (typos, homoglyphs, brand + bait word), new TLS certificates naming a brand (Certificate Transparency, crt.sh), newly registered domains (daily list), Google Search results and ads, and Google Maps listings with an unofficial website or a fake helpline number. They run every day at 03:00 and on a "Run radar now" button, and each find is labelled by how it was found and which sector it imitates (banks, police and fines, delivery, shopping offers, airlines, ...) |
 | **Looks like a victim** | A headless browser with a UAE phone profile (Arabic, Asia/Dubai) follows short links and redirects, takes a screenshot (SHA-256), reads the text and the form fields (password, card, OTP, Emirates ID), and spots remote-access app and APK pushes. A second visit as a foreign desktop browser detects **cloaking** |
 | **Knows who is behind it** | WHOIS/RDAP (including `.ae`), DNS, IP → ASN, hosting provider and abuse contacts; shared platforms (Vercel, Netlify, …) are recognised so their old WHOIS never makes a scam look trustworthy |
 | **Decides and explains** | A detection engine scores 0–100 with reasons in **English and Arabic**: official-domain allowlist, popular sites, phishing feeds, a URL model, brand lookalikes and typosquats, URL shape, Arabic/English scam wording (10 UAE scam types), page signals, domain age, visual match against the real brand sites, cloaking and the Maps helpline check |
@@ -40,7 +40,7 @@ Most misses are phishing homepages with ordinary names (`http://www.jolifm.com`)
 
 ### One radar run (24 Nov 2026)
 
-The lookalike radar generated **56,958** typo, homoglyph and brand + bait-word names for the 23 brands and found **978 registered** in DNS, in about 4.5 minutes, with nobody pasting anything. Of the 239 we opened with the full page check, **38 were FRAUD, 64 SUSPICIOUS and 137 LEGIT** (many lookalikes are parked, for sale or unrelated businesses). Checking those finds by hand also caught two engine mistakes before the demo:
+The lookalike radar generated **56,958** typo, homoglyph and brand + bait-word names for the first 23 brands and found **978 registered** in DNS, in about 4.5 minutes, with nobody pasting anything. Of the 239 we opened with the full page check, **38 were FRAUD, 64 SUSPICIOUS and 137 LEGIT** (many lookalikes are parked, for sale or unrelated businesses). Checking those finds by hand also caught two engine mistakes before the demo:
 - **`adpolice.ae` is Abu Dhabi Police's own alias.** It serves the official site from the same IP as `adpolice.gov.ae` and scored FRAUD 75. It is now an official domain, and any site on a UAE government network counts strongly in its favour.
 - **Businesses that just share a name**, such as "Tamm Real Estate" or the ad-fraud firm AdPolice, no longer reach FRAUD without an official-status claim or a request for sensitive data.
 
@@ -65,7 +65,7 @@ flowchart LR
   R[Radar<br/>lookalikes · crt.sh · new domains<br/>Search + ads · Maps] --> Q[(Job queue<br/>Postgres)]
   I[Analyst scan · citizen check<br/>batch CSV · API] --> Q
   Q --> F[Fetch + enrich<br/>UAE phone browser, redirects, screenshot,<br/>forms, WHOIS/RDAP, DNS, ASN, hosting,<br/>fingerprints, cloaking, visual match]
-  B[Brand registry<br/>23 UAE brands, helplines,<br/>10 scam themes EN/AR] --> R
+  B[Brand registry<br/>53 UAE brands, helplines,<br/>10 scam themes EN/AR] --> R
   B --> E
   F --> E[Detection engine<br/>score 0-100 + reasons EN/AR]
   E --> D[(Cases, evidence,<br/>decisions, users)]
@@ -95,7 +95,7 @@ Workers scale horizontally (`docker compose up --scale worker=3`); user scans al
 | Fingerprints | Favicon hash (Shodan mmh3), DOM-template hash, screenshot dHash, tracker IDs, WhatsApp/Telegram contacts | Scam-network graph and visual match against official sites |
 | Reports | fpdf2 + HarfBuzz text shaping, Noto Sans / Noto Sans Arabic (OFL) | Correct Arabic in a pure-Python PDF, no browser needed in the API |
 | Auth | JWT (PyJWT), scrypt password hashes | Admin and analyst roles, audit log |
-| Data we built | `data/brands.json` (23 UAE brands: official domains, helplines, EN/AR names), `data/scam_themes.json` (10 UAE scam types, EN/AR wording and search queries), `data/references.json` (10 official-site fingerprints) | UAE relevance: the engine, radar and helpline check all read them |
+| Data we built | `data/brands.json` (53 UAE brands in 9 sectors: official domains, helplines, EN/AR names), `data/scam_themes.json` (10 UAE scam types, EN/AR wording and search queries), `data/references.json` (10 official-site fingerprints) | UAE relevance: the engine, radar and helpline check all read them |
 | Training/test data | PhishTank, OpenPhish, Phishing.Database, PhiUSIIL; Tranco top sites, crawled deep pages; 230 UAE official pages | Test sites never appear in training |
 
 ## Build and run
@@ -163,7 +163,7 @@ Input: a `.txt` file with one URL per line, or a `.csv` with a `url` column. Out
 
 ## Honest limitations
 
-- **Search and Maps need a SerpApi key** (free plan: 100 searches a month). Without one those two radars only replay answers saved on an earlier run (marked `replayed`), so they find nothing new; lookalikes, certificates and new domains are free and always on.
+- **Search and Maps run on a small SerpApi budget** (free plan: 250 searches a month). Each run is capped (40 searches for a manual run; the daily run spreads what is left over the rest of the month, keeping 30 back) and spends them on what victims type first ("pay traffic fine abu dhabi"), then brand queries by sector risk, reusing any answer younger than 20 hours. Ads come in the same answer for free, and every URL found still gets the full page check. Without a key those two radars only replay saved answers (marked `replayed`); lookalikes, certificates and new domains are free and always on.
 - **The URL model alone misses phishing on ordinary-looking domains**; the page fetch catches more, but a site that is already offline can only be judged on its URL, WHOIS and feeds.
 - **Cloaking:** we compare a UAE phone visit with a foreign desktop visit, but a kit that blocks all automated browsers or data-centre IPs can still hide from us.
 - **crt.sh is often slow or down**; the radar falls back to the last good answer.
@@ -173,7 +173,7 @@ Input: a `.txt` file with one URL per line, or a `.csv` with a `url` column. Out
 
 ## Route to a police pilot
 
-1. Run one radar + worker instance inside the police network against the 23 brands, with analysts confirming cases.
+1. Run one radar + worker instance inside the police network against the 53 brands, with analysts confirming cases.
 2. Send takedown requests from the generated emails; measure time from registration to detection to takedown.
 3. Add brand owners' own lookalike lists and the police's reported-scam data as feeds and training data.
 4. Scale workers horizontally; add more brands and the Arabic scam wording as new campaigns appear.

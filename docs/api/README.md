@@ -13,7 +13,10 @@ The engine, radar and worker are real. The API still starts in **mock mode** by 
 | --- | --- | --- | --- |
 | GET | `/api/health` | — | `health.json` |
 | GET | `/api/brands` | Brand names/logos for chips and filters | `brands.json` |
-| GET | `/api/radar/feed?limit=50` | Radar feed (newest first, radar sources only) + counts per source | `radar_feed.json` |
+| GET | `/api/radar/feed?limit=&source=&category=&verdict=&brand=&q=` | Radar feed (newest first, radar sources only). Each item has `brand_category` and `source_details`; `counts_by_source` and `counts_by_category` ignore the filters. `source=search` includes ads, `category=none` = no brand named. See [radar-ui.md](../radar-ui.md) | `radar_feed.json` |
+| GET | `/api/radar/status` | Radar page: current or last run with per-source progress, page checks and verdicts; daily schedule; each source's state; `searches_left` (SerpApi). Poll every 2 s while `running` | `radar_status.json` |
+| POST | `/api/radar/run` `{sources?, brands?}` | **Logged in.** "Run radar now" → **202** `{run}`; **409** `{detail: "radar_already_running", run}`; **400** unknown brand | `radar_run.json` |
+| GET | `/api/radar/runs?limit=10` | Last runs, newest first | `radar_runs.json` |
 | GET | `/api/cases?verdict=&source=&brand=&status=&q=&limit=&offset=` | Cases list with filters | `cases.json` |
 | GET | `/api/cases/{id}` | Case page: verdict, reasons, evidence, decisions | `case_*.json` |
 | POST | `/api/cases/{id}/decision` `{action: confirm\|dismiss, reason}` | Confirm / dismiss buttons | returns the updated case |
@@ -43,7 +46,7 @@ The engine, radar and worker are real. The API still starts in **mock mode** by 
 - **Case status:** `new`, `confirmed`, `dismissed`.
 - **Auth:** log in with `POST /api/auth/login` and send `Authorization: Bearer <access_token>` on every request. Tokens are JWTs that expire after 12 hours; on any **401** (it carries `WWW-Authenticate: Bearer`) clear the token and show the login page. Demo accounts: `admin` / `admin123` (role `admin`) and `analyst` / `analyst123` (role `analyst`).
   - **Public, no login:** `/api/health`, `/api/brands`, `/api/metrics`, `/api/check`, `/api/auth/login`.
-  - **Logged in (analyst or admin):** `POST /api/cases/{id}/decision`. The decision is stored with the token's username as `by`, the server time as `at`, and your `reason`.
+  - **Logged in (analyst or admin):** `POST /api/radar/run`, `POST /api/cases/{id}/decision`. The decision is stored with the token's username as `by`, the server time as `at`, and your `reason`.
   - **Admin only:** `/api/users`, `/api/decisions`. Analysts get **403**; hide these screens for them.
   - **Dashboard reads** (radar, cases, case page, graph, takedown, report.pdf, scan, batch) are open for the demo, so a stale token there is ignored. With `SCAMSHIELD_REQUIRE_LOGIN=1` they need a token too, so always send it if you have one.
   - Tokens beginning `mock-` are no longer accepted.

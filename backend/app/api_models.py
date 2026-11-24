@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-from .contracts import Candidate, Evidence, Label, Reason, Source, Verdict
+from .brands import brand_by_id
+from .contracts import BrandCategory, Candidate, Evidence, Label, Reason, Source, Verdict
 
 CaseStatus = Literal["new", "confirmed", "dismissed"]
 CheckVerdict = Literal["FRAUD", "SUSPICIOUS", "LEGIT", "UNKNOWN"]
@@ -55,10 +56,22 @@ class CaseSummary(BaseModel):
     verdict: Label
     score: int
     brand_target: str | None
+    brand_category: BrandCategory | None = Field(
+        default=None, description="Sector of brand_target (bank, police, shopping, ...); null without a brand"
+    )
     status: CaseStatus
+    source_details: dict[str, Any] = Field(
+        default_factory=dict,
+        description=(
+            "How the radar found it (docs/radar-ui.md). lookalike: variant; ct: issuer, issued_at; "
+            "nrd: registered_on; search/search_ad: query, position, title, lang, replayed; "
+            "maps: listing_name, phone, helpline_mismatch, rating, reviews, replayed"
+        ),
+    )
 
     @classmethod
     def of(cls, case: Case) -> CaseSummary:
+        brand = brand_by_id(case.verdict.brand_target)
         return cls(
             id=case.id,
             url=case.candidate.url,
@@ -69,8 +82,41 @@ class CaseSummary(BaseModel):
             verdict=case.verdict.verdict,
             score=case.verdict.score,
             brand_target=case.verdict.brand_target,
+            brand_category=brand.category if brand else None,
             status=case.status,
+            source_details=source_details(case),
         )
+
+
+# Older finds stored "typo"/"combo"; the Radar page knows the dnstwist names.
+_OLD_VARIANTS = {"combo": "dictionary"}
+
+
+def source_details(case: Case) -> dict[str, Any]:
+    """The few radar fields the Radar page shows per source, under stable names."""
+    c, d = case.candidate, case.candidate.extra.details
+    s = c.source
+    out: dict[str, Any]
+    if s == Source.LOOKALIKE:
+        variant = d.get("variant")
+        out = {"variant": _OLD_VARIANTS.get(variant, variant)}
+    elif s == Source.CT:
+        out = {"issuer": d.get("issuer"), "issued_at": d.get("cert_issued") or d.get("issued_at")}
+    elif s == Source.NRD:
+        out = {"registered_on": d.get("registered_on")}
+    elif s in (Source.SEARCH, Source.SEARCH_AD):
+        out = {"query": c.query, "position": d.get("position"), "title": d.get("title"),
+               "lang": d.get("lang"), "replayed": bool(d.get("replayed"))}
+    elif s == Source.MAPS:
+        flags = d.get("flags") or []
+        mismatch = "helpline_not_official" in flags or any(
+            r.code == "helpline_mismatch" for r in case.verdict.reasons
+        )
+        out = {"listing_name": c.extra.listing_name, "phone": c.extra.phone, "helpline_mismatch": mismatch,
+               "rating": d.get("rating"), "reviews": d.get("reviews"), "replayed": bool(d.get("replayed"))}
+    else:
+        out = {}
+    return {k: v for k, v in out.items() if v is not None}
 
 
 class CaseList(BaseModel):
@@ -80,7 +126,81 @@ class CaseList(BaseModel):
 
 class RadarFeed(BaseModel):
     items: list[CaseSummary]
-    counts_by_source: dict[str, int]
+    counts_by_source: dict[str, int] = Field(description="Every case per source, ignoring the filters")
+    counts_by_category: dict[str, int] = Field(
+        default_factory=dict,
+        description="Radar finds per brand sector, ignoring the filters; brand-less finds under 'none'",
+    )
+
+
+# ---- radar runs (docs/radar-ui.md) ---------------------------------------------
+
+RadarSourceName = Literal["lookalikes", "ct", "nrd", "search", "maps"]
+
+
+class RadarRunSource(BaseModel):
+    name: RadarSourceName
+    status: Literal["waiting", "running", "done", "skipped", "failed"]
+    checked: int | None = Field(default=None, description="Names / tokens / queries checked so far")
+    total: int | None = Field(default=None, description="null while unknown")
+    found: int | None = Field(default=None, description="URLs this source returned")
+    new: int | None = Field(default=None, description="Of those, URLs not seen before")
+    note: str | None = Field(default=None, description="e.g. needs_key, or the error type when failed")
+
+
+class RadarRunPages(BaseModel):
+    checked: int = Field(description="Page checks finished (or given up on)")
+    total: int = Field(description="New finds queued for a page check, highest URL risk first")
+
+
+class RadarRun(BaseModel):
+    id: str
+    trigger: Literal["manual", "schedule"]
+    started_by: str | None
+    status: Literal["running", "done", "failed"]
+    started_at: datetime
+    finished_at: datetime | None
+    brands: list[str] | None = Field(default=None, description="Brands this run looked for; null = all")
+    sources: list[RadarRunSource]
+    pages: RadarRunPages
+    verdicts: dict[str, int] = Field(
+        default_factory=dict, description="Final verdicts of this run's new finds so far (FRAUD, SUSPICIOUS, LEGIT)"
+    )
+    error: str | None = None
+
+
+class RadarSchedule(BaseModel):
+    enabled: bool
+    time: str = Field(description="Daily run time, HH:MM in `timezone`")
+    timezone: str
+    next_run_at: datetime | None
+
+
+class RadarSourceInfo(BaseModel):
+    name: RadarSourceName
+    enabled: bool = Field(description="False when the source needs a key that isn't set")
+    needs_key: str | None = None
+    last_run_at: datetime | None = None
+    last_new: int = 0
+
+
+class RadarStatus(BaseModel):
+    running: bool
+    run: RadarRun | None = Field(description="The current run while running, else the last one")
+    schedule: RadarSchedule
+    sources: list[RadarSourceInfo]
+    searches_left: int | None = Field(
+        default=None, description="SerpApi searches left this month (null without a key)"
+    )
+
+
+class RadarRunRequest(BaseModel):
+    sources: list[RadarSourceName] | None = Field(default=None, description="Omit for all enabled sources")
+    brands: list[str] | None = Field(default=None, description="Brand ids; omit for all brands")
+
+
+class RadarRunResponse(BaseModel):
+    run: RadarRun
 
 
 class DecisionRequest(BaseModel):

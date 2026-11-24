@@ -72,11 +72,13 @@ class CertTransparency(RadarSource):
         wanted = {b.id for b in brands}
         tokens = sorted({t.strip("-") for t, b in brand_tokens().items() if b in wanted and len(t.strip("-")) >= 4})
         seen: dict[str, dict] = {}
-        for token in tokens:
+        self.report(0, len(tokens))
+        for i, token in enumerate(tokens, 1):
             rows = query(token)
             for host, info in hosts_from(rows, since).items():
                 seen.setdefault(host, info)
             log.info("%s: %d certificates", token, len(rows))
+            self.report(i, len(tokens))
         now = datetime.now(timezone.utc)
         return [
             Candidate(url=f"https://{host}/", source=Source.CT, query=info["brand"], discovered_at=now,

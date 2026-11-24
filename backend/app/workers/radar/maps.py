@@ -15,7 +15,7 @@ from urllib.parse import urlsplit
 from ...brand_match import is_official, match_brand
 from ...contracts import Brand, Candidate, CandidateExtra, Source
 from .base import RadarSource
-from .serp import e164, is_neutral, serpapi
+from .serp import Query, e164, is_neutral, plan_into_budget, serpapi
 
 log = logging.getLogger("scamshield.radar.maps")
 
@@ -25,13 +25,30 @@ HELPLINE_CLAIM = re.compile(
     r"خدمة العملاء|خط المساعدة|الدعم|مركز الاتصال", re.I)
 
 
+def _params(query: str) -> dict:
+    return {"engine": "google_maps", "q": query, "ll": UAE_CENTER, "type": "search", "hl": "en"}
+
+
+def brand_queries(brand: Brand) -> list[Query]:
+    """Fake helplines hide behind "customer service" listings. A brand with official helplines to
+    compare against is worth more; the Arabic and plain-name searches are the fallbacks."""
+    name = brand.name_en.split(" (")[0]
+    main = 1.5 if brand.helplines else 0.75
+    return [
+        Query(_params(f"{name} customer service"), main, f"{name} customer service"),
+        Query(_params(f"{brand.name_ar} خدمة العملاء"), main * 2 / 3, f"{brand.name_ar} خدمة العملاء"),
+        Query(_params(f"{name} UAE"), 0.5, f"{name} UAE"),
+    ]
+
+
 def listings(brand: Brand) -> list[Candidate]:
     official_phones = {e164(p) for p in brand.helplines}
     names = [brand.name_en.split(" (")[0], brand.name_ar]
     now = datetime.now(timezone.utc)
     found = []
-    for query in [f"{names[0]} customer service", f"{names[0]} UAE", f"{names[1]} خدمة العملاء"]:
-        data = serpapi({"engine": "google_maps", "q": query, "ll": UAE_CENTER, "type": "search", "hl": "en"})
+    for q in brand_queries(brand):
+        query = q.params["q"]
+        data = serpapi(q.params)
         # An exact match comes back as a single place_results object instead of a list.
         places = data.get("local_results") or ([data["place_results"]] if data.get("place_results") else [])
         for place in places:
@@ -67,9 +84,16 @@ class GoogleMaps(RadarSource):
     name = "maps"
     source = Source.MAPS
     interval_minutes = 2 * 60
+    needs_key = "SERPAPI_KEY"
 
     def discover(self, brands: list[Brand]) -> list[Candidate]:
-        return [c for brand in brands for c in listings(brand)]
+        plan_into_budget([q for brand in brands for q in brand_queries(brand)])
+        found: list[Candidate] = []
+        self.report(0, len(brands))
+        for i, brand in enumerate(brands, 1):
+            found += listings(brand)
+            self.report(i, len(brands))
+        return found
 
 
 if __name__ == "__main__":

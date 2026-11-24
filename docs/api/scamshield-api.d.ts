@@ -140,7 +140,8 @@ export interface paths {
         };
         /**
          * Radar Feed
-         * @description Newest auto-discovered URLs first (manual, citizen and batch excluded).
+         * @description Newest auto-discovered URLs first (manual, citizen and batch excluded). The counts ignore
+         *     the filters, so tab and chip numbers stay put while filtering.
          */
         get: operations["radar_feed_api_radar_feed_get"];
         put?: never;
@@ -281,6 +282,67 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/radar/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Radar Status
+         * @description The current run (or the last one), the daily schedule and each source's state.
+         *     Poll every 2 s while `running`, every 30 s otherwise.
+         */
+        get: operations["radar_status_api_radar_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/radar/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Radar Runs List
+         * @description The last runs, newest first.
+         */
+        get: operations["radar_runs_list_api_radar_runs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/radar/run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Radar Run
+         * @description Start a radar run now (analyst or admin). Omit `sources` for all, `brands` for every brand.
+         */
+        post: operations["radar_run_api_radar_run_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/scan": {
         parameters: {
             query?: never;
@@ -387,7 +449,7 @@ export interface components {
              * Category
              * @enum {string}
              */
-            category: "government" | "police" | "bank" | "telecom" | "transport" | "utility" | "delivery";
+            category: "government" | "police" | "bank" | "telecom" | "transport" | "utility" | "delivery" | "shopping" | "travel";
             /**
              * Official Domains
              * @description Registrable domains only, e.g. 'tamm.abudhabi'; subdomains count as official
@@ -500,10 +562,22 @@ export interface components {
             /** Brand Target */
             brand_target: string | null;
             /**
+             * Brand Category
+             * @description Sector of brand_target (bank, police, shopping, ...); null without a brand
+             */
+            brand_category?: ("government" | "police" | "bank" | "telecom" | "transport" | "utility" | "delivery" | "shopping" | "travel") | null;
+            /**
              * Status
              * @enum {string}
              */
             status: "new" | "confirmed" | "dismissed";
+            /**
+             * Source Details
+             * @description How the radar found it (docs/radar-ui.md). lookalike: variant; ct: issuer, issued_at; nrd: registered_on; search/search_ad: query, position, title, lang, replayed; maps: listing_name, phone, helpline_mismatch, rating, reviews, replayed
+             */
+            source_details?: {
+                [key: string]: unknown;
+            };
         };
         /** CheckRequest */
         CheckRequest: {
@@ -916,10 +990,180 @@ export interface components {
         RadarFeed: {
             /** Items */
             items: components["schemas"]["CaseSummary"][];
-            /** Counts By Source */
+            /**
+             * Counts By Source
+             * @description Every case per source, ignoring the filters
+             */
             counts_by_source: {
                 [key: string]: number;
             };
+            /**
+             * Counts By Category
+             * @description Radar finds per brand sector, ignoring the filters; brand-less finds under 'none'
+             */
+            counts_by_category?: {
+                [key: string]: number;
+            };
+        };
+        /** RadarRun */
+        RadarRun: {
+            /** Id */
+            id: string;
+            /**
+             * Trigger
+             * @enum {string}
+             */
+            trigger: "manual" | "schedule";
+            /** Started By */
+            started_by: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "running" | "done" | "failed";
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /** Finished At */
+            finished_at: string | null;
+            /**
+             * Brands
+             * @description Brands this run looked for; null = all
+             */
+            brands?: string[] | null;
+            /** Sources */
+            sources: components["schemas"]["RadarRunSource"][];
+            pages: components["schemas"]["RadarRunPages"];
+            /**
+             * Verdicts
+             * @description Final verdicts of this run's new finds so far (FRAUD, SUSPICIOUS, LEGIT)
+             */
+            verdicts?: {
+                [key: string]: number;
+            };
+            /** Error */
+            error?: string | null;
+        };
+        /** RadarRunPages */
+        RadarRunPages: {
+            /**
+             * Checked
+             * @description Page checks finished (or given up on)
+             */
+            checked: number;
+            /**
+             * Total
+             * @description New finds queued for a page check, highest URL risk first
+             */
+            total: number;
+        };
+        /** RadarRunRequest */
+        RadarRunRequest: {
+            /**
+             * Sources
+             * @description Omit for all enabled sources
+             */
+            sources?: ("lookalikes" | "ct" | "nrd" | "search" | "maps")[] | null;
+            /**
+             * Brands
+             * @description Brand ids; omit for all brands
+             */
+            brands?: string[] | null;
+        };
+        /** RadarRunResponse */
+        RadarRunResponse: {
+            run: components["schemas"]["RadarRun"];
+        };
+        /** RadarRunSource */
+        RadarRunSource: {
+            /**
+             * Name
+             * @enum {string}
+             */
+            name: "lookalikes" | "ct" | "nrd" | "search" | "maps";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "waiting" | "running" | "done" | "skipped" | "failed";
+            /**
+             * Checked
+             * @description Names / tokens / queries checked so far
+             */
+            checked?: number | null;
+            /**
+             * Total
+             * @description null while unknown
+             */
+            total?: number | null;
+            /**
+             * Found
+             * @description URLs this source returned
+             */
+            found?: number | null;
+            /**
+             * New
+             * @description Of those, URLs not seen before
+             */
+            new?: number | null;
+            /**
+             * Note
+             * @description e.g. needs_key, or the error type when failed
+             */
+            note?: string | null;
+        };
+        /** RadarSchedule */
+        RadarSchedule: {
+            /** Enabled */
+            enabled: boolean;
+            /**
+             * Time
+             * @description Daily run time, HH:MM in `timezone`
+             */
+            time: string;
+            /** Timezone */
+            timezone: string;
+            /** Next Run At */
+            next_run_at: string | null;
+        };
+        /** RadarSourceInfo */
+        RadarSourceInfo: {
+            /**
+             * Name
+             * @enum {string}
+             */
+            name: "lookalikes" | "ct" | "nrd" | "search" | "maps";
+            /**
+             * Enabled
+             * @description False when the source needs a key that isn't set
+             */
+            enabled: boolean;
+            /** Needs Key */
+            needs_key?: string | null;
+            /** Last Run At */
+            last_run_at?: string | null;
+            /**
+             * Last New
+             * @default 0
+             */
+            last_new: number;
+        };
+        /** RadarStatus */
+        RadarStatus: {
+            /** Running */
+            running: boolean;
+            /** @description The current run while running, else the last one */
+            run: components["schemas"]["RadarRun"] | null;
+            schedule: components["schemas"]["RadarSchedule"];
+            /** Sources */
+            sources: components["schemas"]["RadarSourceInfo"][];
+            /**
+             * Searches Left
+             * @description SerpApi searches left this month (null without a key)
+             */
+            searches_left?: number | null;
         };
         /** Rdap */
         Rdap: {
@@ -1338,6 +1582,14 @@ export interface operations {
         parameters: {
             query?: {
                 limit?: number;
+                /** @description 'search' also returns search_ad */
+                source?: ("lookalike" | "ct" | "nrd" | "search" | "maps") | null;
+                /** @description Brand sector; 'none' = no brand named */
+                category?: ("government" | "police" | "bank" | "telecom" | "transport" | "utility" | "delivery" | "shopping" | "travel" | "none") | null;
+                verdict?: components["schemas"]["Label"] | null;
+                brand?: string | null;
+                /** @description Substring of the domain */
+                q?: string | null;
             };
             header?: never;
             path?: never;
@@ -1578,6 +1830,97 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Graph"];
+                };
+            };
+        };
+    };
+    radar_status_api_radar_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RadarStatus"];
+                };
+            };
+        };
+    };
+    radar_runs_list_api_radar_runs_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RadarRun"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    radar_run_api_radar_run_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["RadarRunRequest"] | null;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RadarRunResponse"];
+                };
+            };
+            /** @description A run is already going; the body is {detail, run} */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

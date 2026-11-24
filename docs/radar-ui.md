@@ -1,12 +1,12 @@
 # Radar page v2: categories, run button, daily schedule
 
-For Nati (UI). Agegnew builds the backend side next; until it lands, build against the sample JSON below.
+For Nati (UI). **The backend side is live on `main` (25 Nov).** Copy `docs/api/scamshield-api.d.ts` to `frontend/src/lib/api-types.d.ts`; real samples are in `docs/api/mock/radar_feed.json`, `radar_status.json`, `radar_run.json` and `radar_runs.json`.
 
 **Goal:** an analyst opens the Radar page and sees at a glance what the radar found, grouped the way they think about it: *how* we found it (lookalike, certificate, new domain, search, Maps) and *who* it imitates (banks, police and fines, delivery, shopping offers, and so on). They can also start a radar run with one button and watch it work.
 
 ## 1. What changes in the data (backend)
 
-- **More brands:** about 23 → 45. More banks, more fine and parking services, delivery companies, airlines, and shops whose "offers" scammers copy (Noon, Amazon.ae, Carrefour, Lulu, Emirates, Etihad, ...).
+- **More brands:** 23 → 53. More banks, emirate police and parking, delivery, airlines, and shops whose "offers" scammers copy (noon, Dubai Duty Free, Carrefour UAE, Lulu, Emirates, Etihad, ...). Amazon, DHL and FedEx were already covered as worldwide brands.
 - **Every brand has a sector** (`category` in `/api/brands`). Two new values: `shopping` and `travel`.
 - **Every radar find carries its category data**, so the page can filter without extra calls: `brand_category` and `source_details` on each item (section 4).
 - **Radar runs** become visible: a daily automatic run, a manual "Run radar now" button, and live progress while a run is going.
@@ -39,7 +39,9 @@ Each tab label shows its count, e.g. `Lookalike domains 312`. A tab with 0 stays
 | `vowel-swap` | Vowel changed | حرف علة مُبدّل |
 | `homoglyph` | Look-alike letter | حرف شبيه |
 | `tld-swap` | Different ending (.com → .ae) | امتداد مختلف |
-| anything else | Similar name | اسم مشابه |
+| anything else (older finds say `typo`) | Similar name | اسم مشابه |
+
+The backend sends `dictionary` for brand + bait word (tamm-pay), `tld-swap`, and the typo tricks `omission`, `insertion`, `repetition`, `replacement`, `transposition`, `vowel-swap`, `hyphenation`, `homoglyph`.
 
 ### Chips: who it imitates (`brand_category`)
 
@@ -187,7 +189,9 @@ Open like the other dashboard reads. Poll every 2 s while `running`, every 30 s 
 }
 ```
 
-- `run` is the current run while `running` is true, otherwise the last finished one (`null` if the radar never ran).
+- `run` is the current run while `running` is true, otherwise the last finished one (`null` if the radar never ran). `run.brands` is the brands it looked for (`null` = all).
+- `searches_left` (top level) is the SerpApi searches left this month, `null` without a key. Show it small next to the Search & ads tab ("212 searches left this month").
+- Search & Maps entries carry `note: "N live searches so far"` once done: the run's search budget is shared and capped (40 for a manual run).
 - Source `status`: `waiting`, `running`, `done`, `skipped`, `failed`. `total` can be `null` when unknown (show an indeterminate bar).
 - `verdicts` counts finds of this run that already have a verdict. The rest are still being checked.
 

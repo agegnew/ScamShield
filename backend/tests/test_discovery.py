@@ -30,9 +30,17 @@ def test_official_domains_never_match():
 
 def test_lookalike_variants_skip_official_and_include_bait_combos():
     variants = lookalikes.generate(brand_by_id("tamm"))
-    assert "tamm-pay.com" in variants and variants["tamm-pay.com"] == "combo"
+    assert "tamm-pay.com" in variants and variants["tamm-pay.com"] == "dictionary"  # brand + bait word
+    assert variants["tamm.com"] == "tld-swap"
     assert "tamm.abudhabi" not in variants
-    assert not any(how == "typo" for how in variants.values())  # 'tamm' is too short for typos
+    assert set(variants.values()) == {"dictionary", "tld-swap"}  # 'tamm' is too short for typos
+
+
+def test_lookalike_typos_say_which_trick_they_use():
+    variants = lookalikes.generate(brand_by_id("aramex"))
+    assert variants["armex.com"] == "omission"
+    assert variants["aramexx.com"] == "insertion"  # dnstwist "addition", shown as an extra letter
+    assert variants["aramex-pay.com"] == "dictionary"
 
 
 def test_ct_keeps_recent_brand_certificates_only():
