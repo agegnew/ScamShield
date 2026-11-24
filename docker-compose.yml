@@ -3,6 +3,7 @@ name: scamshield
 x-backend-env: &backend-env
   DATABASE_URL: postgresql+psycopg://scamshield:scamshield@db:5432/scamshield
   SCAMSHIELD_BRANDS: /data/brands.json
+  SCAMSHIELD_THEMES: /data/scam_themes.json
   SCAMSHIELD_ARTIFACTS: /artifacts
 
 services:

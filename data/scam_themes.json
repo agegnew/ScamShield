@@ -1,0 +1,105 @@
+{
+  "version": "stub-0 — starter keywords so the format is clear; Samri expands to v1 from ADP and police warnings",
+  "themes": [
+    {
+      "id": "traffic_fines",
+      "name_en": "Traffic fines and fine discounts",
+      "name_ar": "المخالفات المرورية وخصومات المخالفات",
+      "keywords_en": ["traffic fine", "fine discount", "pay your fine", "black points", "unpaid violation"],
+      "keywords_ar": ["مخالفة مرورية", "خصم المخالفات", "سداد المخالفة"],
+      "search_queries_en": ["pay traffic fine abu dhabi", "traffic fine discount uae"],
+      "search_queries_ar": ["دفع المخالفات المرورية"],
+      "sources": []
+    },
+    {
+      "id": "delivery_fees",
+      "name_en": "Parcel delivery and customs fees",
+      "name_ar": "رسوم توصيل الطرود والرسوم الجمركية",
+      "keywords_en": ["delivery fee", "parcel on hold", "redelivery", "customs fee"],
+      "keywords_ar": ["رسوم التوصيل", "شحنتك معلقة", "رسوم جمركية"],
+      "search_queries_en": ["parcel delivery fee uae"],
+      "search_queries_ar": [],
+      "sources": []
+    },
+    {
+      "id": "visa_residency",
+      "name_en": "Visa, residency and domestic workers",
+      "name_ar": "التأشيرات والإقامة والعمالة المنزلية",
+      "keywords_en": ["visa renewal", "residency", "golden visa", "domestic worker"],
+      "keywords_ar": ["تجديد التأشيرة", "الإقامة", "عاملة منزلية"],
+      "search_queries_en": ["uae visa renewal online"],
+      "search_queries_ar": [],
+      "sources": []
+    },
+    {
+      "id": "jobs",
+      "name_en": "Fake job offers",
+      "name_ar": "عروض عمل وهمية",
+      "keywords_en": ["job offer", "work from home", "earn daily"],
+      "keywords_ar": ["عرض عمل", "العمل من المنزل"],
+      "search_queries_en": [],
+      "search_queries_ar": [],
+      "sources": []
+    },
+    {
+      "id": "property",
+      "name_en": "Fake property listings",
+      "name_ar": "إعلانات عقارية وهمية",
+      "keywords_en": ["apartment for rent", "booking deposit", "pay deposit to view"],
+      "keywords_ar": ["شقة للإيجار", "عربون"],
+      "search_queries_en": [],
+      "search_queries_ar": [],
+      "sources": []
+    },
+    {
+      "id": "investment_salary",
+      "name_en": "Investment and salary-day offers",
+      "name_ar": "عروض الاستثمار ويوم الراتب",
+      "keywords_en": ["guaranteed return", "salary bonus", "double your money"],
+      "keywords_ar": ["عائد مضمون", "استثمار"],
+      "search_queries_en": [],
+      "search_queries_ar": [],
+      "sources": []
+    },
+    {
+      "id": "tickets_deals",
+      "name_en": "Event tickets and shop deals",
+      "name_ar": "تذاكر الفعاليات وعروض المتاجر",
+      "keywords_en": ["tickets", "limited offer", "90% off"],
+      "keywords_ar": ["تذاكر", "عرض محدود"],
+      "search_queries_en": [],
+      "search_queries_ar": [],
+      "sources": []
+    },
+    {
+      "id": "consumer_complaints",
+      "name_en": "Fake consumer protection and refunds",
+      "name_ar": "حماية المستهلك واسترداد المبالغ الوهمية",
+      "keywords_en": ["consumer protection", "file a complaint", "refund"],
+      "keywords_ar": ["حماية المستهلك", "تقديم شكوى", "استرداد المبلغ"],
+      "search_queries_en": ["consumer protection complaint abu dhabi"],
+      "search_queries_ar": [],
+      "sources": []
+    },
+    {
+      "id": "account_verification",
+      "name_en": "Account verification and OTP requests",
+      "name_ar": "طلبات تحديث الحساب ورمز التحقق",
+      "keywords_en": ["verify your account", "account suspended", "update your details", "otp"],
+      "keywords_ar": ["تحديث بياناتك", "تم إيقاف حسابك", "رمز التحقق"],
+      "search_queries_en": ["uae pass login"],
+      "search_queries_ar": [],
+      "sources": []
+    },
+    {
+      "id": "remote_access",
+      "name_en": "Remote-access app installs",
+      "name_ar": "طلب تثبيت تطبيقات التحكم عن بعد",
+      "keywords_en": ["anydesk", "teamviewer", "quicksupport", "download the app", ".apk"],
+      "keywords_ar": ["حمّل التطبيق"],
+      "search_queries_en": [],
+      "search_queries_ar": [],
+      "sources": []
+    }
+  ]
+}

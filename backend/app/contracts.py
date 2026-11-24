@@ -62,6 +62,28 @@ class BrandRegistry(BaseModel):
     brands: list[Brand]
 
 
+class ScamTheme(BaseModel):
+    """A scam type that does not copy one brand (jobs, property, delivery fees...)."""
+
+    id: str = Field(description="Short slug, e.g. 'delivery_fees'")
+    name_en: str
+    name_ar: str
+    keywords_en: list[str] = Field(description="Lower-case words/phrases seen on scam pages")
+    keywords_ar: list[str]
+    search_queries_en: list[str] = Field(
+        default_factory=list, description="Queries the search radar runs for this theme"
+    )
+    search_queries_ar: list[str] = Field(default_factory=list)
+    sources: list[str] = Field(
+        default_factory=list, description="News or police warning links this theme is based on"
+    )
+
+
+class ScamThemeRegistry(BaseModel):
+    version: str
+    themes: list[ScamTheme]
+
+
 class CandidateExtra(BaseModel):
     listing_name: str | None = None  # Maps listing title
     phone: str | None = None  # Maps listing phone

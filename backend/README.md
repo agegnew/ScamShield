@@ -42,7 +42,7 @@ pytest -q        # from backend/ or the repo root
 
 | Command (from `backend/`) | What it does |
 | --- | --- |
-| `python -m scripts.validate_brands` | Checks `data/brands.json` (run before committing it) |
+| `python -m scripts.validate_data` | Checks `data/brands.json` and `data/scam_themes.json` (run before committing them) |
 | `python -m scripts.export_contract` | Rewrites `docs/api/openapi.json` + `docs/api/mock/*.json` after any API change |
 
 After `export_contract`, regenerate the UI types from the repo root:
@@ -71,6 +71,7 @@ After `export_contract`, regenerate the UI types from the repo root:
 | `app/graph.py`, `takedown.py`, `messages.py` | Agegnew | Network graph, takedown email, EN/AR text |
 | `app/mock/data.py` | Agegnew | Demo cases |
 | `../data/brands.json` | **Samri** | Brand registry |
+| `../data/scam_themes.json` | **Samri** | Scam types that don't copy one brand: keywords + search queries |
 
 Each of Simon's files starts with a docstring that says exactly what to build. `tests/test_worker.py` shows how to test a source or the fetcher without the network.
 

@@ -7,6 +7,7 @@ REPO_DIR = BACKEND_DIR.parent
 VERSION = "0.2.0"
 MODE = os.getenv("SCAMSHIELD_MODE", "mock")
 BRANDS_PATH = Path(os.getenv("SCAMSHIELD_BRANDS", str(REPO_DIR / "data" / "brands.json")))
+THEMES_PATH = Path(os.getenv("SCAMSHIELD_THEMES", str(REPO_DIR / "data" / "scam_themes.json")))
 ARTIFACTS_DIR = Path(os.getenv("SCAMSHIELD_ARTIFACTS", str(BACKEND_DIR / "artifacts")))
 CORS_ORIGINS = [
     origin.strip()

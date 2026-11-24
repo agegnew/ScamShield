@@ -22,7 +22,7 @@ API docs at http://localhost:8000/docs. No Docker? See [`backend/README.md`](bac
 | Nati | `frontend/` — create the Next.js app there | [`docs/api/README.md`](docs/api/README.md), TypeScript types in [`docs/api/scamshield-api.d.ts`](docs/api/scamshield-api.d.ts), sample JSON in `docs/api/mock/` |
 | Agegnew | `backend/app/` (API, DB, engine) | [`backend/app/engine/core.py`](backend/app/engine/core.py) |
 | Simon | `backend/app/workers/` | [`fetcher.py`](backend/app/workers/fetcher.py), [`enrich.py`](backend/app/workers/enrich.py), [`radar/`](backend/app/workers/radar/) — each file's docstring says what to build |
-| Samri | `data/brands.json`, `data/logos/` | Run `python -m scripts.validate_brands` (from `backend/`) before committing |
+| Samri | `data/scam_themes.json`, `data/brands.json`, `data/logos/` | Run `python -m scripts.validate_data` (from `backend/`) before committing |
 
 Pull before you push, keep commits small, and edit only files your lane owns ([ownership table](backend/README.md#who-owns-what)).
 
@@ -100,7 +100,7 @@ The brand registry feeds both the radar and the engine; every screen reads from 
 | Nati | UI/UX and accessibility | Dashboard, citizen checker, EN/AR RTL, design system | UI shell on mock data — 13:00 |
 | Agegnew (+ Claude Code) | Backend, DB, users, engine | API, database, roles, detection engine, URL model, accuracy eval, PDF/takedown | API contract + mock JSON — 11:45 |
 | Simon | Workers and discovery | Job runner, fetcher, enrichment, radar (lookalikes, crt.sh, Search, Maps) | First real URL fetched + screenshot — 13:00 |
-| Samri | Research, creative, pitch | UAE brand registry, scam research, branding, demo pages, deck, video, demo script | brands.json v1 — 12:30 |
+| Samri | Research, creative, pitch | Scam themes + UAE brand registry, branding, demo pages, deck, video, demo script | scam_themes.json + brands.json v1 — 15:00 |
 
 Everyone works on mock data until 17:00 so nobody waits on anyone.
 
@@ -147,12 +147,14 @@ Free sources (lookalikes, crt.sh) come first so discovery works even without a S
 
 ### Samri — research, creative, pitch
 
-The brand registry is the first thing everyone else needs: the engine, the lookalike radar and the helpline check all read it.
+Your two data files are the first thing everyone else needs: the engine, the lookalike radar, the search radar and the helpline check all read them. Edit them directly on GitHub or locally, then run `python -m scripts.validate_data` from `backend/` (it also runs in the tests).
 
-- [ ] **12:30** — `brands.json` v1, about 20 UAE brands: TAMM, UAE PASS, ICP, MOI, RTA fines, Dubai Police, Abu Dhabi Police, Salik, Emirates Post, Aramex, DEWA, e&, du, Emirates NBD, ADCB, FAB, DIB, Mashreq, ADIB, RAKBANK. For each: official domains, official helplines, EN/AR names and keywords, logo file
-- [ ] **13:00** — Branding: confirm product and team name, logo, colours, icon → Nati
-- [ ] **14:30** — Research: real UAE scam cases (news, police and TDRA warnings) + a list of Arabic and English scam phrases → engine and deck
-- [ ] **16:00** — Ask organizers the open questions at the end of this file
+- [ ] **15:00 — FIRST: `data/scam_themes.json` v1.** Scams that don't copy one brand, so the brand list can't catch them. A starter file with 10 themes is already there; expand each one from real ADP / police / TDRA warnings in the news:
+    - Themes: traffic fines and "90% discount" offers, parcel delivery and customs fees ("Dh3 delivery"), visa / residency / domestic workers, fake job offers, property listings, investment and salary-day offers, event tickets and shop deals, fake consumer protection and refunds, account verification / OTP requests, remote-access app installs (AnyDesk, TeamViewer, APK)
+    - For each theme: 5–15 English and Arabic **keywords** that appear on scam pages (the engine flags them), 3–5 **search queries** in English and Arabic (Simon's search radar runs them), and the **source links** you used
+- [ ] **15:00** — `data/brands.json` v1, about 23 UAE brands: TAMM, UAE PASS, ICP, MOI, RTA fines, Dubai Police, **Abu Dhabi Police** (`adpolice.gov.ae`; Aman 8002626, SMS 2828, 999), **Darb**, **Consumer Protection**, Salik, Emirates Post, Aramex, DEWA, e&, du, Emirates NBD, ADCB, FAB, DIB, Mashreq, ADIB, RAKBANK. For each: official domains, official helplines (copied from the official site), EN/AR names and keywords, logo file in `data/logos/`
+- [ ] **15:30** — Branding: confirm product and team name, logo, colours, icon → Nati
+- [ ] **16:00** — Ask organizers the open questions at the end of this file; collect 5–10 real UAE scam news stories with links for the deck
 - [ ] **16:00** — Two local demo scam pages (fake traffic-fine payment, fake bank login) + one legit control, made with AI tools; Simon serves them locally, never online
 - [ ] **20:00** — Deck draft: problem, solution, live demo, architecture, accuracy, UAE focus, police pilot route, honest limitations, team
 - [ ] **22:00** — Demo script (3 min) + Q&A cheat sheet
@@ -168,6 +170,7 @@ Fixed in the first hour so all four lanes build in parallel. Change one only aft
 | Contract | From → to | Fields |
 | --- | --- | --- |
 | `brands.json` | Samri → everyone | id, name_en, name_ar, category, official_domains[], helplines[], keywords_en[], keywords_ar[], logo |
+| `scam_themes.json` | Samri → engine, search radar | id, name_en, name_ar, keywords_en[], keywords_ar[], search_queries_en[], search_queries_ar[], sources[] |
 | Candidate | Simon → DB | url, source (lookalike, ct, search, search_ad, maps, manual, citizen, batch), query, discovered_at, extra {listing_name, phone, address} |
 | Evidence | Simon → engine | url, final_url, redirect_chain[{url, status}], http_status, screenshot_path, title, text_excerpt, forms[{action, input_types[], field_hints[]}], rdap {created, registrar, abuse_email}, ip, asn, hosting_org, hosting_abuse_email, fetched_at, fetch_error |
 | Verdict | Engine → API/UI | url, verdict, score, brand_target, reasons[{code, weight, text_en, text_ar, evidence_ref}], model_version, scored_at |
