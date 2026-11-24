@@ -1,10 +1,14 @@
 """Simon's discovery code: brand matching, radars and page parsing, without the network."""
 
+from datetime import datetime, timezone
+
 from app.brand_match import match_brand
 from app.brands import brand_by_id
 from app.contracts import Source
-from app.workers import fetcher
+from app.workers import enrich, fetcher
 from app.workers.radar import ct, lookalikes, maps, search
+
+NOW = datetime.now(timezone.utc)
 
 
 def test_brand_match_needs_context_for_short_names():
@@ -119,3 +123,19 @@ def test_fetcher_labels_placeholder_pages():
     }
     for (url, title, text), kind in cases.items():
         assert fetcher.page_kind(url, title, text) == kind, (url, title)
+
+
+def test_shop_wording_is_not_a_coming_soon_page():
+    assert fetcher.page_kind("http://a.com/", "Deals", "Brand new iPhone 15, check back for offers") == "content"
+    assert fetcher.page_kind("http://a.com/", "", "Our website is coming soon") == "coming_soon"
+
+
+def test_whois_follows_the_final_host_unless_it_is_a_registrar_page(monkeypatch):
+    from app.contracts import Evidence
+
+    looked_up = []
+    monkeypatch.setattr(enrich, "lookup", lambda url: looked_up.append(url) or {})
+    for kind in ("parked", "blocked", "error"):
+        ev = Evidence(url="https://bit.ly/x", final_url="https://phish.example/", page_kind=kind, fetched_at=NOW)
+        enrich.enrich(ev)
+    assert looked_up == ["https://bit.ly/x", "https://phish.example/", "https://phish.example/"]

@@ -86,8 +86,10 @@ PAGE_KINDS = [
                           r"if this is your domain|déjà enregistré|secureserver\.net|related searches", re.I)),
     ("error", re.compile(r"\b404\b|not found|error establishing|critical error|site not configured|"
                          r"cannot be displayed|chrome-error://", re.I)),
+    # Whole phrases only: "brand new" or "check back" alone also appear on shop pages ("brand new iPhone").
     ("coming_soon", re.compile(r"launching soon|coming soon|under construction|website is (being built|coming)|"
-                               r"brand new|almost here|check back|still being worked on|hello world", re.I)),
+                               r"(site|website|page) is brand new|please check back|check back (soon|later)|"
+                               r"still being worked on|welcome to wordpress\. this is your first post", re.I)),
     ("default_host_page", re.compile(r"welcome to nginx|apache2? .{0,20}default page|it works!|"
                                      r"index of /|default web site page", re.I)),
 ]

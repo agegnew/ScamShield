@@ -68,3 +68,17 @@ def test_unresolvable_host_is_unsafe(monkeypatch):
     monkeypatch.setattr(safety, "_resolve", nx)
     with pytest.raises(safety.UnsafeURL, match="cannot resolve"):
         safety.assert_public_url("https://missing.test/")
+
+
+def test_demo_hosts_may_resolve_locally_but_nothing_else(monkeypatch):
+    monkeypatch.setattr(safety, "_resolve", resolves_to("127.0.0.1"))
+    monkeypatch.setattr(safety, "DEMO_HOSTS", frozenset({"tamm-fines-pay.ae"}))
+    assert safety.assert_public_url("http://tamm-fines-pay.ae:8080/fake-fine/") == ["127.0.0.1"]
+    with pytest.raises(safety.UnsafeURL):
+        safety.assert_public_url("http://other.ae:8080/")
+    with pytest.raises(safety.UnsafeURL):
+        safety.assert_public_url("http://tamm-fines-pay.ae:22/")  # port rule still applies
+
+
+def test_no_demo_hosts_by_default():
+    assert safety.DEMO_HOSTS == frozenset()

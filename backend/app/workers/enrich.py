@@ -19,6 +19,7 @@ import requests
 import tldextract
 
 from ..contracts import Evidence, Rdap
+from .safety import is_demo_host
 
 RDAP_URL = "https://rdap.org/domain/{}"
 RDAP_IP_URL = "https://rdap.org/ip/{}"
@@ -161,8 +162,10 @@ def lookup(url: str) -> dict:
 
 
 # Destinations that are not the site being judged: a parked lookalike that redirects to a marketplace
-# would otherwise get the marketplace's WHOIS (godaddy.com, 28 years old).
-PLACEHOLDER_KINDS = {"parked", "for_sale", "expired", "blocked", "error", "coming_soon", "default_host_page"}
+# would otherwise get the marketplace's WHOIS (godaddy.com, 28 years old). Only registrar and
+# marketplace pages: a short link that ends on a captcha-gated or dead phishing page must keep the
+# phishing domain's WHOIS, not the shortener's (bit.ly, 15 years old, would read as "old = safe").
+PLACEHOLDER_KINDS = {"parked", "for_sale", "expired"}
 
 
 def enrich(evidence: Evidence) -> Evidence:
@@ -171,6 +174,8 @@ def enrich(evidence: Evidence) -> Evidence:
     if evidence.fetch_error and evidence.fetch_error.startswith("Blocked"):
         return evidence  # private or forbidden address: nothing public to look up
     target = evidence.final_url or evidence.url
+    if is_demo_host(urlsplit(target).hostname):
+        return evidence  # a local demo page: the real domain's WHOIS would belong to someone else
     if evidence.page_kind in PLACEHOLDER_KINDS:
         target = evidence.url
     return evidence.model_copy(update=lookup(target))

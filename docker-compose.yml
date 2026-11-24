@@ -85,5 +85,23 @@ services:
       api:
         condition: service_healthy
 
+  # Samri's demo scam pages under lookalike names, for the live demo only (never put online).
+  # Start with `docker compose --profile demo up` and set SCAMSHIELD_DEMO_HOSTS in .env
+  # (see demo-pages/README.md). The worker reaches them through these network aliases.
+  demo:
+    profiles: ["demo"]
+    image: python:3.11-slim
+    command: python -m http.server 8080 --directory /site
+    volumes:
+      - ./demo-pages:/site:ro
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks:
+      default:
+        aliases:
+          - tamm-fines-pay.ae
+          - emiratesnbd-verify.com
+          - gulfdriverguide.ae
+
 volumes:
   pgdata:

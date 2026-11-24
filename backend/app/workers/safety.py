@@ -5,10 +5,22 @@ site, including every redirect hop (in Playwright: inside page.route()).
 """
 
 import ipaddress
+import os
 import socket
 from urllib.parse import urlsplit
 
 ALLOWED_PORTS = {80, 443, 8080, 8443}
+
+# Demo pages (demo-pages/) run on the demo laptop under lookalike names that resolve to a local
+# address. Only these exact hostnames may skip the private-address check. Empty by default; set
+# SCAMSHIELD_DEMO_HOSTS=tamm-fines-pay.ae,emiratesnbd-verify.com,gulfdriverguide.ae for the demo.
+DEMO_HOSTS = frozenset(
+    h.strip().lower().rstrip(".") for h in os.getenv("SCAMSHIELD_DEMO_HOSTS", "").split(",") if h.strip()
+)
+
+
+def is_demo_host(host: str | None) -> bool:
+    return bool(host) and host.lower().rstrip(".") in DEMO_HOSTS
 
 _resolve = socket.getaddrinfo  # replaced in tests
 
@@ -47,6 +59,8 @@ def assert_public_url(url: str) -> list[str]:
     ips = sorted({info[4][0] for info in infos})
     if not ips:
         raise Unresolvable(f"cannot resolve {host}")
+    if is_demo_host(host):
+        return ips
     for ip in ips:
         addr = ipaddress.ip_address(ip.split("%")[0])
         if addr.version == 6 and addr.ipv4_mapped:

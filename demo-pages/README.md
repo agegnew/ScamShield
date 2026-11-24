@@ -28,10 +28,15 @@ To make the demo look real, give them lookalike names that only exist on the dem
 127.0.0.1  gulfdriverguide.ae
 ```
 
-## Note for Simon: the fetcher will block these pages
+## Scanning them with ScamShield
 
-`safety.assert_public_url()` refuses anything that resolves to a private address, including `127.0.0.1`. That is correct for real scans. For the demo you need a small exception, for example:
-- an env setting such as `DEMO_ALLOWED_HOSTS=tamm-fines-pay.ae,emiratesnbd-verify.com,gulfdriverguide.ae` that skips the check only for those exact hostnames, and is empty by default; or
-- saving each page's Evidence once and loading it as demo data.
+The SSRF guard (`backend/app/workers/safety.py`) refuses anything that resolves to a private address, including `127.0.0.1`. That stays on for real scans. For the demo, only the exact hostnames in `SCAMSHIELD_DEMO_HOSTS` may resolve locally (empty by default; WHOIS lookups are skipped for them, because the real domains belong to someone else). Put this in `.env` on the demo laptop:
 
-Don't switch the check off globally.
+```
+SCAMSHIELD_DEMO_HOSTS=tamm-fines-pay.ae,emiratesnbd-verify.com,gulfdriverguide.ae
+```
+
+- **Docker:** `docker compose --profile demo up --build` also starts a `demo` service that serves this folder on `127.0.0.1:8080` and gives the worker the three names as network aliases. Add the hosts-file lines above so the laptop's browser opens the same URLs.
+- **Without Docker:** serve the folder as shown above, add the hosts-file lines, and run the worker with the same `SCAMSHIELD_DEMO_HOSTS`.
+
+Then scan `http://tamm-fines-pay.ae:8080/fake-fine/`, `http://emiratesnbd-verify.com:8080/fake-bank/` and `http://gulfdriverguide.ae:8080/legit/`. Measured on 24 Nov (engine v1 + combination rules): fake fine **FRAUD 100**, fake bank **FRAUD 100**, legit blog **LEGIT 27**. The legit page sits close to the SUSPICIOUS line (30) because the URL model dislikes the `:8080` port; scan exactly these URLs in the demo.
