@@ -118,7 +118,9 @@ def maps_brand(brand: dict) -> list[dict]:
     names = [brand["name_en"].split(" (")[0], brand["name_ar"]]
     for query in [f"{names[0]} customer service", f"{names[0]} UAE", f"{names[1]} خدمة العملاء"]:
         data = serpapi({"engine": "google_maps", "q": query, "ll": UAE_CENTER, "type": "search", "hl": "en"})
-        for place in data.get("local_results", []):
+        # An exact match comes back as a single place_results object instead of a list.
+        places = data.get("local_results") or ([data["place_results"]] if data.get("place_results") else [])
+        for place in places:
             title = place.get("title") or ""
             if brands.match_brand(title.replace(" ", "")) != brand["id"] and \
                     not any(n.lower() in title.lower() for n in names):
