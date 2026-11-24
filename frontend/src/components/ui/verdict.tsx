@@ -132,12 +132,20 @@ export function StatusTag({ status, className }: { status: "new" | "confirmed" |
   );
 }
 
+/** "ICP - Federal Authority for Identity…" → "ICP". The full name stays in the tooltip. */
+export function shortBrand(name: string | null | undefined) {
+  if (!name) return "";
+  const head = name.split(/\s[-–—]\s/)[0].trim();
+  return head.length > 0 && head.length < name.length ? head : name;
+}
+
 export function BrandChip({ brandId, name, className }: { brandId: string | null | undefined; name?: string | null; className?: string }) {
   const { t } = useLang();
   if (!brandId) return <span className={cn("text-sm text-muted", className)}>{t("noBrand")}</span>;
+  const full = name ?? brandId;
   return (
-    <span className={cn("inline-flex items-center gap-1.5 rounded-full bg-accent-soft px-2.5 py-1 text-xs font-bold text-accent-text whitespace-nowrap", className)}>
-      {name ?? brandId}
+    <span title={full} className={cn("inline-flex max-w-[14rem] items-center gap-1.5 truncate rounded-full bg-accent-soft px-2.5 py-1 text-xs font-bold text-accent-text whitespace-nowrap", className)}>
+      {shortBrand(full)}
     </span>
   );
 }

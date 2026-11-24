@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ALargeSmall, ClipboardList, FolderOpen, Languages, LogOut, Radar, ScanSearch, Share2, Smartphone, Target, UsersRound } from "lucide-react";
+import { ALargeSmall, ClipboardList, FolderOpen, LayoutDashboard, Languages, LogOut, Radar, ScanSearch, Share2, Smartphone, Target, UsersRound } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { apiMode, me, onMode, useHealth } from "@/lib/api";
 import { clearSession, getToken, getUser, setSession, type User } from "@/lib/auth";
@@ -93,10 +93,20 @@ export function TextSizeToggle({ className }: { className?: string }) {
 }
 
 const NAV = [
-  { href: "/", key: "navRadar", Icon: Radar },
+  { href: "/", key: "navOverview", Icon: LayoutDashboard },
+  { href: "/radar", key: "navRadar", Icon: Radar },
   { href: "/cases", key: "navCases", Icon: FolderOpen },
   { href: "/graph", key: "navNetwork", Icon: Share2 },
   { href: "/accuracy", key: "navAccuracy", Icon: Target },
+] as const;
+
+/* Phone bottom bar: five slots at most. Network and Accuracy are one tap away from the Overview. */
+const MOBILE_NAV = [
+  { href: "/", key: "navOverview", Icon: LayoutDashboard },
+  { href: "/radar", key: "navRadar", Icon: Radar },
+  { href: "/cases", key: "navCases", Icon: FolderOpen },
+  { href: "/graph", key: "navNetwork", Icon: Share2 },
+  { href: "/scan", key: "navScan", Icon: ScanSearch },
 ] as const;
 
 const ADMIN_NAV = [
@@ -233,7 +243,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* Bottom nav (mobile) */}
       <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-line bg-surface px-1 py-1.5 lg:hidden">
-        {[...NAV, { href: "/scan", key: "navScan", Icon: ScanSearch } as const].map(({ href, key, Icon }) => (
+        {MOBILE_NAV.map(({ href, key, Icon }) => (
           <Link
             key={href}
             href={href}

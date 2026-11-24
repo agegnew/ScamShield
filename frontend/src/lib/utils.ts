@@ -10,7 +10,7 @@ export function fmtTime(iso: string | null | undefined, lang: "en" | "ar", opts?
   if (!iso) return "—";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
-  return new Intl.DateTimeFormat(lang === "ar" ? "ar-AE" : "en-AE", {
+  return new Intl.DateTimeFormat(lang === "ar" ? "ar-AE-u-nu-latn" : "en-AE", {
     timeZone: "Asia/Dubai",
     hour: "2-digit",
     minute: "2-digit",
@@ -26,7 +26,7 @@ export function fmtAgo(iso: string | null | undefined, lang: "en" | "ar") {
   const d = new Date(iso).getTime();
   if (Number.isNaN(d)) return iso;
   const diff = Math.round((d - Date.now()) / 1000);
-  const rtf = new Intl.RelativeTimeFormat(lang === "ar" ? "ar" : "en", { numeric: "auto" });
+  const rtf = new Intl.RelativeTimeFormat(lang === "ar" ? "ar-AE-u-nu-latn" : "en", { numeric: "auto" });
   const abs = Math.abs(diff);
   if (abs < 60) return rtf.format(diff, "second");
   if (abs < 3600) return rtf.format(Math.round(diff / 60), "minute");

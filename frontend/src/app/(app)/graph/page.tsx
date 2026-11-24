@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { ChevronRight, LayoutGrid, Share2 } from "lucide-react";
 import { useGraph, type Graph } from "@/lib/api";
 import { useLang } from "@/lib/i18n";
+import { isLocalDemo, toCampaigns } from "@/lib/campaigns";
 import { cn } from "@/lib/utils";
 import { verdictHex, VerdictChip } from "@/components/ui/verdict";
 import { ErrorState, Panel, PanelTitle, Skeleton } from "@/components/ui/primitives";
@@ -55,29 +57,168 @@ function layout(g: Graph, w: number, h: number) {
   return pos;
 }
 
+function DomainName({ domain, className }: { domain: string; className?: string }) {
+  const { t } = useLang();
+  if (isLocalDemo(domain)) {
+    return (
+      <span className={cn("inline-flex items-center gap-1.5", className)}>
+        <span className="rounded-full bg-surface-2 px-2 py-0.5 text-[11px] font-bold text-ink-2">{t("localDemo")}</span>
+        <span className="ltr text-xs text-muted">{domain}</span>
+      </span>
+    );
+  }
+  return <span className={cn("ltr", className)}>{domain}</span>;
+}
+
 export default function GraphPage() {
   const { t } = useLang();
-  const { data, error, isLoading, mutate } = useGraph();
+  const { data: full, error, isLoading, mutate } = useGraph();
+  const [view, setView] = useState<"groups" | "map">("groups");
+  const { campaigns, unlinked } = useMemo(() => toCampaigns(full), [full]);
+
+  return (
+    <div className="mx-auto max-w-6xl">
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-3 pt-2">
+        <div>
+          <h1 className="text-3xl font-extrabold tracking-tight text-ink">{t("graphTitle")}</h1>
+          <p className="mt-1 max-w-2xl text-muted">{t("graphSub")}</p>
+        </div>
+        <div role="tablist" aria-label={t("graphTitle")} className="inline-flex rounded-full bg-surface-2 p-1">
+          {(
+            [
+              ["groups", t("viewGroups"), LayoutGrid],
+              ["map", t("viewMap"), Share2],
+            ] as const
+          ).map(([v, label, Icon]) => (
+            <button
+              key={v}
+              role="tab"
+              type="button"
+              aria-selected={view === v}
+              onClick={() => setView(v)}
+              className={cn("inline-flex h-9 items-center gap-1.5 rounded-full px-4 text-sm font-bold", view === v ? "bg-surface text-ink shadow-sm" : "text-muted")}
+            >
+              <Icon aria-hidden className="size-4" />
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {error ? (
+        <ErrorState error={error} onRetry={() => mutate()} />
+      ) : isLoading || !full ? (
+        <Skeleton className="h-[520px] rounded-[16px]" />
+      ) : view === "groups" ? (
+        <Groups campaigns={campaigns} unlinked={unlinked} />
+      ) : (
+        <MapView full={full} campaigns={campaigns} unlinked={unlinked} />
+      )}
+    </div>
+  );
+}
+
+function Groups({ campaigns, unlinked }: ReturnType<typeof toCampaigns>) {
+  const { t } = useLang();
+  return (
+    <div className="flex flex-col gap-6">
+      <section>
+        <PanelTitle hint={t("campaignsSub")}>{t("campaignsTitle")}</PanelTitle>
+        {campaigns.length === 0 ? (
+          <p className="mt-3 rounded-[16px] border border-dashed border-line-2 p-8 text-center text-sm text-muted">{t("noEdges")}</p>
+        ) : (
+          <div className="mt-3 grid gap-4 lg:grid-cols-2">
+            {campaigns.map((c, i) => {
+              const details = [...new Map(c.edges.map((e) => [`${e.type}|${e.detail}`, e])).values()];
+              return (
+                <Panel key={i} className="p-4 sm:p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h2 className="text-lg font-extrabold text-ink">
+                      {t("campaign", { n: i + 1 })} <span className="text-muted">·</span> <span className="text-ink-2">{t("campaignDomains", { n: c.nodes.length })}</span>
+                    </h2>
+                    <div className="flex flex-wrap gap-1.5">
+                      {c.types.map((ty) => (
+                        <span key={ty} className="rounded-full bg-primary-soft px-2.5 py-1 text-xs font-bold text-primary">
+                          {t(`edge_${ty}` as Parameters<typeof t>[0])}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <ul className="mt-3 flex flex-col">
+                    {c.nodes.map((n, j) => (
+                      <li key={n.id} className={cn(j > 0 && "border-t border-line")}>
+                        <Link href={`/cases/${n.id}`} className="group flex items-center gap-3 rounded-xl px-2 py-2.5 hover:bg-surface-2">
+                          <VerdictChip verdict={n.verdict} size="sm" />
+                          <span className="ltr text-xs font-bold tabular-nums text-muted">{n.score}</span>
+                          <DomainName domain={n.domain} className="min-w-0 flex-1 truncate text-sm font-extrabold text-ink" />
+                          <ChevronRight aria-hidden className="size-4 text-muted rtl:rotate-180" />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                  <details className="group mt-2 border-t border-line pt-2">
+                    <summary className="cursor-pointer list-none text-sm font-bold text-ink-2 hover:text-ink">
+                      {t(details.length === 1 ? "link1" : "links", { n: details.length })}
+                    </summary>
+                    <ul className="mt-2 flex flex-col gap-1.5">
+                      {details.map((e, k) => (
+                        <li key={k} className="flex flex-wrap items-baseline gap-2 text-xs">
+                          <span className="rounded-full bg-surface-2 px-2 py-0.5 font-bold text-ink-2">{t(`edge_${e.type}` as Parameters<typeof t>[0])}</span>
+                          <span className="ltr break-all text-muted">{e.detail}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                </Panel>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      {unlinked.length > 0 && (
+        <section>
+          <PanelTitle hint={t("unlinkedSub")}>
+            {t("unlinkedTitle")} <span className="ltr text-muted tabular-nums">({unlinked.length})</span>
+          </PanelTitle>
+          <ul className="mt-3 grid gap-x-4 rounded-[16px] border border-line bg-surface p-2 sm:grid-cols-2 lg:grid-cols-3">
+            {unlinked.map((n) => (
+              <li key={n.id}>
+                <Link href={`/cases/${n.id}`} className="flex items-center gap-2.5 rounded-xl px-2 py-2 hover:bg-surface-2">
+                  <VerdictChip verdict={n.verdict} size="sm" />
+                  <DomainName domain={n.domain} className="min-w-0 flex-1 truncate text-sm font-bold text-ink" />
+                  <span className="ltr text-xs tabular-nums text-muted">{n.score}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
+  );
+}
+
+/* The map draws only linked domains, so the groups stand out; lone domains stay in the side list. */
+function MapView({ full, campaigns, unlinked }: { full: Graph } & ReturnType<typeof toCampaigns>) {
+  const { t } = useLang();
   const [sel, setSel] = useState<string | null>(null);
   const W = 860;
   const H = 520;
-  const pos = useMemo(() => (data ? layout(data, W, H) : []), [data]);
+  const data = useMemo<Graph>(() => {
+    const ids = new Set(campaigns.flatMap((c) => c.nodes.map((n) => n.id)));
+    return { nodes: full.nodes.filter((n) => ids.has(n.id)), edges: full.edges.filter((e) => ids.has(e.source) && ids.has(e.target)) };
+  }, [full, campaigns]);
+  const pos = useMemo(() => layout(data, W, H), [data]);
+  const isLoading = false;
 
-  if (error) return <ErrorState error={error} onRetry={() => mutate()} />;
-
-  const idx = new Map((data?.nodes ?? []).map((n, i) => [n.id, i]));
+  const idx = new Map(data.nodes.map((n, i) => [n.id, i]));
   const connected = new Set(sel ? (data?.edges ?? []).filter((e) => e.source === sel || e.target === sel).flatMap((e) => [e.source, e.target]) : []);
   const selEdges = sel ? (data?.edges ?? []).filter((e) => e.source === sel || e.target === sel) : [];
   const selNode = data?.nodes.find((n) => n.id === sel);
 
   return (
-    <div className="mx-auto max-w-6xl">
-      <div className="mb-5 pt-2">
-        <h1 className="text-3xl font-extrabold tracking-tight text-ink">{t("graphTitle")}</h1>
-        <p className="mt-1 max-w-2xl text-muted">{t("graphSub")}</p>
-      </div>
-
-      {isLoading || !data ? (
+    <div>
+      {isLoading ? (
         <Skeleton className="h-[520px] rounded-[16px]" />
       ) : (
         <div className="grid gap-4 lg:grid-cols-[1fr_20rem]">
@@ -98,7 +239,7 @@ export default function GraphPage() {
                     <circle r={r} fill={verdictHex[n.verdict]} fillOpacity={0.15} stroke={verdictHex[n.verdict]} strokeWidth={sel === n.id ? 4 : 2} />
                     <text y={r + 14} textAnchor="middle" fontSize={11} fontWeight={700} fill="var(--ink)">
                       {/* Long hacked-site names would run into their neighbours; the side list has the full name. */}
-                      {n.domain.length > 20 ? `${n.domain.slice(0, 17)}…` : n.domain}
+                      {isLocalDemo(n.domain) ? t("localDemo") : n.domain.length > 20 ? `${n.domain.slice(0, 17)}…` : n.domain}
                     </text>
                   </g>
                 );
@@ -110,18 +251,20 @@ export default function GraphPage() {
             {selNode ? (
               <>
                 <VerdictChip verdict={selNode.verdict} />
-                <h2 className="ltr mt-2 break-all text-lg font-extrabold">{selNode.domain}</h2>
+                <h2 className="mt-2 break-all text-lg font-extrabold">
+                  <DomainName domain={selNode.domain} />
+                </h2>
                 <Link href={`/cases/${selNode.id}`} className="text-sm font-bold text-primary underline">
                   {t("openCase")}
                 </Link>
-                <p className="mt-4 text-xs font-bold text-muted">{t("links", { n: selEdges.length })}</p>
+                <p className="mt-4 text-xs font-bold text-muted">{t(selEdges.length === 1 ? "link1" : "links", { n: selEdges.length })}</p>
                 <ul className="mt-2 flex flex-col gap-2">
                   {selEdges.map((e, i) => {
                     const other = data.nodes.find((n) => n.id === (e.source === sel ? e.target : e.source));
                     return (
                       <li key={i} className="rounded-xl bg-surface-2 p-2.5 text-sm">
                         <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs font-bold text-primary">{t(`edge_${e.type}`)}</span>
-                        <p className="ltr mt-1 font-bold">{other?.domain}</p>
+                        <p className="mt-1 font-bold">{other && <DomainName domain={other.domain} />}</p>
                         <p className="ltr text-xs text-muted">{e.detail}</p>
                       </li>
                     );
@@ -130,7 +273,7 @@ export default function GraphPage() {
               </>
             ) : (
               <>
-                <PanelTitle>{t("links", { n: data.edges.length })}</PanelTitle>
+                <PanelTitle>{t(data.edges.length === 1 ? "link1" : "links", { n: data.edges.length })}</PanelTitle>
                 {data.edges.length === 0 ? (
                   <p className="mt-2 text-sm text-muted">{t("noEdges")}</p>
                 ) : (
@@ -138,7 +281,7 @@ export default function GraphPage() {
                     {data.nodes.map((n) => (
                       <li key={n.id}>
                         <button type="button" onClick={() => setSel(n.id)} className={cn("flex w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-start hover:bg-surface-2")}>
-                          <span className="ltr truncate text-sm font-bold">{n.domain}</span>
+                          <DomainName domain={n.domain} className="truncate text-sm font-bold" />
                           <span className="ltr text-xs tabular-nums" style={{ color: verdictHex[n.verdict] }}>
                             {n.score}
                           </span>
@@ -146,6 +289,11 @@ export default function GraphPage() {
                       </li>
                     ))}
                   </ul>
+                )}
+                {unlinked.length > 0 && (
+                  <p className="mt-4 border-t border-line pt-3 text-xs text-muted">
+                    {t("unlinkedTitle")}: <span className="font-bold tabular-nums">{unlinked.length}</span>
+                  </p>
                 )}
               </>
             )}

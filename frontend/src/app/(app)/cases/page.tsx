@@ -50,8 +50,12 @@ function CasesInner() {
     return () => clearTimeout(h);
   }, [qDraft, q, setParam]);
 
-  const { data, error, isLoading, mutate } = useCases({ verdict, source, brand, status, q, limit: 100 });
-  const anyFilter = Boolean(verdict || source || brand || status || q);
+  // "risky=1" (from the Overview) hides "no warning signs" cases, so the list matches the count that linked here.
+  const risky = sp.get("risky") === "1";
+  const raw = useCases({ verdict, source, brand, status, q, limit: risky ? 500 : 100 });
+  const { error, isLoading, mutate } = raw;
+  const data = raw.data && risky ? { items: raw.data.items.filter((c) => c.verdict !== "LEGIT"), total: raw.data.items.filter((c) => c.verdict !== "LEGIT").length } : raw.data;
+  const anyFilter = Boolean(verdict || source || brand || status || q || risky);
   const brandName = (id: string | null) => {
     if (!id) return null;
     const b = brands?.find((x) => x.id === id);
@@ -102,6 +106,16 @@ function CasesInner() {
             </option>
           ))}
         </Select>
+        {risky && (
+          <button
+            type="button"
+            onClick={() => setParam("risky", "")}
+            className="inline-flex h-10 items-center gap-1.5 rounded-full bg-primary-soft px-3.5 text-sm font-bold text-primary hover:bg-primary-soft-2"
+          >
+            {t("riskyOnly")}
+            <X aria-hidden className="size-4" />
+          </button>
+        )}
         {anyFilter && (
           <Button
             variant="ghost"
