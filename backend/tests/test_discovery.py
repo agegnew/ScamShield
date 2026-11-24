@@ -139,3 +139,8 @@ def test_whois_follows_the_final_host_unless_it_is_a_registrar_page(monkeypatch)
         ev = Evidence(url="https://bit.ly/x", final_url="https://phish.example/", page_kind=kind, fetched_at=NOW)
         enrich.enrich(ev)
     assert looked_up == ["https://bit.ly/x", "https://phish.example/", "https://phish.example/"]
+
+
+def test_lookalike_radar_skips_ordinary_word_labels():
+    labels = lookalikes.brand_labels(brand_by_id("consumer_protection"))
+    assert "economy" not in labels and "added" not in labels and "consumerrights" in labels

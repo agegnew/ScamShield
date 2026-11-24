@@ -4,6 +4,12 @@ from functools import lru_cache
 from .config import BRANDS_PATH
 from .contracts import Brand, BrandRegistry
 
+# Official domain labels that are ordinary words or too short to name the brand on their own
+# (du.ae, economy.gov.ae, added.gov.ae, itc.gov.ae). Typos, combos and page titles with these
+# words are mostly unrelated sites ("iconomy.online", "Recently added"), so they are not used
+# as brand names; the brands' domain_tokens still are.
+GENERIC_LABELS = frozenset({"du", "added", "economy", "itc"})
+
 
 @lru_cache(maxsize=1)
 def load_registry() -> BrandRegistry:

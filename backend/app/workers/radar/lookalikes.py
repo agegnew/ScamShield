@@ -15,7 +15,7 @@ import dns.exception
 import dns.resolver
 import dnstwist
 
-from ...brands import load_registry
+from ...brands import GENERIC_LABELS, load_registry
 from ...contracts import Brand, Candidate, CandidateExtra, Source
 from ..enrich import icann_domain
 from .base import RadarSource
@@ -39,7 +39,8 @@ RESOLVER.lifetime = 4
 
 
 def brand_labels(brand: Brand) -> set[str]:
-    return {d.split(".")[0] for d in brand.official_domains}
+    # Ordinary words (economy, added) and two-letter names (du) give thousands of unrelated domains.
+    return {d.split(".")[0] for d in brand.official_domains} - GENERIC_LABELS
 
 
 def typo_labels(label: str) -> set[str]:

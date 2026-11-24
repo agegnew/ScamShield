@@ -269,3 +269,14 @@ def test_old_domain_still_counts_without_strong_evidence(monkeypatch):
     monkeypatch.setattr(model, "phishing_probability", lambda url: 0.37)
     ev = page("https://rallysteelworks.ae/about/", rdap=Rdap(created=NOW - timedelta(days=9 * 365)))
     assert {"url_model", "old_domain"} <= codes(engine.score("https://rallysteelworks.ae/about/", evidence=ev))
+
+
+def test_typos_of_an_ordinary_word_are_not_brand_typosquats():
+    # economy.gov.ae is official for Consumer Protection, but "iconomy" is not imitating it.
+    assert "typosquat" not in codes(engine.score("https://iconomy.online/"))
+    assert "typosquat" in codes(engine.score("https://emiratesnbb.com/"))
+
+
+def test_ordinary_words_in_a_title_are_not_a_brand_claim():
+    ev = page("https://news.example/", title="The Economy Times - Recently added stories")
+    assert "brand_on_wrong_domain" not in codes(engine.score("https://news.example/", evidence=ev))
