@@ -1,0 +1,12 @@
+{
+  "case_id": "c-0001",
+  "domain": "tamm-fines-pay.test",
+  "registrar": "Example Registrar Inc.",
+  "registrar_abuse_email": "abuse@registrar.test",
+  "hosting_org": "Example Hosting Ltd.",
+  "hosting_abuse_email": "abuse@hosting.test",
+  "ip": "203.0.113.45",
+  "subject": "Phishing site impersonating TAMM: tamm-fines-pay.test",
+  "body_en": "Hello,\n\nWe are reporting a phishing website impersonating TAMM, registered or hosted with you.\n\nURL: https://tamm-fines-pay.test/pay?ref=AD-55120\nFinal URL: https://tamm-fines-pay.test/pay?ref=AD-55120\nFirst seen: 2026-11-24T10:42:00+04:00\nIP address: 203.0.113.45\nRisk score: 94/100 (FRAUD)\n\nEvidence:\n- Domain imitates TAMM: 'tamm' plus 'fines-pay' on a non-official domain\n- Domain registered 3 days before discovery\n- Page shows the TAMM name and logo, but the official domain is tamm.abudhabi\n- Form asks for card number, CVV and a one-time code\n- Urgent payment wording: 'Pay now to avoid a 50% penalty'\n\nScreenshots, WHOIS and hosting records are kept under case c-0001.\nPlease suspend this domain or site.\n\nScamShield",
+  "body_ar": "مرحبًا،\n\nنبلغكم عن موقع تصيّد احتيالي ينتحل صفة تم، مسجّل أو مستضاف لديكم.\n\nالرابط: https://tamm-fines-pay.test/pay?ref=AD-55120\nالرابط النهائي: https://tamm-fines-pay.test/pay?ref=AD-55120\nأول رصد: 2026-11-24T10:42:00+04:00\nعنوان IP: 203.0.113.45\nدرجة الخطورة: 94/100 (FRAUD)\n\nالأدلة:\n- النطاق يقلّد «تم»: كلمة tamm مع fines-pay على نطاق غير رسمي\n- تم تسجيل النطاق قبل 3 أيام من اكتشافه\n- الصفحة تعرض اسم وشعار «تم» بينما النطاق الرسمي هو tamm.abudhabi\n- النموذج يطلب رقم البطاقة ورمز CVV ورمز التحقق لمرة واحدة\n- عبارات دفع عاجلة: «ادفع الآن لتجنب غرامة 50٪»\n\nلقطات الشاشة وبيانات WHOIS والاستضافة محفوظة في القضية c-0001.\nنرجو إيقاف هذا النطاق أو الموقع.\n\nScamShield"
+}

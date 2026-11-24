@@ -1,0 +1,35 @@
+{
+  "id": "c-0006",
+  "domain": "www.tamm.abudhabi",
+  "status": "new",
+  "candidate": {
+    "url": "https://www.tamm.abudhabi/",
+    "source": "search",
+    "query": "tamm traffic fines",
+    "discovered_at": "2026-11-24T08:50:00+04:00",
+    "extra": {
+      "listing_name": null,
+      "phone": null,
+      "address": null
+    }
+  },
+  "evidence": null,
+  "verdict": {
+    "url": "https://www.tamm.abudhabi/",
+    "verdict": "LEGIT",
+    "score": 0,
+    "brand_target": null,
+    "reasons": [
+      {
+        "code": "official_domain",
+        "weight": -50,
+        "text_en": "Official TAMM domain (www.tamm.abudhabi)",
+        "text_ar": "نطاق رسمي لـتم (www.tamm.abudhabi)",
+        "evidence_ref": "url"
+      }
+    ],
+    "model_version": "mock-0",
+    "scored_at": "2026-11-24T08:52:00+04:00"
+  },
+  "decisions": []
+}

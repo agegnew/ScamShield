@@ -1,0 +1,29 @@
+{
+  "model_version": "mock-0",
+  "items": [
+    {
+      "url": "https://tamm-fines-pay.test/pay?ref=AD-55120",
+      "verdict": "FRAUD",
+      "score": 94,
+      "brand_target": "tamm",
+      "reason_codes": [
+        "lookalike_domain",
+        "new_domain",
+        "brand_on_wrong_domain",
+        "card_otp_form",
+        "scam_keywords"
+      ],
+      "error": null
+    },
+    {
+      "url": "https://www.rta.ae/",
+      "verdict": "LEGIT",
+      "score": 0,
+      "brand_target": null,
+      "reason_codes": [
+        "official_domain"
+      ],
+      "error": null
+    }
+  ]
+}

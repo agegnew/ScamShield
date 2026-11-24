@@ -1,0 +1,86 @@
+[
+  {
+    "id": "tamm",
+    "name_en": "TAMM",
+    "name_ar": "تم",
+    "category": "government",
+    "official_domains": [
+      "tamm.abudhabi"
+    ],
+    "helplines": [
+      "800 555"
+    ],
+    "keywords_en": [
+      "tamm",
+      "abu dhabi government services",
+      "traffic fine"
+    ],
+    "keywords_ar": [
+      "تم",
+      "خدمات حكومة أبوظبي",
+      "مخالفات"
+    ],
+    "logo": null
+  },
+  {
+    "id": "uaepass",
+    "name_en": "UAE PASS",
+    "name_ar": "الهوية الرقمية",
+    "category": "government",
+    "official_domains": [
+      "uaepass.ae"
+    ],
+    "helplines": [],
+    "keywords_en": [
+      "uae pass",
+      "uaepass",
+      "digital identity"
+    ],
+    "keywords_ar": [
+      "الهوية الرقمية"
+    ],
+    "logo": null
+  },
+  {
+    "id": "emiratesnbd",
+    "name_en": "Emirates NBD",
+    "name_ar": "بنك الإمارات دبي الوطني",
+    "category": "bank",
+    "official_domains": [
+      "emiratesnbd.com"
+    ],
+    "helplines": [
+      "600 54 0000"
+    ],
+    "keywords_en": [
+      "emirates nbd",
+      "enbd"
+    ],
+    "keywords_ar": [
+      "الإمارات دبي الوطني"
+    ],
+    "logo": null
+  },
+  {
+    "id": "rta",
+    "name_en": "Roads and Transport Authority (RTA)",
+    "name_ar": "هيئة الطرق والمواصلات",
+    "category": "transport",
+    "official_domains": [
+      "rta.ae"
+    ],
+    "helplines": [
+      "800 9090"
+    ],
+    "keywords_en": [
+      "rta",
+      "traffic fine",
+      "nol"
+    ],
+    "keywords_ar": [
+      "هيئة الطرق والمواصلات",
+      "مخالفات مرورية"
+    ],
+    "logo": null
+  }
+]

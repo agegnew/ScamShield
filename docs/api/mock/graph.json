@@ -1,0 +1,72 @@
+{
+  "nodes": [
+    {
+      "id": "c-0001",
+      "domain": "tamm-fines-pay.test",
+      "verdict": "FRAUD",
+      "score": 94,
+      "brand_target": "tamm"
+    },
+    {
+      "id": "c-0002",
+      "domain": "uaepass-login.test",
+      "verdict": "FRAUD",
+      "score": 89,
+      "brand_target": "uaepass"
+    },
+    {
+      "id": "c-0003",
+      "domain": "emiratesnbd-support.test",
+      "verdict": "FRAUD",
+      "score": 81,
+      "brand_target": "emiratesnbd"
+    },
+    {
+      "id": "c-0004",
+      "domain": "rta-fine-check.test",
+      "verdict": "SUSPICIOUS",
+      "score": 58,
+      "brand_target": "rta"
+    },
+    {
+      "id": "c-0005",
+      "domain": "s.test",
+      "verdict": "FRAUD",
+      "score": 90,
+      "brand_target": "tamm"
+    },
+    {
+      "id": "c-0008",
+      "domain": "uae-pass.test",
+      "verdict": "SUSPICIOUS",
+      "score": 42,
+      "brand_target": "uaepass"
+    }
+  ],
+  "edges": [
+    {
+      "source": "c-0001",
+      "target": "c-0002",
+      "type": "same_ip",
+      "detail": "Same IP address 203.0.113.45"
+    },
+    {
+      "source": "c-0001",
+      "target": "c-0005",
+      "type": "same_ip",
+      "detail": "Same IP address 203.0.113.45"
+    },
+    {
+      "source": "c-0002",
+      "target": "c-0005",
+      "type": "same_ip",
+      "detail": "Same IP address 203.0.113.45"
+    },
+    {
+      "source": "c-0001",
+      "target": "c-0005",
+      "type": "same_registration_day",
+      "detail": "Registered on 2026-11-21 at Example Registrar Inc."
+    }
+  ]
+}

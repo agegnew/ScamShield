@@ -1,0 +1,88 @@
+{
+  "id": "c-0003",
+  "domain": "emiratesnbd-support.test",
+  "status": "new",
+  "candidate": {
+    "url": "https://emiratesnbd-support.test/",
+    "source": "maps",
+    "query": "emirates nbd customer care",
+    "discovered_at": "2026-11-24T09:58:00+04:00",
+    "extra": {
+      "listing_name": "Emirates NBD Customer Care 24/7",
+      "phone": "04 555 0199",
+      "address": "Al Barsha, Dubai"
+    }
+  },
+  "evidence": {
+    "url": "https://emiratesnbd-support.test/",
+    "final_url": "https://emiratesnbd-support.test/",
+    "redirect_chain": [],
+    "http_status": 200,
+    "screenshot_path": "mock/screenshot.svg",
+    "title": "Emirates NBD Support - Card Unblocking 24/7",
+    "text_excerpt": "Card blocked? Call our 24/7 support line or enter your card details below and an agent will unblock it within minutes.",
+    "forms": [
+      {
+        "action": "https://emiratesnbd-support.test/unblock",
+        "input_types": [
+          "text",
+          "tel"
+        ],
+        "field_hints": [
+          "card number",
+          "mobile number"
+        ]
+      }
+    ],
+    "rdap": {
+      "created": "2026-11-15T12:00:00Z",
+      "registrar": "Sample Registrar LLC",
+      "abuse_email": "abuse@sample-registrar.test"
+    },
+    "ip": "198.51.100.23",
+    "asn": 64501,
+    "hosting_org": "Sample Cloud LLC",
+    "hosting_abuse_email": "abuse@cloud.test",
+    "fetched_at": "2026-11-24T09:59:00+04:00",
+    "fetch_error": null
+  },
+  "verdict": {
+    "url": "https://emiratesnbd-support.test/",
+    "verdict": "FRAUD",
+    "score": 81,
+    "brand_target": "emiratesnbd",
+    "reasons": [
+      {
+        "code": "helpline_mismatch",
+        "weight": 35,
+        "text_en": "Maps listing phone 04 555 0199 is not Emirates NBD's official helpline 600 54 0000",
+        "text_ar": "رقم الهاتف في خرائط Google ‏04 555 0199 ليس رقم الخدمة الرسمي لبنك الإمارات دبي الوطني 600 54 0000",
+        "evidence_ref": "candidate.extra.phone"
+      },
+      {
+        "code": "lookalike_domain",
+        "weight": 25,
+        "text_en": "Domain uses the Emirates NBD name but is not emiratesnbd.com",
+        "text_ar": "النطاق يستخدم اسم بنك الإمارات دبي الوطني لكنه ليس emiratesnbd.com",
+        "evidence_ref": "url"
+      },
+      {
+        "code": "new_domain",
+        "weight": 12,
+        "text_en": "Domain registered 9 days before discovery",
+        "text_ar": "تم تسجيل النطاق قبل 9 أيام من اكتشافه",
+        "evidence_ref": "rdap.created"
+      },
+      {
+        "code": "scam_keywords",
+        "weight": 9,
+        "text_en": "Promises '24/7 card unblocking' and asks for card details",
+        "text_ar": "يَعِد «بفك حظر البطاقة على مدار الساعة» ويطلب بيانات البطاقة",
+        "evidence_ref": "text_excerpt"
+      }
+    ],
+    "model_version": "mock-0",
+    "scored_at": "2026-11-24T10:00:00+04:00"
+  },
+  "decisions": []
+}

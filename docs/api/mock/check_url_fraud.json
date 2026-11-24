@@ -1,0 +1,56 @@
+{
+  "kind": "url",
+  "input": "tamm-violations.test/pay",
+  "verdict": "FRAUD",
+  "score": 90,
+  "brand_target": "tamm",
+  "headline_en": "This looks like a scam",
+  "headline_ar": "يبدو أن هذا احتيال",
+  "advice_en": [
+    "Do not enter card details or any code.",
+    "If you already paid, call your bank now.",
+    "Report it to Abu Dhabi Police through the Aman service: 8002626."
+  ],
+  "advice_ar": [
+    "لا تُدخل بيانات بطاقتك أو أي رمز.",
+    "إذا دفعت بالفعل، اتصل ببنكك فورًا.",
+    "أبلغ شرطة أبوظبي عبر خدمة أمان: 8002626."
+  ],
+  "reasons": [
+    {
+      "code": "shortener_redirect",
+      "weight": 10,
+      "text_en": "Short link redirects to tamm-violations.test",
+      "text_ar": "الرابط المختصر يحوّل إلى tamm-violations.test",
+      "evidence_ref": "redirect_chain"
+    },
+    {
+      "code": "lookalike_domain",
+      "weight": 30,
+      "text_en": "Final domain imitates TAMM: 'tamm' plus 'violations'",
+      "text_ar": "النطاق النهائي يقلّد «تم»: كلمة tamm مع violations",
+      "evidence_ref": "url"
+    },
+    {
+      "code": "brand_on_wrong_domain",
+      "weight": 20,
+      "text_en": "Page shows the TAMM name and logo on a non-official domain",
+      "text_ar": "الصفحة تعرض اسم وشعار «تم» على نطاق غير رسمي",
+      "evidence_ref": "screenshot"
+    },
+    {
+      "code": "card_otp_form",
+      "weight": 20,
+      "text_en": "Form asks for card number, CVV and a one-time code",
+      "text_ar": "النموذج يطلب رقم البطاقة ورمز CVV ورمز التحقق لمرة واحدة",
+      "evidence_ref": "forms"
+    },
+    {
+      "code": "new_domain",
+      "weight": 10,
+      "text_en": "Domain registered 3 days before discovery",
+      "text_ar": "تم تسجيل النطاق قبل 3 أيام من اكتشافه",
+      "evidence_ref": "rdap.created"
+    }
+  ]
+}

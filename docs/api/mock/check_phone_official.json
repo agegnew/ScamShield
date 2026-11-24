@@ -1,0 +1,24 @@
+{
+  "kind": "phone",
+  "input": "600 54 0000",
+  "verdict": "LEGIT",
+  "score": 0,
+  "brand_target": "emiratesnbd",
+  "headline_en": "No warning signs found",
+  "headline_ar": "لم نجد علامات تحذيرية",
+  "advice_en": [
+    "Even so, never share one-time codes with anyone."
+  ],
+  "advice_ar": [
+    "ومع ذلك، لا تشارك رموز التحقق لمرة واحدة مع أي شخص."
+  ],
+  "reasons": [
+    {
+      "code": "official_helpline",
+      "weight": -50,
+      "text_en": "This is an official Emirates NBD helpline",
+      "text_ar": "هذا رقم خدمة رسمي لـبنك الإمارات دبي الوطني",
+      "evidence_ref": "brands.helplines"
+    }
+  ]
+}

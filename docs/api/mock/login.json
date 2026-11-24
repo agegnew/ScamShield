@@ -1,0 +1,8 @@
+{
+  "access_token": "mock-analyst",
+  "token_type": "bearer",
+  "user": {
+    "username": "analyst",
+    "role": "analyst"
+  }
+}

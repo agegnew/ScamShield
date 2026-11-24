@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.pytest_cache/
+
+backend/artifacts/*
+!backend/artifacts/mock/
+
+node_modules/
+.next/
+
+kickoff/

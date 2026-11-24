@@ -1,0 +1,49 @@
+"""Scam network: link risky cases that share infrastructure."""
+
+from collections import defaultdict
+from itertools import combinations
+
+from .api_models import Case, EdgeType, Graph, GraphEdge, GraphNode
+from .contracts import Label
+from .urls import hostname
+
+# A group bigger than this is probably shared hosting or a CDN, not one campaign.
+MAX_GROUP = 25
+
+
+def build_graph(cases: list[Case]) -> Graph:
+    risky = [c for c in cases if c.verdict.verdict != Label.LEGIT]
+    nodes = [
+        GraphNode(
+            id=c.id,
+            domain=c.domain,
+            verdict=c.verdict.verdict,
+            score=c.verdict.score,
+            brand_target=c.verdict.brand_target,
+        )
+        for c in risky
+    ]
+
+    groups: dict[tuple[EdgeType, str], list[str]] = defaultdict(list)
+    for case in risky:
+        ev = case.evidence
+        if ev is None:
+            continue
+        if ev.ip:
+            groups[("same_ip", f"Same IP address {ev.ip}")].append(case.id)
+        if ev.rdap and ev.rdap.created and ev.rdap.registrar:
+            day = ev.rdap.created.date().isoformat()
+            detail = f"Registered on {day} at {ev.rdap.registrar}"
+            groups[("same_registration_day", detail)].append(case.id)
+        if ev.final_url:
+            groups[("same_final_host", f"Same final host {hostname(ev.final_url)}")].append(
+                case.id
+            )
+
+    edges = [
+        GraphEdge(source=a, target=b, type=edge_type, detail=detail)
+        for (edge_type, detail), ids in groups.items()
+        if 2 <= len(ids) <= MAX_GROUP
+        for a, b in combinations(sorted(set(ids)), 2)
+    ]
+    return Graph(nodes=nodes, edges=edges)

@@ -1,0 +1,18 @@
+{
+  "kind": "phone",
+  "input": "050 123 4567",
+  "verdict": "UNKNOWN",
+  "score": null,
+  "brand_target": null,
+  "headline_en": "We don't know this number",
+  "headline_ar": "هذا الرقم غير معروف لدينا",
+  "advice_en": [
+    "Banks and government offices never ask for codes by phone.",
+    "Call back on the number published on the official website."
+  ],
+  "advice_ar": [
+    "البنوك والجهات الحكومية لا تطلب الرموز عبر الهاتف أبدًا.",
+    "اتصل بالرقم المنشور على الموقع الرسمي."
+  ],
+  "reasons": []
+}

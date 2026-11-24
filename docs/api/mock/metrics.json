@@ -1,0 +1,16 @@
+{
+  "mode": "mock",
+  "dataset": "mock — sample numbers for UI layout only, not a measurement",
+  "model_version": "mock-0",
+  "n_fraud": 200,
+  "n_legit": 200,
+  "tp": 186,
+  "fp": 6,
+  "tn": 194,
+  "fn": 14,
+  "precision": 0.969,
+  "recall": 0.93,
+  "fpr": 0.03,
+  "f1": 0.949,
+  "evaluated_at": "2026-11-24T10:00:00+04:00"
+}

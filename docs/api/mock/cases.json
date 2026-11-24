@@ -1,0 +1,101 @@
+{
+  "items": [
+    {
+      "id": "c-0001",
+      "url": "https://tamm-fines-pay.test/pay?ref=AD-55120",
+      "domain": "tamm-fines-pay.test",
+      "source": "lookalike",
+      "query": "tamm",
+      "discovered_at": "2026-11-24T10:42:00+04:00",
+      "verdict": "FRAUD",
+      "score": 94,
+      "brand_target": "tamm",
+      "status": "confirmed"
+    },
+    {
+      "id": "c-0002",
+      "url": "https://uaepass-login.test/auth",
+      "domain": "uaepass-login.test",
+      "source": "ct",
+      "query": "uaepass",
+      "discovered_at": "2026-11-24T10:15:00+04:00",
+      "verdict": "FRAUD",
+      "score": 89,
+      "brand_target": "uaepass",
+      "status": "new"
+    },
+    {
+      "id": "c-0003",
+      "url": "https://emiratesnbd-support.test/",
+      "domain": "emiratesnbd-support.test",
+      "source": "maps",
+      "query": "emirates nbd customer care",
+      "discovered_at": "2026-11-24T09:58:00+04:00",
+      "verdict": "FRAUD",
+      "score": 81,
+      "brand_target": "emiratesnbd",
+      "status": "new"
+    },
+    {
+      "id": "c-0004",
+      "url": "https://rta-fine-check.test/dubai",
+      "domain": "rta-fine-check.test",
+      "source": "search_ad",
+      "query": "pay traffic fine dubai",
+      "discovered_at": "2026-11-24T09:31:00+04:00",
+      "verdict": "SUSPICIOUS",
+      "score": 58,
+      "brand_target": "rta",
+      "status": "new"
+    },
+    {
+      "id": "c-0005",
+      "url": "https://s.test/x7Kp2",
+      "domain": "s.test",
+      "source": "citizen",
+      "query": null,
+      "discovered_at": "2026-11-24T09:12:00+04:00",
+      "verdict": "FRAUD",
+      "score": 90,
+      "brand_target": "tamm",
+      "status": "new"
+    },
+    {
+      "id": "c-0006",
+      "url": "https://www.tamm.abudhabi/",
+      "domain": "www.tamm.abudhabi",
+      "source": "search",
+      "query": "tamm traffic fines",
+      "discovered_at": "2026-11-24T08:50:00+04:00",
+      "verdict": "LEGIT",
+      "score": 0,
+      "brand_target": null,
+      "status": "new"
+    },
+    {
+      "id": "c-0007",
+      "url": "https://www.rta.ae/",
+      "domain": "www.rta.ae",
+      "source": "search",
+      "query": "pay traffic fine dubai",
+      "discovered_at": "2026-11-24T08:47:00+04:00",
+      "verdict": "LEGIT",
+      "score": 0,
+      "brand_target": null,
+      "status": "new"
+    },
+    {
+      "id": "c-0008",
+      "url": "https://uae-pass.test/",
+      "domain": "uae-pass.test",
+      "source": "lookalike",
+      "query": "uaepass",
+      "discovered_at": "2026-11-24T08:20:00+04:00",
+      "verdict": "SUSPICIOUS",
+      "score": 42,
+      "brand_target": "uaepass",
+      "status": "dismissed"
+    }
+  ],
+  "total": 8
+}

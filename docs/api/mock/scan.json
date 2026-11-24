@@ -1,0 +1,21 @@
+{
+  "case_id": "c-0009",
+  "status": "done",
+  "verdict": {
+    "url": "https://new-site.test/login",
+    "verdict": "SUSPICIOUS",
+    "score": 50,
+    "brand_target": null,
+    "reasons": [
+      {
+        "code": "mock_placeholder",
+        "weight": 0,
+        "text_en": "Mock result: the real engine is not connected yet",
+        "text_ar": "نتيجة تجريبية: المحرك الحقيقي غير متصل بعد",
+        "evidence_ref": null
+      }
+    ],
+    "model_version": "mock-0",
+    "scored_at": "2026-11-24T12:45:31.086725+04:00"
+  }
+}

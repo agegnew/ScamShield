@@ -100,7 +100,7 @@ Everyone works on mock data until 17:00 so nobody waits on anyone.
 
 ### Agegnew (+ Claude Code) — backend, DB, users, engine
 
-- [ ] **11:45** — Repo + FastAPI skeleton; publish the API contract and mock JSON for Nati
+- [x] **11:45** — Repo + FastAPI skeleton; publish the API contract and mock JSON for Nati
 - [ ] **13:00** — Database (SQLite through SQLAlchemy, Postgres-ready): users, brands, candidates, scans, verdicts, cases, decisions, domain links
 - [ ] **14:00** — Users: admin and analyst roles, login (JWT), seeded accounts; every confirm/dismiss logged with who, when, why
 - [ ] **15:00** — Datasets: phishing URLs from OpenPhish, URLhaus, PhishTank; legit *deep pages* (not only homepages) from top sites and UAE banks/government; 70/30 train/held-out split
@@ -143,13 +143,15 @@ The brand registry is the first thing everyone else needs: the engine, the looka
 
 Fixed in the first hour so all four lanes build in parallel. Change one only after telling the whole team.
 
+**Source of truth is code:** [`backend/app/contracts.py`](backend/app/contracts.py) for the shared formats, [`docs/api/README.md`](docs/api/README.md) for the API (with sample JSON for every endpoint).
+
 | Contract | From → to | Fields |
 | --- | --- | --- |
 | `brands.json` | Samri → everyone | id, name_en, name_ar, category, official_domains[], helplines[], keywords_en[], keywords_ar[], logo |
 | Candidate | Simon → DB | url, source (lookalike, ct, search, search_ad, maps, manual, citizen, batch), query, discovered_at, extra {listing_name, phone, address} |
-| Evidence | Simon → engine | final_url, redirect_chain[], http_status, screenshot_path, title, text_excerpt, forms[{type, action}], rdap {created, registrar, abuse_email}, ip, asn, hosting_org, fetched_at |
-| Verdict | Engine → API/UI | verdict, score, brand_target, reasons[{code, weight, text_en, text_ar, evidence_ref}], model_version |
-| API | Agegnew → Nati | `POST /api/scan`, `POST /api/batch`, `POST /api/check` (citizen), `GET /api/radar/feed`, `GET /api/cases`, `GET /api/cases/{id}`, `POST /api/cases/{id}/decision`, `GET /api/cases/{id}/report.pdf`, `GET /api/graph`, `GET /api/metrics`, `POST /api/auth/login` |
+| Evidence | Simon → engine | url, final_url, redirect_chain[{url, status}], http_status, screenshot_path, title, text_excerpt, forms[{action, input_types[], field_hints[]}], rdap {created, registrar, abuse_email}, ip, asn, hosting_org, hosting_abuse_email, fetched_at, fetch_error |
+| Verdict | Engine → API/UI | url, verdict, score, brand_target, reasons[{code, weight, text_en, text_ar, evidence_ref}], model_version, scored_at |
+| API | Agegnew → Nati | See [`docs/api/README.md`](docs/api/README.md) — 14 endpoints, mock data live now |
 
 ## Timeline and gates
 
