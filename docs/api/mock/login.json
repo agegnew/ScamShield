@@ -1,5 +1,5 @@
 {
-  "access_token": "mock-analyst",
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbmFseXN0Iiwicm9sZSI6ImFuYWx5c3QiLCJpYXQiOjE3OTU1Mjc2ODgsImV4cCI6MTc5NTU3MDg4OH0.r5ZkfYYLIZlD1oPRzGFKMaLxLqbcI_w3EzmGlxXik6M",
   "token_type": "bearer",
   "user": {
     "username": "analyst",

@@ -76,6 +76,61 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Me */
+        get: operations["me_api_auth_me_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Users */
+        get: operations["users_api_users_get"];
+        put?: never;
+        /** Add User */
+        post: operations["add_user_api_users_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Decisions
+         * @description Audit log: every confirm / dismiss across all cases, newest first.
+         */
+        get: operations["decisions_api_decisions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/radar/feed": {
         parameters: {
             query?: never;
@@ -139,7 +194,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Decide */
+        /**
+         * Decide
+         * @description Confirm or dismiss. Needs a logged-in analyst or admin; the log keeps who, when, why.
+         */
         post: operations["decide_api_cases__case_id__decision_post"];
         delete?: never;
         options?: never;
@@ -171,8 +229,33 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Report Pdf */
+        /**
+         * Report Pdf
+         * @description Police-ready evidence report: verdict, reasons, screenshot, WHOIS, hosting, redirects,
+         *     related domains, analyst decisions and takedown contacts. Downloads as a file.
+         */
         get: operations["report_pdf_api_cases__case_id__report_pdf_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/cases/{case_id}/export.json": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Json
+         * @description Evidence bundle for hand-over: the full case, the takedown request and related domains.
+         *     Downloads as a file.
+         */
+        get: operations["export_json_api_cases__case_id__export_json_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -499,6 +582,30 @@ export interface components {
              */
             at: string;
         };
+        /**
+         * DecisionLogEntry
+         * @description One confirm / dismiss in the audit log: who, when, why.
+         */
+        DecisionLogEntry: {
+            /** Case Id */
+            case_id: string;
+            /** Domain */
+            domain: string;
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "confirm" | "dismiss";
+            /** Reason */
+            reason: string;
+            /** By */
+            by: string;
+            /**
+             * At
+             * Format: date-time
+             */
+            at: string;
+        };
         /** DecisionRequest */
         DecisionRequest: {
             /**
@@ -610,6 +717,28 @@ export interface components {
              * @description Set when the page could not be loaded; the engine still scores the URL
              */
             fetch_error?: string | null;
+        };
+        /**
+         * EvidenceExport
+         * @description Downloadable evidence bundle for one case (GET /api/cases/{id}/export.json).
+         */
+        EvidenceExport: {
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /** Scamshield Version */
+            scamshield_version: string;
+            /**
+             * Model Version
+             * @description Detection engine that produced this export
+             */
+            model_version: string;
+            case: components["schemas"]["Case"];
+            takedown: components["schemas"]["Takedown"];
+            /** Related */
+            related: components["schemas"]["RelatedDomain"][];
         };
         /**
          * Fingerprints
@@ -830,6 +959,26 @@ export interface components {
             /** Status */
             status?: number | null;
         };
+        /**
+         * RelatedDomain
+         * @description Another case that shares infrastructure with this one (an edge of GET /api/graph).
+         */
+        RelatedDomain: {
+            /** Case Id */
+            case_id: string;
+            /** Domain */
+            domain: string;
+            verdict: components["schemas"]["Label"];
+            /** Score */
+            score: number;
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "same_ip" | "same_registration_day" | "same_final_host" | "same_favicon" | "same_template" | "same_tracker" | "same_contact";
+            /** Detail */
+            detail: string;
+        };
         /** ScanRequest */
         ScanRequest: {
             /** Url */
@@ -874,6 +1023,48 @@ export interface components {
             body_en: string;
             /** Body Ar */
             body_ar: string;
+            /**
+             * Recipients
+             * @description Registrar and host abuse emails, deduplicated
+             */
+            recipients?: string[];
+            /**
+             * Mailto
+             * @description mailto: link with the recipients, subject and English body; None without recipients
+             */
+            mailto?: string | null;
+        };
+        /**
+         * User
+         * @description An account as admins see it (the password hash is never returned).
+         */
+        User: {
+            /** Username */
+            username: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "admin" | "analyst";
+            /** Disabled */
+            disabled: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** UserCreate */
+        UserCreate: {
+            /** Username */
+            username: string;
+            /** Password */
+            password: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "admin" | "analyst";
         };
         /** UserInfo */
         UserInfo: {
@@ -1039,6 +1230,110 @@ export interface operations {
             };
         };
     };
+    me_api_auth_me_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserInfo"];
+                };
+            };
+        };
+    };
+    users_api_users_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["User"][];
+                };
+            };
+        };
+    };
+    add_user_api_users_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["User"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    decisions_api_decisions_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DecisionLogEntry"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     radar_feed_api_radar_feed_get: {
         parameters: {
             query?: {
@@ -1142,9 +1437,7 @@ export interface operations {
     decide_api_cases__case_id__decision_post: {
         parameters: {
             query?: never;
-            header?: {
-                authorization?: string | null;
-            };
+            header?: never;
             path: {
                 case_id: string;
             };
@@ -1218,13 +1511,44 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description A4 PDF, English + Arabic */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_json_api_cases__case_id__export_json_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
             /** @description Successful Response */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["EvidenceExport"];
                 };
             };
             /** @description Validation Error */

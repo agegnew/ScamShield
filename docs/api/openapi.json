@@ -77,7 +77,7 @@
     "/api/auth/login": {
       "post": {
         "tags": [
-          "system"
+          "auth"
         ],
         "summary": "Login",
         "operationId": "login_api_auth_login_post",
@@ -115,6 +115,161 @@
         }
       }
     },
+    "/api/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Me",
+        "operationId": "me_api_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInfo"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/users": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Users",
+        "operationId": "users_api_users_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  },
+                  "type": "array",
+                  "title": "Response Users Api Users Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Add User",
+        "operationId": "add_user_api_users_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/decisions": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Decisions",
+        "description": "Audit log: every confirm / dismiss across all cases, newest first.",
+        "operationId": "decisions_api_decisions_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DecisionLogEntry"
+                  },
+                  "title": "Response Decisions Api Decisions Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/radar/feed": {
       "get": {
         "tags": [
@@ -123,6 +278,11 @@
         "summary": "Radar Feed",
         "description": "Newest auto-discovered URLs first (manual, citizen and batch excluded).",
         "operationId": "radar_feed_api_radar_feed_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "limit",
@@ -168,6 +328,11 @@
         ],
         "summary": "List Cases",
         "operationId": "list_cases_api_cases_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "verdict",
@@ -311,6 +476,11 @@
         ],
         "summary": "Get Case",
         "operationId": "get_case_api_cases__case_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "case_id",
@@ -352,7 +522,13 @@
           "cases"
         ],
         "summary": "Decide",
+        "description": "Confirm or dismiss. Needs a logged-in analyst or admin; the log keeps who, when, why.",
         "operationId": "decide_api_cases__case_id__decision_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "case_id",
@@ -361,22 +537,6 @@
             "schema": {
               "type": "string",
               "title": "Case Id"
-            }
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
             }
           }
         ],
@@ -421,6 +581,11 @@
         ],
         "summary": "Takedown",
         "operationId": "takedown_api_cases__case_id__takedown_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "case_id",
@@ -462,7 +627,57 @@
           "cases"
         ],
         "summary": "Report Pdf",
+        "description": "Police-ready evidence report: verdict, reasons, screenshot, WHOIS, hosting, redirects,\nrelated domains, analyst decisions and takedown contacts. Downloads as a file.",
         "operationId": "report_pdf_api_cases__case_id__report_pdf_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Case Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A4 PDF, English + Arabic",
+            "content": {
+              "application/pdf": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cases/{case_id}/export.json": {
+      "get": {
+        "tags": [
+          "cases"
+        ],
+        "summary": "Export Json",
+        "description": "Evidence bundle for hand-over: the full case, the takedown request and related domains.\nDownloads as a file.",
+        "operationId": "export_json_api_cases__case_id__export_json_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "case_id",
@@ -479,7 +694,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceExport"
+                }
               }
             }
           },
@@ -514,7 +731,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
       }
     },
     "/api/scan": {
@@ -556,7 +778,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
       }
     },
     "/api/batch": {
@@ -567,6 +794,11 @@
         "summary": "Batch",
         "description": "Score many URLs at once without storing them. `?format=csv` returns a file.",
         "operationId": "batch_api_batch_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "format",
@@ -1292,6 +1524,50 @@
         ],
         "title": "Decision"
       },
+      "DecisionLogEntry": {
+        "properties": {
+          "case_id": {
+            "type": "string",
+            "title": "Case Id"
+          },
+          "domain": {
+            "type": "string",
+            "title": "Domain"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "confirm",
+              "dismiss"
+            ],
+            "title": "Action"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "by": {
+            "type": "string",
+            "title": "By"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "case_id",
+          "domain",
+          "action",
+          "reason",
+          "by",
+          "at"
+        ],
+        "title": "DecisionLogEntry",
+        "description": "One confirm / dismiss in the audit log: who, when, why."
+      },
       "DecisionRequest": {
         "properties": {
           "action": {
@@ -1643,6 +1919,48 @@
         ],
         "title": "Evidence",
         "description": "What the fetcher and enrichment saw for one URL."
+      },
+      "EvidenceExport": {
+        "properties": {
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "scamshield_version": {
+            "type": "string",
+            "title": "Scamshield Version"
+          },
+          "model_version": {
+            "type": "string",
+            "title": "Model Version",
+            "description": "Detection engine that produced this export"
+          },
+          "case": {
+            "$ref": "#/components/schemas/Case"
+          },
+          "takedown": {
+            "$ref": "#/components/schemas/Takedown"
+          },
+          "related": {
+            "items": {
+              "$ref": "#/components/schemas/RelatedDomain"
+            },
+            "type": "array",
+            "title": "Related"
+          }
+        },
+        "type": "object",
+        "required": [
+          "generated_at",
+          "scamshield_version",
+          "model_version",
+          "case",
+          "takedown",
+          "related"
+        ],
+        "title": "EvidenceExport",
+        "description": "Downloadable evidence bundle for one case (GET /api/cases/{id}/export.json)."
       },
       "Fingerprints": {
         "properties": {
@@ -2172,6 +2490,53 @@
         ],
         "title": "RedirectHop"
       },
+      "RelatedDomain": {
+        "properties": {
+          "case_id": {
+            "type": "string",
+            "title": "Case Id"
+          },
+          "domain": {
+            "type": "string",
+            "title": "Domain"
+          },
+          "verdict": {
+            "$ref": "#/components/schemas/Label"
+          },
+          "score": {
+            "type": "integer",
+            "title": "Score"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "same_ip",
+              "same_registration_day",
+              "same_final_host",
+              "same_favicon",
+              "same_template",
+              "same_tracker",
+              "same_contact"
+            ],
+            "title": "Type"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "case_id",
+          "domain",
+          "verdict",
+          "score",
+          "type",
+          "detail"
+        ],
+        "title": "RelatedDomain",
+        "description": "Another case that shares infrastructure with this one (an edge of GET /api/graph)."
+      },
       "ScanRequest": {
         "properties": {
           "url": {
@@ -2311,6 +2676,26 @@
           "body_ar": {
             "type": "string",
             "title": "Body Ar"
+          },
+          "recipients": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Recipients",
+            "description": "Registrar and host abuse emails, deduplicated"
+          },
+          "mailto": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mailto",
+            "description": "mailto: link with the recipients, subject and English body; None without recipients"
           }
         },
         "type": "object",
@@ -2327,6 +2712,72 @@
           "body_ar"
         ],
         "title": "Takedown"
+      },
+      "User": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "analyst"
+            ],
+            "title": "Role"
+          },
+          "disabled": {
+            "type": "boolean",
+            "title": "Disabled"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "role",
+          "disabled",
+          "created_at"
+        ],
+        "title": "User",
+        "description": "An account as admins see it (the password hash is never returned)."
+      },
+      "UserCreate": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9_.-]+$",
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 8,
+            "title": "Password"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "analyst"
+            ],
+            "title": "Role"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password",
+          "role"
+        ],
+        "title": "UserCreate"
       },
       "UserInfo": {
         "properties": {
@@ -2489,6 +2940,13 @@
         ],
         "title": "VisualMatch",
         "description": "The page reuses an official brand site's favicon or template on a non-official host."
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "description": "Log in with POST /api/auth/login and paste the access_token here.",
+        "scheme": "bearer"
       }
     }
   }

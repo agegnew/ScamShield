@@ -17,8 +17,9 @@ The engine, radar and worker are real. The API still starts in **mock mode** by 
 | GET | `/api/cases?verdict=&source=&brand=&status=&q=&limit=&offset=` | Cases list with filters | `cases.json` |
 | GET | `/api/cases/{id}` | Case page: verdict, reasons, evidence, decisions | `case_*.json` |
 | POST | `/api/cases/{id}/decision` `{action: confirm\|dismiss, reason}` | Confirm / dismiss buttons | returns the updated case |
-| GET | `/api/cases/{id}/takedown` | "Takedown request" panel (EN + AR email) | `takedown_c-0001.json` |
-| GET | `/api/cases/{id}/report.pdf` | "Export PDF" button — returns **501** until 19:00 | — |
+| GET | `/api/cases/{id}/takedown` | "Takedown request" panel (EN + AR email). `recipients` = registrar + host abuse emails (deduplicated); `mailto` = ready `mailto:` link with subject and English body (null when no contact) | `takedown_c-0001.json` |
+| GET | `/api/cases/{id}/report.pdf` | "Export PDF" button: police-ready evidence report (A4, English + Arabic): verdict, reasons, screenshot + SHA-256, redirects, WHOIS/hosting, page findings, related domains, decisions, takedown contacts. Downloads as `scamshield-<id>.pdf` | — |
+| GET | `/api/cases/{id}/export.json` | "Export evidence (JSON)" button: `{generated_at, scamshield_version, model_version, case, takedown, related}`. `related` = other cases sharing infrastructure `{case_id, domain, verdict, score, type, detail}`. Downloads as `scamshield-<id>.json` | — |
 | GET | `/api/graph` | Network graph: nodes = risky cases, edges = shared infrastructure | `graph.json` |
 | GET | `/api/metrics` | Accuracy page | `metrics.json` |
 | POST | `/api/scan` `{url}` | "Scan a URL" box. Returns `status: queued` with a quick URL-only verdict; poll `GET /api/cases/{case_id}` every 2 s until `evidence` is filled | `scan.json` |
