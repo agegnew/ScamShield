@@ -1,20 +1,26 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from datetime import datetime, timezone
 
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
+
+from .. import engine as detection
 from ..api_models import (
     Case,
     CaseList,
     CaseStatus,
     DecisionRequest,
+    EvidenceExport,
     Graph,
     RadarFeed,
     Takedown,
     UserInfo,
 )
 from ..auth import analyst_access, require_user
+from ..config import VERSION
 from ..contracts import Label, Source
 from ..deps import get_repo
-from ..graph import build_graph
+from ..graph import build_graph, related_domains
 from ..repo import CaseRepo
+from ..report import build_report
 from ..takedown import build_takedown
 
 # Analyst reads are open unless SCAMSHIELD_REQUIRE_LOGIN=1 (see auth.py).
@@ -84,10 +90,41 @@ def takedown(case_id: str, repo: CaseRepo = Depends(get_repo)) -> Takedown:
     return build_takedown(_case_or_404(repo, case_id))
 
 
-@router.get("/cases/{case_id}/report.pdf")
-def report_pdf(case_id: str, repo: CaseRepo = Depends(get_repo)) -> None:
-    _case_or_404(repo, case_id)
-    raise HTTPException(status_code=501, detail="PDF export is not built yet (due 19:00)")
+@router.get(
+    "/cases/{case_id}/report.pdf",
+    response_class=Response,
+    responses={
+        200: {"content": {"application/pdf": {}}, "description": "A4 PDF, English + Arabic"}
+    },
+)
+def report_pdf(case_id: str, repo: CaseRepo = Depends(get_repo)) -> Response:
+    """Police-ready evidence report: verdict, reasons, screenshot, WHOIS, hosting, redirects,
+    related domains, analyst decisions and takedown contacts. Downloads as a file."""
+    case = _case_or_404(repo, case_id)
+    pdf = build_report(case, related_domains(case.id, repo.all(limit=2000)))
+    return Response(
+        content=pdf,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="scamshield-{case.id}.pdf"'},
+    )
+
+
+@router.get("/cases/{case_id}/export.json", response_model=EvidenceExport)
+def export_json(
+    case_id: str, response: Response, repo: CaseRepo = Depends(get_repo)
+) -> EvidenceExport:
+    """Evidence bundle for hand-over: the full case, the takedown request and related domains.
+    Downloads as a file."""
+    case = _case_or_404(repo, case_id)
+    response.headers["Content-Disposition"] = f'attachment; filename="scamshield-{case.id}.json"'
+    return EvidenceExport(
+        generated_at=datetime.now(timezone.utc),
+        scamshield_version=VERSION,
+        model_version=detection.core.model_version(),
+        case=case,
+        takedown=build_takedown(case),
+        related=related_domains(case.id, repo.all(limit=2000)),
+    )
 
 
 @router.get("/graph", response_model=Graph)

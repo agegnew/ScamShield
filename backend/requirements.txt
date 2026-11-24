@@ -9,3 +9,7 @@ scikit-learn>=1.5
 joblib>=1.4
 tldextract>=5.3
 python-dotenv>=1.0
+# Evidence report PDF in pure Python; fpdf2 brings Pillow and fontTools, uharfbuzz shapes Arabic.
+# report.py relies on fpdf2 internals for a font fix, so stay on 2.9.x.
+fpdf2>=2.9,<2.10
+uharfbuzz>=0.39

@@ -3,7 +3,7 @@
 from collections import defaultdict
 from itertools import combinations
 
-from .api_models import Case, EdgeType, Graph, GraphEdge, GraphNode
+from .api_models import Case, EdgeType, Graph, GraphEdge, GraphNode, RelatedDomain
 from .contracts import Label
 from .urls import hostname
 
@@ -65,3 +65,24 @@ def build_graph(cases: list[Case]) -> Graph:
         for a, b in combinations(sorted(set(ids)), 2)
     ]
     return Graph(nodes=nodes, edges=edges)
+
+
+def related_domains(case_id: str, cases: list[Case]) -> list[RelatedDomain]:
+    """Graph edges that touch one case, seen from that case (the other end of each edge)."""
+    by_id = {c.id: c for c in cases}
+    related = []
+    for edge in build_graph(cases).edges:
+        if case_id not in (edge.source, edge.target):
+            continue
+        other = by_id[edge.target if edge.source == case_id else edge.source]
+        related.append(
+            RelatedDomain(
+                case_id=other.id,
+                domain=other.domain,
+                verdict=other.verdict.verdict,
+                score=other.verdict.score,
+                type=edge.type,
+                detail=edge.detail,
+            )
+        )
+    return sorted(related, key=lambda r: (-r.score, r.domain, r.type))
