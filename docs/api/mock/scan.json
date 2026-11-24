@@ -1,6 +1,6 @@
 {
-  "case_id": "c-0009",
-  "status": "done",
+  "case_id": "c-b80835fb",
+  "status": "queued",
   "verdict": {
     "url": "https://new-site.test/login",
     "verdict": "SUSPICIOUS",
@@ -8,14 +8,14 @@
     "brand_target": null,
     "reasons": [
       {
-        "code": "mock_placeholder",
+        "code": "engine_incomplete",
         "weight": 0,
-        "text_en": "Mock result: the real engine is not connected yet",
-        "text_ar": "نتيجة تجريبية: المحرك الحقيقي غير متصل بعد",
+        "text_en": "Not scored yet: the detection engine is still being built",
+        "text_ar": "لم يتم التقييم بعد: محرك الكشف قيد البناء",
         "evidence_ref": null
       }
     ],
-    "model_version": "mock-0",
-    "scored_at": "2026-11-24T12:45:31.086725+04:00"
+    "model_version": "engine-0",
+    "scored_at": "2026-11-24T09:10:39.636336Z"
   }
 }

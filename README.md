@@ -6,6 +6,26 @@ We win with a working engine that finds UAE-brand scams on its own (Search, Maps
 
 > The design docs in `ScamShield-AI-Documentation/` were written before the kickoff. Where they conflict with this file, this file wins.
 
+## Getting started
+
+```bash
+git clone https://github.com/agegnew/ScamShield.git
+cd ScamShield
+cp .env.example .env
+docker compose up --build        # Postgres + API + worker
+```
+
+API docs at http://localhost:8000/docs. No Docker? See [`backend/README.md`](backend/README.md) (runs on SQLite).
+
+| Person | Work in | Start with |
+| --- | --- | --- |
+| Nati | `frontend/` — create the Next.js app there | [`docs/api/README.md`](docs/api/README.md), TypeScript types in [`docs/api/scamshield-api.d.ts`](docs/api/scamshield-api.d.ts), sample JSON in `docs/api/mock/` |
+| Agegnew | `backend/app/` (API, DB, engine) | [`backend/app/engine/core.py`](backend/app/engine/core.py) |
+| Simon | `backend/app/workers/` | [`fetcher.py`](backend/app/workers/fetcher.py), [`enrich.py`](backend/app/workers/enrich.py), [`radar/`](backend/app/workers/radar/) — each file's docstring says what to build |
+| Samri | `data/brands.json`, `data/logos/` | Run `python -m scripts.validate_brands` (from `backend/`) before committing |
+
+Pull before you push, keep commits small, and edit only files your lane owns ([ownership table](backend/README.md#who-owns-what)).
+
 ## How we are judged
 
 | Weight | Criterion | What judges check |
@@ -101,7 +121,7 @@ Everyone works on mock data until 17:00 so nobody waits on anyone.
 ### Agegnew (+ Claude Code) — backend, DB, users, engine
 
 - [x] **11:45** — Repo + FastAPI skeleton; publish the API contract and mock JSON for Nati
-- [ ] **13:00** — Database (SQLite through SQLAlchemy, Postgres-ready): users, brands, candidates, scans, verdicts, cases, decisions, domain links
+- [x] **13:00** — Database (SQLite through SQLAlchemy, Postgres in Docker): users, brands, candidates, scans, verdicts, cases, decisions, domain links
 - [ ] **14:00** — Users: admin and analyst roles, login (JWT), seeded accounts; every confirm/dismiss logged with who, when, why
 - [ ] **15:00** — Datasets: phishing URLs from OpenPhish, URLhaus, PhishTank; legit *deep pages* (not only homepages) from top sites and UAE banks/government; 70/30 train/held-out split
 - [ ] **17:00** — Engine v1, cheapest layer first: allowlist → threat feeds → URL model → brand impersonation → Arabic/English scam keywords → helpline check → score + reasons EN/AR. Batch CLI + `POST /api/batch`. First precision/recall on the held-out set

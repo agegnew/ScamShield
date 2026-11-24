@@ -1,0 +1,62 @@
+name: scamshield
+
+x-backend-env: &backend-env
+  DATABASE_URL: postgresql+psycopg://scamshield:scamshield@db:5432/scamshield
+  SCAMSHIELD_BRANDS: /data/brands.json
+  SCAMSHIELD_ARTIFACTS: /artifacts
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: scamshield
+      POSTGRES_PASSWORD: scamshield
+      POSTGRES_DB: scamshield
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scamshield"]
+      interval: 3s
+      retries: 20
+
+  api:
+    build: ./backend
+    env_file:
+      - path: .env
+        required: false
+    environment: *backend-env
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend/app:/app/app
+      - ./data:/data:ro
+      - ./backend/artifacts:/artifacts
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 5s
+      retries: 20
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.worker
+    env_file:
+      - path: .env
+        required: false
+    environment: *backend-env
+    volumes:
+      - ./backend/app:/app/app
+      - ./data:/data:ro
+      - ./backend/artifacts:/artifacts
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  pgdata:

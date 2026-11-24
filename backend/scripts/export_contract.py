@@ -1,17 +1,25 @@
 """Write docs/api/openapi.json and docs/api/mock/*.json from the running app.
 
 Run from backend/:  python -m scripts.export_contract
-The mock files are exactly what the API returns in mock mode.
+Uses a throwaway database seeded with the demo cases, so the files are exactly
+what the API returns in mock mode.
 """
 
 import json
+import os
+import tempfile
 from pathlib import Path
 
-from fastapi.testclient import TestClient
+os.environ["DATABASE_URL"] = (
+    f"sqlite:///{(Path(tempfile.mkdtemp(prefix='scamshield-export-')) / 'export.db').as_posix()}"
+)
+os.environ["SCAMSHIELD_MODE"] = "mock"
+os.environ["SCAMSHIELD_SEED_MOCK"] = "1"
 
-from app.config import REPO_DIR
-from app.main import app
-from app.mock.store import store
+from fastapi.testclient import TestClient  # noqa: E402
+
+from app.config import REPO_DIR  # noqa: E402
+from app.main import app  # noqa: E402
 
 OUT = REPO_DIR / "docs" / "api"
 MOCK = OUT / "mock"
@@ -49,18 +57,16 @@ def write(path: Path, data: object) -> None:
 
 def main() -> None:
     MOCK.mkdir(parents=True, exist_ok=True)
-    store.reset()
-    client = TestClient(app)
-    write(OUT / "openapi.json", app.openapi())
-    for name, path in GETS.items():
-        res = client.get(path)
-        res.raise_for_status()
-        write(MOCK / f"{name}.json", res.json())
-    for name, (path, body) in POSTS.items():
-        res = client.post(path, json=body)
-        res.raise_for_status()
-        write(MOCK / f"{name}.json", res.json())
-    store.reset()
+    with TestClient(app) as client:
+        write(OUT / "openapi.json", app.openapi())
+        for name, path in GETS.items():
+            res = client.get(path)
+            res.raise_for_status()
+            write(MOCK / f"{name}.json", res.json())
+        for name, (path, body) in POSTS.items():
+            res = client.post(path, json=body)
+            res.raise_for_status()
+            write(MOCK / f"{name}.json", res.json())
     print(f"Wrote {len(GETS) + len(POSTS)} mock files and openapi.json to {OUT}")
 
 

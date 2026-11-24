@@ -54,8 +54,22 @@ def test_scan_rejects_non_http_and_adds_scheme(client):
     assert client.post("/api/scan", json={"url": "ftp://example.test/x"}).status_code == 422
     res = client.post("/api/scan", json={"url": "new-site.test/login"})
     assert res.status_code == 200
+    assert res.json()["status"] == "queued"
     case = client.get(f"/api/cases/{res.json()['case_id']}").json()
     assert case["candidate"]["url"] == "http://new-site.test/login"
+
+
+def test_scan_of_known_url_returns_stored_result(client):
+    body = client.post(
+        "/api/scan", json={"url": "https://tamm-fines-pay.test/pay?ref=AD-55120"}
+    ).json()
+    assert (body["case_id"], body["status"], body["verdict"]["score"]) == ("c-0001", "done", 94)
+
+
+def test_scan_twice_reuses_case(client):
+    first = client.post("/api/scan", json={"url": "https://again.test/"}).json()["case_id"]
+    second = client.post("/api/scan", json={"url": "https://again.test/"}).json()["case_id"]
+    assert first == second
 
 
 def test_batch_returns_one_row_per_url_with_errors_inline(client):

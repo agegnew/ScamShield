@@ -3,7 +3,7 @@
   "info": {
     "title": "ScamShield API",
     "description": "Finds and scores UAE-brand scam sites. Every response carries the header X-ScamShield-Mode: mock | live.",
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "paths": {
     "/api/health": {
@@ -121,7 +121,7 @@
           "cases"
         ],
         "summary": "Radar Feed",
-        "description": "Newest auto-discovered URLs first (manual and batch submissions excluded).",
+        "description": "Newest auto-discovered URLs first (manual, citizen and batch excluded).",
         "operationId": "radar_feed_api_radar_feed_get",
         "parameters": [
           {
@@ -523,6 +523,7 @@
           "scan"
         ],
         "summary": "Scan",
+        "description": "Create (or reuse) a case for the URL. Returns a URL-only verdict now and\nqueues a full fetch; poll GET /api/cases/{case_id} for the final result.",
         "operationId": "scan_api_scan_post",
         "requestBody": {
           "content": {
@@ -564,7 +565,7 @@
           "scan"
         ],
         "summary": "Batch",
-        "description": "Score many URLs at once. `?format=csv` returns a CSV file.",
+        "description": "Score many URLs at once without storing them. `?format=csv` returns a file.",
         "operationId": "batch_api_batch_post",
         "parameters": [
           {

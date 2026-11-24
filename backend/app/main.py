@@ -1,13 +1,31 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from .config import ARTIFACTS_DIR, CORS_ORIGINS, MODE, VERSION
+from .config import ARTIFACTS_DIR, CORS_ORIGINS, MODE, SEED_MOCK, VERSION
+from .db import SessionLocal, init_db
+from .mock.data import build_cases
+from .repo import CaseRepo
 from .routes import cases, citizen, scan, system
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    init_db()
+    if SEED_MOCK:
+        with SessionLocal() as session:
+            repo = CaseRepo(session)
+            if repo.is_empty():
+                repo.seed(build_cases())
+    yield
+
 
 app = FastAPI(
     title="ScamShield API",
     version=VERSION,
+    lifespan=lifespan,
     description=(
         "Finds and scores UAE-brand scam sites. "
         "Every response carries the header X-ScamShield-Mode: mock | live."

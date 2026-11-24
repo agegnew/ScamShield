@@ -7,6 +7,7 @@ venv/
 
 backend/artifacts/*
 !backend/artifacts/mock/
+backend/scamshield.db*
 
 node_modules/
 .next/

@@ -2,12 +2,13 @@ import re
 
 from fastapi import APIRouter, Depends, HTTPException
 
+from .. import engine as detection
 from ..api_models import CheckRequest, CheckResponse, CheckVerdict
 from ..brands import brand_for_helpline, normalize_uae_phone
 from ..contracts import Reason
+from ..deps import get_repo
 from ..messages import CITIZEN_TEXT, official_helpline_reason
-from ..mock.data import placeholder_verdict
-from ..mock.store import MockStore, get_store
+from ..repo import CaseRepo
 from ..urls import InvalidURL, normalize_url
 
 router = APIRouter(prefix="/api", tags=["citizen"])
@@ -23,7 +24,6 @@ def _response(
     brand: str | None,
     reasons: list[Reason],
 ) -> CheckResponse:
-    text = CITIZEN_TEXT[verdict]
     return CheckResponse(
         kind=kind,
         input=raw,
@@ -31,12 +31,12 @@ def _response(
         score=score,
         brand_target=brand,
         reasons=reasons,
-        **text,
+        **CITIZEN_TEXT[verdict],
     )
 
 
 @router.post("/check", response_model=CheckResponse)
-def check(body: CheckRequest, store: MockStore = Depends(get_store)) -> CheckResponse:
+def check(body: CheckRequest, repo: CaseRepo = Depends(get_repo)) -> CheckResponse:
     """Public checker: paste a link or a phone number. No login needed."""
     raw = body.input.strip()
     digits = re.sub(r"\D", "", raw)
@@ -45,7 +45,7 @@ def check(body: CheckRequest, store: MockStore = Depends(get_store)) -> CheckRes
         brand = brand_for_helpline(raw)
         if brand:
             return _response("phone", raw, "LEGIT", 0, brand.id, [official_helpline_reason(brand)])
-        case = store.find_by_phone(normalize_uae_phone(raw))
+        case = repo.find_by_phone(normalize_uae_phone(raw))
         if case:
             v = case.verdict
             return _response("phone", raw, v.verdict.value, v.score, v.brand_target, v.reasons)
@@ -55,6 +55,6 @@ def check(body: CheckRequest, store: MockStore = Depends(get_store)) -> CheckRes
         url = normalize_url(raw)
     except InvalidURL as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
-    case = store.find_by_url(url)
-    v = case.verdict if case else placeholder_verdict(url)
+    case = repo.find_by_url(url)
+    v = case.verdict if case else detection.score(url)
     return _response("url", raw, v.verdict.value, v.score, v.brand_target, v.reasons)
