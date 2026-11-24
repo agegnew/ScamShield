@@ -198,3 +198,29 @@ class LoginResponse(BaseModel):
     access_token: str
     token_type: Literal["bearer"] = "bearer"
     user: UserInfo
+
+
+class User(BaseModel):
+    """An account as admins see it (the password hash is never returned)."""
+
+    username: str
+    role: Literal["admin", "analyst"]
+    disabled: bool
+    created_at: datetime
+
+
+class UserCreate(BaseModel):
+    username: str = Field(min_length=3, max_length=32, pattern=r"^[A-Za-z0-9_.-]+$")
+    password: str = Field(min_length=8, max_length=256)
+    role: Literal["admin", "analyst"]
+
+
+class DecisionLogEntry(BaseModel):
+    """One confirm / dismiss in the audit log: who, when, why."""
+
+    case_id: str
+    domain: str
+    action: Literal["confirm", "dismiss"]
+    reason: str
+    by: str
+    at: datetime

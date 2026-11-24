@@ -5,3 +5,4 @@ __pycache__
 tests
 artifacts
 scamshield.db*
+.jwt-secret
