@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="scamshield-demo" content="fake bank login page. Local demo only, never online">
+<title>Emirates NBD Online Banking | Verify your account | تحديث بياناتك</title>
+<style>
+  :root { --brand:#072447; --accent:#f39200; --bg:#eef1f5; --text:#1b2430; --warn:#b42318; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family: Arial, Tahoma, sans-serif; background:var(--bg); color:var(--text); }
+  header { background:var(--brand); color:#fff; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; }
+  .mark { font-size:20px; font-weight:700; } .mark b { color:var(--accent); }
+  .wrap { max-width:420px; margin:28px auto; padding:0 16px; }
+  .notice { background:#fdecea; border-left:4px solid var(--warn); padding:12px 14px; border-radius:6px; font-size:14px; margin-bottom:16px; }
+  .notice .ar { direction:rtl; text-align:right; margin-top:6px; }
+  .card { background:#fff; border-radius:10px; padding:24px; box-shadow:0 2px 12px rgba(0,0,0,.08); }
+  h1 { font-size:20px; margin:0 0 4px; } .sub { color:#667; font-size:14px; margin:0 0 10px; }
+  .steps { display:flex; gap:6px; margin:10px 0 4px; } .steps span { flex:1; height:4px; border-radius:2px; background:#d6dbe3; } .steps .on { background:var(--accent); }
+  label { display:block; font-size:13px; color:#556; margin:14px 0 4px; }
+  input { width:100%; padding:11px; border:1px solid #cbd2dc; border-radius:6px; font-size:15px; }
+  button { width:100%; margin-top:20px; padding:13px; border:0; border-radius:6px; background:var(--accent); color:#fff; font-size:16px; font-weight:700; cursor:pointer; }
+  .help { font-size:13px; color:#667; text-align:center; margin-top:14px; }
+  .help a { color:var(--brand); font-weight:700; }
+  .hidden { display:none; }
+  #demo-done { background:#111; color:#fff; padding:18px; border-radius:10px; text-align:center; }
+  footer { text-align:center; font-size:12px; color:#889; padding:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="mark">Emirates <b>NBD</b></div>
+  <div style="font-size:14px">العربية</div>
+</header>
+
+<div class="wrap">
+  <div class="notice">
+    <strong>Your account has been temporarily blocked.</strong> To avoid permanent suspension, verify your account and update your Emirates ID within 24 hours.
+    <div class="ar">تم إيقاف حسابك مؤقتاً. يرجى تحديث بياناتك خلال 24 ساعة لتجنب الإيقاف الدائم.</div>
+  </div>
+
+  <div class="card">
+    <form id="step1" action="#" autocomplete="off">
+      <h1>Online Banking login</h1>
+      <p class="sub">Step 1 of 2: confirm your identity</p>
+      <div class="steps"><span class="on"></span><span></span></div>
+      <label for="u">Username or customer ID</label>
+      <input id="u" name="username" placeholder="Username">
+      <label for="p">Password | كلمة المرور</label>
+      <input id="p" name="password" type="password" placeholder="Password">
+      <label for="m">Registered mobile number</label>
+      <input id="m" name="mobile" type="tel" placeholder="05X XXX XXXX">
+      <button type="submit">Continue</button>
+    </form>
+
+    <form id="step2" class="hidden" action="#" autocomplete="off">
+      <h1>Verify with OTP</h1>
+      <p class="sub">Step 2 of 2: enter the one-time password we sent to your mobile, and your card PIN to reactivate.</p>
+      <div class="steps"><span class="on"></span><span class="on"></span></div>
+      <label for="o">One-time password (OTP) | رمز التحقق</label>
+      <input id="o" name="otp" type="password" placeholder="6 digits">
+      <label for="pin">ATM card PIN | الرقم السري</label>
+      <input id="pin" name="pin" type="password" placeholder="4 digits">
+      <button type="submit">Reactivate account</button>
+    </form>
+
+    <div id="demo-done" class="hidden">
+      <strong>This was a ScamShield demo page.</strong><br>
+      Nothing was sent. A real bank never asks for your OTP or PIN on a web page.
+    </div>
+
+    <div class="help">Need help? Call our verification team on WhatsApp <a href="#">+971 55 000 0000</a></div>
+  </div>
+</div>
+
+<footer>© 2026 Emirates NBD Bank PJSC. All rights reserved.<br>
+<small>ScamShield demo page: not a real site, never put online.</small></footer>
+
+<script>
+  // Demo only: neither form sends anything.
+  var s1 = document.getElementById('step1'), s2 = document.getElementById('step2'), done = document.getElementById('demo-done');
+  s1.addEventListener('submit', function (e) { e.preventDefault(); s1.reset(); s1.classList.add('hidden'); s2.classList.remove('hidden'); });
+  s2.addEventListener('submit', function (e) { e.preventDefault(); s2.reset(); s2.classList.add('hidden'); done.classList.remove('hidden'); });
+</script>
+</body>
+</html>

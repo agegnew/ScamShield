@@ -15,7 +15,7 @@
 | ADR-007 | Geography visualization? | Case table first, map optional after data permits | Proposed |
 | ADR-008 | Data store? | PostgreSQL and local private artifact volume | Proposed |
 | ADR-009 | Hero differentiator? | Guardian OR Ghost Agent/TrustChain after P0 | **Open, decide by hour 14** |
-| ADR-010 | Product name/team name? | Working ScamShield AI; team name undecided | Open |
+| ADR-010 | Product name/team name? | ScamShield (Arabic: درع الاحتيال); team: CipherGuard | Decided; reopen only by team agreement |
 | ADR-011 | Mobile? | Future explicit-consent companion, no phone scanning from web alone | Proposed limitation |
 | ADR-012 | Public deployment? | Local-only unless separate security acceptance | Proposed |
 
