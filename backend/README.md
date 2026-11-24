@@ -92,7 +92,7 @@ Try one piece on its own: `python -m app.workers.fetcher https://example.com`, `
 | `SCAMSHIELD_SEED_MOCK` | `1` in mock mode — loads demo cases into an empty DB |
 | `SCAMSHIELD_BRANDS` | `../data/brands.json` |
 | `SCAMSHIELD_ARTIFACTS` | `backend/artifacts` (screenshots, served at `/artifacts/`) |
-| `SCAMSHIELD_CORS` | `http://localhost:3000,http://127.0.0.1:3000` |
+| `SCAMSHIELD_CORS` | `http://localhost:3001,http://127.0.0.1:3001,http://localhost:3000,http://127.0.0.1:3000` (the frontend runs on 3001) |
 | `SCAMSHIELD_WORKER_POLL` | `2` seconds between empty-queue checks |
 | `SERPAPI_KEY` | empty — Search and Maps radar stay off |
 | `SCAMSHIELD_ADMIN_PASSWORD` / `SCAMSHIELD_ANALYST_PASSWORD` | `admin123` / `analyst123` — seeded accounts `admin` and `analyst`, created when the users table is empty |

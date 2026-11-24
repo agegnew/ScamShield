@@ -114,10 +114,21 @@ docker compose up --build        # Postgres + API + page worker + radar
 - The API starts with 8 labelled sample cases (`SCAMSHIELD_MODE=mock`). For real data set `SCAMSHIELD_MODE=live` and `SCAMSHIELD_SEED_DEMO=1` in `.env`: the database then starts with the real cases scanned for the demo (`data/demo/`), and the radar adds new ones as it runs.
 - Optional: `SERPAPI_KEY` turns on the Search and Maps radars.
 
-**Without Docker:** see [backend/README.md](backend/README.md) (SQLite, `uvicorn` + `python -m app.workers.runner`). Tests: `pytest -q` in `backend/` (157 tests).
+**Without Docker:** see [backend/README.md](backend/README.md) (SQLite, `uvicorn` + `python -m app.workers.runner`). Tests: `pytest -q` in `backend/` (158 tests).
+
+**Dashboard (analyst console + citizen checker):** needs Node.js 20+ and the API running on port 8000.
+
+```bash
+cd frontend
+npm ci
+npm run dev                      # http://localhost:3001
+```
+
+- Analyst console: http://localhost:3001 (sign in as above). Citizen checker: http://localhost:3001/check (no login).
+- Another API address: copy `frontend/.env.example` to `frontend/.env.local` and set `NEXT_PUBLIC_API_URL`.
+- Screens, conventions and checks: [frontend/README.md](frontend/README.md).
 
 **API contract for the dashboard:** [docs/api/README.md](docs/api/README.md), with TypeScript types and sample JSON for every endpoint.
-<!-- TODO(Nati): add the frontend/ run steps here once the dashboard is in the repo. -->
 
 ### Batch mode (for a list of URLs)
 
@@ -143,7 +154,8 @@ Input: a `.txt` file with one URL per line, or a `.csv` with a `url` column. Out
 | `backend/app/workers/` | Fetcher, enrichment, fingerprints, cloaking, visual match, SSRF guard, the five radars, job runner |
 | `backend/app/routes/`, `auth.py`, `report.py`, `takedown.py`, `graph.py` | HTTP API, login and roles, PDF report, takedown email, scam-network graph |
 | `backend/scripts/` | Dataset build, model training, evaluation, batch mode, demo seeding, contract export |
-| `backend/tests/` | 157 tests (`pytest -m live` adds real-network checks) |
+| `backend/tests/` | 158 tests (`pytest -m live` adds real-network checks) |
+| `frontend/` | Next.js dashboard: analyst console (radar, cases, case page, network, accuracy, scan, audit, users) and the public citizen checker, English and Arabic |
 | `data/` | Brand registry, scam themes, official-site references, held-out test set, demo snapshot |
 | `docs/api/` | API contract (OpenAPI, TypeScript types, sample JSON) |
 | `demo-pages/` | Local-only demo scam pages |

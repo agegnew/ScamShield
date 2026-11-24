@@ -21,7 +21,9 @@ ARTIFACTS_DIR = Path(os.getenv("SCAMSHIELD_ARTIFACTS", str(BACKEND_DIR / "artifa
 CORS_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
-        "SCAMSHIELD_CORS", "http://localhost:3000,http://127.0.0.1:3000"
+        # The frontend dev server runs on 3001 (frontend/package.json); 3000 is the usual Next.js port.
+        "SCAMSHIELD_CORS",
+        "http://localhost:3001,http://127.0.0.1:3001,http://localhost:3000,http://127.0.0.1:3000",
     ).split(",")
     if origin.strip()
 ]
