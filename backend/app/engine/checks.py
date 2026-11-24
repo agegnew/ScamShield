@@ -274,21 +274,45 @@ def url_shape(ctx: Ctx) -> list[Reason]:
     return reasons
 
 
+# Form-field words are scored by the credential_form check; counting them as a scam theme too
+# would double-count every ordinary checkout or login page.
+FORM_FIELD_WORDS = {
+    "otp", "cvv", "card number", "verification code", "one-time password", "enter your pin",
+    "رمز التحقق", "رقم البطاقة", "الرقم السري", "كلمة المرور لمرة واحدة",
+}
+# Themes whose single words are already specific enough (anydesk, teamviewer, .apk).
+DISTINCTIVE_THEMES = {"remote_access"}
+
+
 def _theme_hits(text: str, theme: ScamTheme, url_mode: bool) -> str | None:
+    """The matched wording if the theme applies, else None.
+
+    A theme applies on a multi-word scam phrase ("pay dh3", "remove black points") or on two
+    different keywords of the same theme. One generic word ("tickets", "refund", "الإقامة")
+    appears on plenty of legitimate pages and is not enough on its own.
+    """
+    hits: list[str] = []
     for kw in theme.keywords_en:
-        variants = {kw}
+        if kw in FORM_FIELD_WORDS:
+            continue
         if url_mode:
-            compact = kw.replace(" ", "")
-            if len(compact) < 5:
-                continue
-            variants = {compact, kw.replace(" ", "-"), kw.replace(" ", "_")}
-        if any(v in text for v in variants):
-            return kw
+            if " " not in kw.strip():
+                continue  # single words in a URL path (/tickets, /refund) say nothing
+            if any(v in text for v in (kw.replace(" ", ""), kw.replace(" ", "-"), kw.replace(" ", "_"))):
+                hits.append(kw)
+        elif re.search(rf"(?<![a-z0-9]){re.escape(kw)}(?![a-z0-9])", text):
+            hits.append(kw)
     if not url_mode:
-        for kw in theme.keywords_ar:
-            if kw in text:
-                return kw
-    return None
+        hits += [kw for kw in theme.keywords_ar if kw not in FORM_FIELD_WORDS and kw in text]
+    hits = list(dict.fromkeys(hits))
+    if not hits:
+        return None
+    phrase = next((h for h in hits if " " in h.strip()), None)
+    if phrase:
+        return phrase
+    if len(hits) >= 2:
+        return f"{hits[0]} / {hits[1]}"
+    return hits[0] if theme.id in DISTINCTIVE_THEMES else None
 
 
 def scam_themes_in_url(ctx: Ctx) -> list[Reason]:
@@ -404,10 +428,17 @@ def page_signals(ctx: Ctx) -> list[Reason]:
             _r("credential_form", 20, f"Page asks for {en}", f"الصفحة تطلب {ar}", "forms")
         )
 
+    # "Presents itself as" = the brand is in the page title, or the page names the brand AND asks
+    # for sensitive data. A blog or news page that only mentions TAMM is not impersonating it.
+    title_raw = ev.title or ""
+    asks_sensitive = bool(asks_en)
     for brand in ctx.brands:
         if _is_official(brand, ctx.final_host):
             continue
-        hit = next((n for n in _page_names(brand) if _name_in_page(n, text, raw_text)), None)
+        names = _page_names(brand)
+        hit = next((n for n in names if _name_in_page(n, title_raw.lower(), title_raw)), None)
+        if hit is None and asks_sensitive:
+            hit = next((n for n in names if _name_in_page(n, text, raw_text)), None)
         if hit:
             ctx.brand_target = ctx.brand_target or brand.id
             reasons.append(

@@ -8,16 +8,21 @@
       "tamm.abudhabi"
     ],
     "helplines": [
-      "+971800555"
+      "800555"
     ],
     "keywords_en": [
       "tamm",
-      "abu dhabi government services",
-      "pay traffic fine abu dhabi"
+      "abu dhabi government",
+      "traffic fine",
+      "pay fines",
+      "government services"
     ],
     "keywords_ar": [
-      "خدمات حكومة أبوظبي",
-      "دفع المخالفات أبوظبي"
+      "تم",
+      "حكومة أبوظبي",
+      "مخالفات مرورية",
+      "دفع المخالفات",
+      "خدمات حكومية"
     ],
     "domain_tokens": [
       "tamm"
@@ -32,15 +37,21 @@
     "official_domains": [
       "uaepass.ae"
     ],
-    "helplines": [],
+    "helplines": [
+      "600561111"
+    ],
     "keywords_en": [
       "uae pass",
-      "uaepass login",
-      "digital identity uae"
+      "uaepass",
+      "digital identity",
+      "login",
+      "verify identity"
     ],
     "keywords_ar": [
       "الهوية الرقمية",
-      "يو إيه إي باس"
+      "يو إيه إي باس",
+      "تسجيل الدخول",
+      "تحقق من الهوية"
     ],
     "domain_tokens": [
       "uaepass",
@@ -50,24 +61,29 @@
   },
   {
     "id": "icp",
-    "name_en": "ICP (Federal Authority for Identity, Citizenship, Customs and Port Security)",
+    "name_en": "ICP - Federal Authority for Identity, Citizenship, Customs and Port Security",
     "name_ar": "الهيئة الاتحادية للهوية والجنسية والجمارك وأمن المنافذ",
     "category": "government",
     "official_domains": [
       "icp.gov.ae"
     ],
     "helplines": [
-      "+971600522222"
+      "600522222"
     ],
     "keywords_en": [
-      "emirates id renewal",
-      "visa status check",
-      "icp smart services"
+      "icp",
+      "emirates id",
+      "visa",
+      "residency",
+      "renew emirates id",
+      "visa status"
     ],
     "keywords_ar": [
-      "تجديد الهوية الإماراتية",
-      "الاستعلام عن التأشيرة",
-      "الهيئة الاتحادية للهوية"
+      "الهوية والجنسية",
+      "الهوية الإماراتية",
+      "تأشيرة",
+      "إقامة",
+      "تجديد الهوية"
     ],
     "domain_tokens": [
       "icp-",
@@ -85,14 +101,22 @@
     "official_domains": [
       "moi.gov.ae"
     ],
-    "helplines": [],
+    "helplines": [
+      "8005000",
+      "999"
+    ],
     "keywords_en": [
-      "moi traffic fines",
-      "uae traffic fines payment"
+      "ministry of interior",
+      "moi",
+      "traffic fines",
+      "black points",
+      "pay fine"
     ],
     "keywords_ar": [
-      "وزارة الداخلية المخالفات",
-      "دفع المخالفات المرورية"
+      "وزارة الداخلية",
+      "مخالفات مرورية",
+      "نقاط سوداء",
+      "دفع المخالفة"
     ],
     "domain_tokens": [
       "moi-",
@@ -104,24 +128,29 @@
   },
   {
     "id": "rta",
-    "name_en": "RTA Dubai",
+    "name_en": "RTA - Roads and Transport Authority Dubai",
     "name_ar": "هيئة الطرق والمواصلات",
     "category": "transport",
     "official_domains": [
       "rta.ae"
     ],
     "helplines": [
-      "+9718009090"
+      "8009090"
     ],
     "keywords_en": [
+      "rta",
       "rta fines",
-      "pay rta fine",
-      "nol card"
+      "parking fine",
+      "nol card",
+      "vehicle registration",
+      "driving licence"
     ],
     "keywords_ar": [
       "هيئة الطرق والمواصلات",
-      "مخالفات دبي",
-      "بطاقة نول"
+      "مخالفات المواقف",
+      "بطاقة نول",
+      "تسجيل المركبة",
+      "رخصة القيادة"
     ],
     "domain_tokens": [
       "rta-",
@@ -140,15 +169,22 @@
       "dubaipolice.gov.ae"
     ],
     "helplines": [
-      "901"
+      "901",
+      "999"
     ],
     "keywords_en": [
-      "dubai police fines",
-      "dubai police pay fine"
+      "dubai police",
+      "traffic fine",
+      "pay fine",
+      "fine discount",
+      "police report"
     ],
     "keywords_ar": [
       "شرطة دبي",
-      "مخالفات شرطة دبي"
+      "مخالفة مرورية",
+      "دفع المخالفة",
+      "خصم المخالفات",
+      "بلاغ"
     ],
     "domain_tokens": [
       "dubaipolice",
@@ -165,18 +201,23 @@
       "adpolice.gov.ae"
     ],
     "helplines": [
-      "+9718002626",
-      "2828"
+      "8002626",
+      "2828",
+      "999"
     ],
     "keywords_en": [
-      "abu dhabi police fines",
-      "adp traffic fine",
-      "aman abu dhabi police report"
+      "abu dhabi police",
+      "traffic fine",
+      "pay fine",
+      "fine discount",
+      "aman"
     ],
     "keywords_ar": [
       "شرطة أبوظبي",
-      "مخالفات أبوظبي",
-      "خدمة أمان"
+      "مخالفة مرورية",
+      "دفع المخالفة",
+      "خصم المخالفات",
+      "أمان"
     ],
     "domain_tokens": [
       "adpolice",
@@ -192,20 +233,25 @@
     "name_ar": "سالك",
     "category": "transport",
     "official_domains": [
-      "salik.ae"
+      "salik.ae",
+      "salik.rta.ae"
     ],
     "helplines": [
-      "+97180072545"
+      "80072545"
     ],
     "keywords_en": [
+      "salik",
+      "toll",
       "salik recharge",
-      "salik fine",
-      "salik toll"
+      "toll fine",
+      "top up"
     ],
     "keywords_ar": [
       "سالك",
+      "رسوم الطرق",
       "شحن سالك",
-      "مخالفة سالك"
+      "مخالفة سالك",
+      "تعبئة الرصيد"
     ],
     "domain_tokens": [
       "salik"
@@ -221,17 +267,23 @@
       "emiratespost.ae"
     ],
     "helplines": [
-      "+971600599999"
+      "600599999"
     ],
     "keywords_en": [
-      "emirates post parcel",
-      "emirates post delivery fee",
-      "track parcel uae"
+      "emirates post",
+      "parcel",
+      "delivery failed",
+      "customs fee",
+      "reschedule delivery",
+      "track shipment"
     ],
     "keywords_ar": [
       "بريد الإمارات",
-      "تتبع الشحنة",
-      "رسوم التوصيل"
+      "طرد",
+      "فشل التوصيل",
+      "رسوم جمركية",
+      "إعادة جدولة التوصيل",
+      "تتبع الشحنة"
     ],
     "domain_tokens": [
       "emiratespost",
@@ -249,16 +301,23 @@
       "aramex.com"
     ],
     "helplines": [
-      "+971600544000"
+      "600544000"
     ],
     "keywords_en": [
-      "aramex delivery",
-      "aramex customs fee",
-      "aramex track"
+      "aramex",
+      "parcel",
+      "delivery failed",
+      "shipping fee",
+      "track shipment",
+      "address update"
     ],
     "keywords_ar": [
       "أرامكس",
-      "تتبع شحنة أرامكس"
+      "طرد",
+      "فشل التوصيل",
+      "رسوم الشحن",
+      "تتبع الشحنة",
+      "تحديث العنوان"
     ],
     "domain_tokens": [
       "aramex"
@@ -267,22 +326,32 @@
   },
   {
     "id": "dewa",
-    "name_en": "DEWA",
+    "name_en": "DEWA - Dubai Electricity and Water Authority",
     "name_ar": "هيئة كهرباء ومياه دبي",
     "category": "utility",
     "official_domains": [
       "dewa.gov.ae"
     ],
     "helplines": [
-      "+97146019999"
+      "046019999",
+      "991"
     ],
     "keywords_en": [
-      "dewa bill",
-      "dewa refund"
+      "dewa",
+      "electricity bill",
+      "water bill",
+      "pay bill",
+      "refund",
+      "disconnection"
     ],
     "keywords_ar": [
+      "ديوا",
       "هيئة كهرباء ومياه دبي",
-      "فاتورة ديوا"
+      "فاتورة الكهرباء",
+      "فاتورة المياه",
+      "دفع الفاتورة",
+      "استرداد",
+      "قطع الخدمة"
     ],
     "domain_tokens": [
       "dewa"
@@ -291,26 +360,32 @@
   },
   {
     "id": "eand",
-    "name_en": "e& (Etisalat)",
+    "name_en": "e& (etisalat)",
     "name_ar": "اتصالات",
     "category": "telecom",
     "official_domains": [
       "etisalat.ae",
+      "eand.ae",
       "eand.com"
     ],
     "helplines": [
       "101",
-      "+971800101"
+      "800101"
     ],
     "keywords_en": [
-      "etisalat bill",
-      "etisalat points",
-      "e& rewards"
+      "etisalat",
+      "e&",
+      "smiles points",
+      "redeem points",
+      "bill payment",
+      "recharge"
     ],
     "keywords_ar": [
       "اتصالات",
-      "نقاط اتصالات",
-      "فاتورة اتصالات"
+      "نقاط سمايلز",
+      "استبدال النقاط",
+      "دفع الفاتورة",
+      "إعادة شحن"
     ],
     "domain_tokens": [
       "etisalat",
@@ -329,14 +404,21 @@
     ],
     "helplines": [
       "155",
-      "+971800155"
+      "800155"
     ],
     "keywords_en": [
-      "du bill payment",
-      "du recharge"
+      "du",
+      "du rewards",
+      "redeem points",
+      "bill payment",
+      "recharge"
     ],
     "keywords_ar": [
-      "شحن رصيد دو"
+      "دو",
+      "مكافآت دو",
+      "استبدال النقاط",
+      "دفع الفاتورة",
+      "إعادة شحن"
     ],
     "domain_tokens": [
       "du-ae",
@@ -354,14 +436,23 @@
       "emiratesnbd.com"
     ],
     "helplines": [
-      "+971600540000"
+      "600540000"
     ],
     "keywords_en": [
-      "emirates nbd login",
-      "enbd online banking"
+      "emirates nbd",
+      "online banking",
+      "account blocked",
+      "update kyc",
+      "card suspended",
+      "verify account"
     ],
     "keywords_ar": [
-      "بنك الإمارات دبي الوطني"
+      "بنك الإمارات دبي الوطني",
+      "الخدمات المصرفية",
+      "تم إيقاف الحساب",
+      "تحديث البيانات",
+      "تعليق البطاقة",
+      "تحقق من الحساب"
     ],
     "domain_tokens": [
       "emiratesnbd",
@@ -372,21 +463,30 @@
   },
   {
     "id": "adcb",
-    "name_en": "ADCB",
+    "name_en": "ADCB - Abu Dhabi Commercial Bank",
     "name_ar": "بنك أبوظبي التجاري",
     "category": "bank",
     "official_domains": [
       "adcb.com"
     ],
     "helplines": [
-      "+971600502030"
+      "600502030"
     ],
     "keywords_en": [
-      "adcb login",
-      "adcb online banking"
+      "adcb",
+      "online banking",
+      "account blocked",
+      "update kyc",
+      "card suspended",
+      "verify account"
     ],
     "keywords_ar": [
-      "بنك أبوظبي التجاري"
+      "بنك أبوظبي التجاري",
+      "الخدمات المصرفية",
+      "تم إيقاف الحساب",
+      "تحديث البيانات",
+      "تعليق البطاقة",
+      "تحقق من الحساب"
     ],
     "domain_tokens": [
       "adcb"
@@ -395,21 +495,29 @@
   },
   {
     "id": "fab",
-    "name_en": "First Abu Dhabi Bank",
+    "name_en": "FAB - First Abu Dhabi Bank",
     "name_ar": "بنك أبوظبي الأول",
     "category": "bank",
     "official_domains": [
       "bankfab.com"
     ],
     "helplines": [
-      "+971600525500"
+      "600525500"
     ],
     "keywords_en": [
-      "fab login",
-      "first abu dhabi bank online"
+      "fab",
+      "first abu dhabi bank",
+      "online banking",
+      "account blocked",
+      "update kyc",
+      "card suspended"
     ],
     "keywords_ar": [
-      "بنك أبوظبي الأول"
+      "بنك أبوظبي الأول",
+      "الخدمات المصرفية",
+      "تم إيقاف الحساب",
+      "تحديث البيانات",
+      "تعليق البطاقة"
     ],
     "domain_tokens": [
       "bankfab",
@@ -428,14 +536,22 @@
       "dib.ae"
     ],
     "helplines": [
-      "+971600545555"
+      "046092222"
     ],
     "keywords_en": [
-      "dib login",
-      "dubai islamic bank online"
+      "dubai islamic bank",
+      "dib",
+      "online banking",
+      "account blocked",
+      "update kyc",
+      "card suspended"
     ],
     "keywords_ar": [
-      "بنك دبي الإسلامي"
+      "بنك دبي الإسلامي",
+      "الخدمات المصرفية",
+      "تم إيقاف الحساب",
+      "تحديث البيانات",
+      "تعليق البطاقة"
     ],
     "domain_tokens": [
       "dib-",
@@ -455,14 +571,23 @@
       "mashreqbank.com"
     ],
     "helplines": [
-      "+97144244444"
+      "044244444"
     ],
     "keywords_en": [
-      "mashreq login",
-      "mashreq neo"
+      "mashreq",
+      "mashreq neo",
+      "online banking",
+      "account blocked",
+      "update kyc",
+      "card suspended"
     ],
     "keywords_ar": [
-      "بنك المشرق"
+      "بنك المشرق",
+      "مشرق نيو",
+      "الخدمات المصرفية",
+      "تم إيقاف الحساب",
+      "تحديث البيانات",
+      "تعليق البطاقة"
     ],
     "domain_tokens": [
       "mashreq"
@@ -471,21 +596,29 @@
   },
   {
     "id": "adib",
-    "name_en": "Abu Dhabi Islamic Bank",
+    "name_en": "ADIB - Abu Dhabi Islamic Bank",
     "name_ar": "مصرف أبوظبي الإسلامي",
     "category": "bank",
     "official_domains": [
       "adib.ae"
     ],
     "helplines": [
-      "+971600543216"
+      "600543216"
     ],
     "keywords_en": [
-      "adib login",
-      "adib online banking"
+      "adib",
+      "abu dhabi islamic bank",
+      "online banking",
+      "account blocked",
+      "update kyc",
+      "card suspended"
     ],
     "keywords_ar": [
-      "مصرف أبوظبي الإسلامي"
+      "مصرف أبوظبي الإسلامي",
+      "الخدمات المصرفية",
+      "تم إيقاف الحساب",
+      "تحديث البيانات",
+      "تعليق البطاقة"
     ],
     "domain_tokens": [
       "adib"
@@ -501,15 +634,23 @@
       "rakbank.ae"
     ],
     "helplines": [
-      "+97142130000"
+      "042130000"
     ],
     "keywords_en": [
-      "rakbank login",
-      "rakbank online"
+      "rakbank",
+      "online banking",
+      "account blocked",
+      "update kyc",
+      "card suspended",
+      "verify account"
     ],
     "keywords_ar": [
       "بنك رأس الخيمة الوطني",
-      "راك بنك"
+      "راك بنك",
+      "الخدمات المصرفية",
+      "تم إيقاف الحساب",
+      "تحديث البيانات",
+      "تعليق البطاقة"
     ],
     "domain_tokens": [
       "rakbank",
@@ -518,51 +659,31 @@
     "logo": null
   },
   {
-    "id": "consumer_protection",
-    "name_en": "UAE Consumer Protection",
-    "name_ar": "حماية المستهلك",
-    "category": "government",
-    "official_domains": [
-      "moec.gov.ae",
-      "economy.gov.ae",
-      "added.gov.ae"
-    ],
-    "helplines": [],
-    "keywords_en": [
-      "consumer protection complaint uae",
-      "file complaint consumer protection abu dhabi"
-    ],
-    "keywords_ar": [
-      "حماية المستهلك",
-      "تقديم شكوى حماية المستهلك"
-    ],
-    "domain_tokens": [
-      "consumerprotection",
-      "consumer-protection",
-      "consumer-uae",
-      "moec-",
-      "-moec"
-    ],
-    "logo": null
-  },
-  {
     "id": "darb",
-    "name_en": "Darb (Abu Dhabi toll)",
+    "name_en": "Darb (Abu Dhabi road toll)",
     "name_ar": "درب",
     "category": "transport",
     "official_domains": [
-      "itc.gov.ae"
+      "itc.gov.ae",
+      "admobility.gov.ae"
     ],
-    "helplines": [],
+    "helplines": [
+      "800850"
+    ],
     "keywords_en": [
-      "darb toll",
-      "darb fine payment",
-      "darb recharge"
+      "darb",
+      "abu dhabi toll",
+      "toll gate",
+      "darb fine",
+      "toll violation",
+      "unpaid toll"
     ],
     "keywords_ar": [
       "درب",
-      "مخالفات درب",
-      "بوابات درب"
+      "بوابات التعرفة المرورية",
+      "رسوم الطريق أبوظبي",
+      "مخالفة درب",
+      "رسوم غير مدفوعة"
     ],
     "domain_tokens": [
       "darb-",
@@ -571,6 +692,46 @@
       "darb-toll",
       "darbpay",
       "darb-ae"
+    ],
+    "logo": null
+  },
+  {
+    "id": "consumer_protection",
+    "name_en": "Consumer Protection (Ministry of Economy / Dubai DET)",
+    "name_ar": "حماية المستهلك",
+    "category": "government",
+    "official_domains": [
+      "moet.gov.ae",
+      "economy.gov.ae",
+      "consumerrights.ae",
+      "dubaidet.gov.ae",
+      "moec.gov.ae",
+      "added.gov.ae"
+    ],
+    "helplines": [
+      "8001222",
+      "600545555"
+    ],
+    "keywords_en": [
+      "consumer protection",
+      "consumer rights",
+      "file a complaint",
+      "refund",
+      "ministry of economy"
+    ],
+    "keywords_ar": [
+      "حماية المستهلك",
+      "حقوق المستهلك",
+      "تقديم شكوى",
+      "استرداد المبلغ",
+      "وزارة الاقتصاد"
+    ],
+    "domain_tokens": [
+      "consumerprotection",
+      "consumer-protection",
+      "consumer-uae",
+      "moec-",
+      "-moec"
     ],
     "logo": null
   },

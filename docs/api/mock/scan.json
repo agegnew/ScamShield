@@ -1,5 +1,5 @@
 {
-  "case_id": "c-bf85727f",
+  "case_id": "c-bf0f49ba",
   "status": "queued",
   "verdict": {
     "url": "https://new-site.test/login",
@@ -16,6 +16,6 @@
       }
     ],
     "model_version": "engine-1/url-model",
-    "scored_at": "2026-11-24T10:27:57.051404Z"
+    "scored_at": "2026-11-24T11:14:28.396825Z"
   }
 }

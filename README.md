@@ -164,14 +164,14 @@ Merged into `main` and wired to the database, engine and API (`backend/app/worke
 
 Your two data files are the first thing everyone else needs: the engine, the lookalike radar, the search radar and the helpline check all read them. Edit them directly on GitHub or locally, then run `python -m scripts.validate_data` from `backend/` (it also runs in the tests).
 
-- [ ] **15:00 — FIRST: `data/scam_themes.json` v1.** Scams that don't copy one brand, so the brand list can't catch them. A starter file with 10 themes is already there; expand each one from real ADP / police / TDRA warnings in the news:
+- [x] **15:00 — FIRST: `data/scam_themes.json` v1.** Done: 10 themes, 11–15 EN and 8–13 AR keywords each, 5–9 search queries, 4–5 sources. Scams that don't copy one brand, so the brand list can't catch them. A starter file with 10 themes is already there; expand each one from real ADP / police / TDRA warnings in the news:
     - Themes: traffic fines and "90% discount" offers, parcel delivery and customs fees ("Dh3 delivery"), visa / residency / domestic workers, fake job offers, property listings, investment and salary-day offers, event tickets and shop deals, fake consumer protection and refunds, account verification / OTP requests, remote-access app installs (AnyDesk, TeamViewer, APK)
     - For each theme: 5–15 English and Arabic **keywords** that appear on scam pages (the engine flags them), 3–5 **search queries** in English and Arabic (Simon's search radar runs them), and the **source links** you used
-- [ ] **15:00** — `data/brands.json` v1, about 23 UAE brands: TAMM, UAE PASS, ICP, MOI, RTA fines, Dubai Police, **Abu Dhabi Police** (`adpolice.gov.ae`; Aman 8002626, SMS 2828, 999), **Darb**, **Consumer Protection**, Salik, Emirates Post, Aramex, DEWA, e&, du, Emirates NBD, ADCB, FAB, DIB, Mashreq, ADIB, RAKBANK. For each: official domains, official helplines (copied from the official site), EN/AR names and keywords, logo file in `data/logos/`
-- [ ] **15:30** — Branding: confirm product and team name, logo, colours, icon → Nati
-- [ ] **16:00** — Ask organizers the open questions at the end of this file; collect 5–10 real UAE scam news stories with links for the deck
-- [ ] **16:00** — Two local demo scam pages (fake traffic-fine payment, fake bank login) + one legit control, made with AI tools; Simon serves them locally, never online
-- [ ] **20:00** — Deck draft: problem, solution, live demo, architecture, accuracy, UAE focus, police pilot route, honest limitations, team
+- [x] **15:00** — `data/brands.json` v1.1, 23 brands: Samri's verified helplines and domains + Simon's `domain_tokens` and Abu Dhabi Customs ([notes](data/BRANDS-NOTES.md); still to do: logo files, confirm the Darb helpline): TAMM, UAE PASS, ICP, MOI, RTA fines, Dubai Police, **Abu Dhabi Police** (`adpolice.gov.ae`; Aman 8002626, SMS 2828, 999), **Darb**, **Consumer Protection**, Salik, Emirates Post, Aramex, DEWA, e&, du, Emirates NBD, ADCB, FAB, DIB, Mashreq, ADIB, RAKBANK. For each: official domains, official helplines (copied from the official site), EN/AR names and keywords, logo file in `data/logos/`
+- [x] **15:30** — Branding: confirm product and team name, logo, colours, icon → Nati ([brand kit](branding/BRANDING.md))
+- [x] **16:00** — Open questions decided by the team (no organizer available; see the end of this file); 8 real UAE scam stories + 3 backups for the deck in [docs/pitch/uae-scam-stories.md](docs/pitch/uae-scam-stories.md)
+- [x] **16:00** — Two local demo scam pages (fake traffic-fine payment, fake bank login) + one legit control, made with AI tools; Simon serves them locally, never online → [demo-pages/](demo-pages/README.md)
+- [ ] **20:00** — Deck draft (14 slides with speaker notes reported done, but not in the repo yet: add it under `docs/pitch/`; accuracy numbers and the demo score are `[__]` placeholders until 05:00): problem, solution, live demo, architecture, accuracy, UAE focus, police pilot route, honest limitations, team
 - [ ] **22:00** — Demo script (3 min) + Q&A cheat sheet
 - [ ] **00:00–03:00** — Record and edit the 1-minute demo video
 - [ ] **05:00** — Final deck with real accuracy numbers; rehearse the 5-minute version
@@ -229,7 +229,10 @@ A missed gate cuts scope; it never moves the freeze.
 
 ## Open questions
 
-- [ ] Organizers: how is the hidden test set run — do judges call our API or CLI, or hand us a list? Do we need a hosted URL?
-- [ ] Organizers: is the pitch slot 5 or 10 minutes? (Kickoff slides 16 and 17 disagree.)
-- [ ] Team: do we have a SerpApi key with credits, and an LLM API key?
-- [ ] Team: final team name and member names for the submission
+No organizer was available to answer, so the team decided these itself (24 Nov 2026). If an organizer later says otherwise, their answer wins.
+
+- [x] **How is the hidden test set run? Do we need a hosted URL?** → **Decided: a list, no hosted URL.** Judges hand us a file of URLs; we run the batch CLI locally and send back a CSV of verdicts. `POST /api/batch` stays ready in case they want to call an API, and the demo runs from a laptop. We will only set up a public tunnel if a judge asks for a link.
+- [x] **Is the pitch 5 or 10 minutes?** → **Decided: build for 5 minutes.** The 5-minute version is the main one: problem, live demo, results, ask. A 10-minute version only adds a longer demo (citizen checker + takedown report) and the architecture slide, so nothing has to be rewritten if we get 10.
+- [x] **Do we have a SerpApi key and an LLM key?** → **Decided: build as if we have neither.** Lookalikes and crt.sh are free and run without keys. If someone has a SerpApi key, add it to `.env` and run the search and Maps radars once to save cached results for the demo. The LLM stays off (P1).
+- [x] Team: final team name — CipherGuard
+- [ ] Team: member names for the submission. This needs each member to confirm their own name, so it can't be decided for them.

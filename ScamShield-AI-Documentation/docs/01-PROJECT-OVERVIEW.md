@@ -52,9 +52,9 @@ It responds directly to the organizer's published challenge: detect fraudulent w
 - No assertion of official endorsement, police deployment, real-world blocklist coverage, or detection accuracy without validated testing.
 - No unconditional guarantee that unknown URLs can be stopped pre-request in Chrome.
 
-## Proposed branding
+## Branding
 
-**Working product name:** ScamShield AI / ScamShield Digital Immune System. **GhostHunter** is an alternative pitch name, not an agreed rename. **Team name:** not decided; past suggestions included Ghost Protocol, ZeroTrace, PhantomX, CipherGuard, ShadowHunters.
+**Product name:** ScamShield (Arabic: درع الاحتيال). **Team name:** CipherGuard. The approved logo, icon, colour tokens, typography, tagline and usage notes are in the [brand kit](../../branding/BRANDING.md). Use the product name consistently in the UI and pitch; “ScamShield AI” may be used in descriptive copy where needed, but “ScamShield Digital Immune System” and “GhostHunter” are not alternate product names.
 
 ## Value proposition in one sentence
 

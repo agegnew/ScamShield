@@ -152,6 +152,31 @@ def test_download_signals_and_emirates_id_field():
     assert any("Emirates ID" in r.text_en for r in v.reasons)
 
 
+def test_mentioning_a_brand_is_not_impersonating_it():
+    blog = page("https://driverguide.example/", title="Gulf Driver Guide",
+                text_excerpt="How to pay a TAMM traffic fine on the official site")
+    assert "brand_on_wrong_domain" not in codes(engine.score("https://driverguide.example/", evidence=blog))
+    phish = page("https://pay.example/", title="Pay fines",
+                 text_excerpt="TAMM payment", forms=[FormInfo(sensitive=["card"])])
+    assert "brand_on_wrong_domain" in codes(engine.score("https://pay.example/", evidence=phish))
+
+
+def test_one_generic_theme_word_is_not_enough():
+    # 'tickets' alone is on every airline and cinema site; a scam phrase or two keywords is needed.
+    plain = page("https://cinema.example/", text_excerpt="Buy tickets for tonight's show")
+    assert "scam_theme_page" not in codes(engine.score("https://cinema.example/", evidence=plain))
+    scammy = page("https://deal.example/", text_excerpt="VIP tickets, last tickets, sold out soon")
+    assert "scam_theme_page" in codes(engine.score("https://deal.example/", evidence=scammy))
+    phrase = page("https://fine.example/", text_excerpt="Get a 90% discount on your fine today")
+    assert "scam_theme_page" in codes(engine.score("https://fine.example/", evidence=phrase))
+
+
+def test_theme_words_match_whole_words_only():
+    # 'otp' must not match inside 'footprint'; form-field words count only through credential_form.
+    ev = page("https://eco.example/", text_excerpt="Reduce your carbon footprint and reactivate savings")
+    assert "scam_theme_page" not in codes(engine.score("https://eco.example/", evidence=ev))
+
+
 def test_common_arabic_word_is_not_taken_for_a_brand_name():
     # 'تم' is TAMM's Arabic name but also the everyday word 'was / done'.
     ev = page("https://news.example/", text_excerpt="تم افتتاح المتجر الجديد اليوم")
