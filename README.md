@@ -114,7 +114,7 @@ docker compose up --build        # Postgres + API + page worker + radar
 - The API starts with 8 labelled sample cases (`SCAMSHIELD_MODE=mock`). For real data set `SCAMSHIELD_MODE=live` and `SCAMSHIELD_SEED_DEMO=1` in `.env`: the database then starts with the real cases scanned for the demo (`data/demo/`), and the radar adds new ones as it runs.
 - Optional: `SERPAPI_KEY` turns on the Search and Maps radars.
 
-**Without Docker:** see [backend/README.md](backend/README.md) (SQLite, `uvicorn` + `python -m app.workers.runner`). Tests: `pytest -q` in `backend/` (145 tests).
+**Without Docker:** see [backend/README.md](backend/README.md) (SQLite, `uvicorn` + `python -m app.workers.runner`). Tests: `pytest -q` in `backend/` (157 tests).
 
 **API contract for the dashboard:** [docs/api/README.md](docs/api/README.md), with TypeScript types and sample JSON for every endpoint.
 <!-- TODO(Nati): add the frontend/ run steps here once the dashboard is in the repo. -->
@@ -143,7 +143,7 @@ Input: a `.txt` file with one URL per line, or a `.csv` with a `url` column. Out
 | `backend/app/workers/` | Fetcher, enrichment, fingerprints, cloaking, visual match, SSRF guard, the five radars, job runner |
 | `backend/app/routes/`, `auth.py`, `report.py`, `takedown.py`, `graph.py` | HTTP API, login and roles, PDF report, takedown email, scam-network graph |
 | `backend/scripts/` | Dataset build, model training, evaluation, batch mode, demo seeding, contract export |
-| `backend/tests/` | 145 tests (`pytest -m live` adds real-network checks) |
+| `backend/tests/` | 157 tests (`pytest -m live` adds real-network checks) |
 | `data/` | Brand registry, scam themes, official-site references, held-out test set, demo snapshot |
 | `docs/api/` | API contract (OpenAPI, TypeScript types, sample JSON) |
 | `demo-pages/` | Local-only demo scam pages |
