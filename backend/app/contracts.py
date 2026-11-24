@@ -37,7 +37,7 @@ class Label(str, Enum):
 
 
 BrandCategory = Literal[
-    "government", "police", "bank", "telecom", "transport", "utility", "delivery"
+    "government", "police", "bank", "telecom", "transport", "utility", "delivery", "shopping", "travel"
 ]
 
 

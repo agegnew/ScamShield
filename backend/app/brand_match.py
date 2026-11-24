@@ -41,7 +41,8 @@ def match_token(host: str) -> tuple[str, str] | None:
     if not host or is_official(host):
         return None
     label = host.rsplit(".", 1)[0]
-    for token, brand_id in brand_tokens().items():
+    # Longest token first: "dubaicustoms-uae" is Dubai Customs, not the shorter "customs-uae".
+    for token, brand_id in sorted(brand_tokens().items(), key=lambda item: -len(item[0].strip("-"))):
         core = token.strip("-")
         if core not in label:
             continue

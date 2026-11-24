@@ -8,7 +8,7 @@ import re
 from dataclasses import dataclass, field
 
 from ..brand_match import match_token
-from ..brands import GENERIC_LABELS, normalize_uae_phone
+from ..brands import GENERIC_LABELS, NO_TYPOSQUAT_LABELS, normalize_uae_phone
 from ..contracts import Brand, Candidate, Evidence, Reason, ScamTheme
 from ..urls import domain_label
 from . import feeds, model
@@ -171,13 +171,19 @@ def brand_lookalike(ctx: Ctx) -> list[Reason]:
                     "url",
                 )
             ]
+        # One brand's official site is never a misspelling of another's (rakpolice.gov.ae vs adpolice).
+        if any(_is_official(brand, host) for brand in ctx.brands):
+            continue
         label = domain_label(host).lower()
         for brand in ctx.brands:
-            if _is_official(brand, host):
-                continue
             for off in brand.official_domains:
                 off_label = domain_label(off).lower()
-                if len(off_label) < 5 or label == off_label or off_label in GENERIC_LABELS:
+                if (
+                    len(off_label) < 5
+                    or label == off_label
+                    or off_label in GENERIC_LABELS
+                    or off_label in NO_TYPOSQUAT_LABELS
+                ):
                     continue
                 folded = label
                 for a, b in HOMOGLYPHS:
@@ -347,9 +353,8 @@ def scam_themes_in_url(ctx: Ctx) -> list[Reason]:
 def _page_names(brand: Brand) -> list[str]:
     """Brand names to look for in page text. Short ones ('du', Arabic 'تم' = 'was') are too common."""
     names = [brand.name_en.split(" (")[0].lower(), brand.name_ar]
-    labels = (domain_label(d).lower() for d in brand.official_domains)
-    names += [label for label in labels if label not in GENERIC_LABELS]
-    return [n for n in dict.fromkeys(names) if len(n.replace(" ", "")) >= 4]
+    names += [domain_label(d).lower() for d in brand.official_domains]
+    return [n for n in dict.fromkeys(names) if len(n.replace(" ", "")) >= 4 and n not in GENERIC_LABELS]
 
 
 def _name_in_page(name: str, text: str, raw_text: str) -> bool:

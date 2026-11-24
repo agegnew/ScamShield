@@ -1,6 +1,12 @@
 # brands.json v1 — notes
 
-23 UAE brands (v1.1). Fields follow the shared contract in `backend/app/contracts.py`.
+53 UAE brands (v1.2). Fields follow the shared contract in `backend/app/contracts.py`.
+
+**v1.2 (25 Nov 2026, Agegnew):** 30 brands added so the radar covers more of what scammers copy: 8 banks (CBD, Emirates Islamic, NBF, Sharjah Islamic Bank, Ajman Bank, Al Hilal Bank, Wio, Bank of Sharjah), MOHRE, GDRFA Dubai, Dubai Customs, the Federal Tax Authority, MOHAP, Sharjah / Ajman / RAK Police, Parkin, Talabat, shops whose "offers" are copied (noon, Dubai Duty Free, Lulu, Carrefour UAE, Sharaf DG), airlines (Emirates, Etihad, flydubai, Air Arabia) and utilities (ADDC, SEWA, Etihad WE). Two new sectors: `shopping` and `travel`.
+- Every official domain was checked in DNS. Al Etihad Credit Bureau was left out because its domain did not check out.
+- **Helplines are empty for the new brands** until someone copies them from the official sites (the helpline check and the Maps radar use them).
+- Ordinary words are not used as brand names on their own (`GENERIC_LABELS` in `backend/app/brands.py`): "noon", "emirates", "etihad", "tax", "sewa", "parkin" (vs "parking"), and Arabic "نون" and "طلبات" ("orders"). Their domain tokens (`noon-uae`, `flyemirates`, `parkin-pay`, ...) and full names ("Emirates airline") still match.
+- Held-out accuracy is unchanged with the new brands (precision 0.942, recall 0.778, 0 of 230 UAE official pages flagged).
 
 **Merged v1.1 (24 Nov 2026):** Samri's verified v1 is the base (helplines, domains, names, keywords). From Simon's draft it keeps:
 - `domain_tokens` on every brand: the strings the radars and the engine look for inside scam domains (e.g. `enbd`, `rta-`). Don't remove them; keep new ones 4+ characters or hyphen-bounded.
