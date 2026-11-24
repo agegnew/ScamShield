@@ -1,5 +1,5 @@
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from urllib.parse import parse_qs, urlsplit
 
 from app.api_models import Case, EvidenceExport, Takedown
@@ -99,6 +99,14 @@ def test_takedown_recipients_deduplicated_and_empty_without_contacts():
     td = build_takedown(_mock("c-0006"))  # no evidence
     assert td.recipients == []
     assert td.mailto is None
+
+
+def test_takedown_first_seen_is_readable_utc():
+    case = _mock("c-0001")
+    case.candidate.discovered_at = datetime(2026, 11, 24, 17, 37, 37, 981352, tzinfo=timezone(timedelta(hours=4)))
+    td = build_takedown(case)
+    assert "First seen: 2026-11-24 13:37 UTC\n" in td.body_en
+    assert "2026-11-24 13:37 UTC" in td.body_ar
 
 
 def test_related_domains_seen_from_one_case():

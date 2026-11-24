@@ -1,5 +1,6 @@
 """Takedown request for a case, addressed to the registrar and the host."""
 
+from datetime import timezone
 from urllib.parse import quote, urlencode
 
 from .api_models import Case, Takedown
@@ -17,7 +18,9 @@ def build_takedown(case: Case) -> Takedown:
     url = case.candidate.url
     final_url = (ev.final_url if ev else None) or url
     ip = ev.ip if ev else None
-    first_seen = case.candidate.discovered_at.isoformat()
+    seen = case.candidate.discovered_at
+    seen = seen.replace(tzinfo=timezone.utc) if seen.tzinfo is None else seen.astimezone(timezone.utc)
+    first_seen = seen.strftime("%Y-%m-%d %H:%M UTC")  # an abuse desk reads this, not a parser
     score = f"{case.verdict.score}/100 ({case.verdict.verdict.value})"
     points = [r for r in case.verdict.reasons if r.weight > 0]
     evidence_en = "\n".join(f"- {r.text_en}" for r in points) or "- See attached case file"
