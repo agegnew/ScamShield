@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 
 from app.api_models import Case
 from app.contracts import Candidate, Evidence, Label, Rdap, Source, Verdict
