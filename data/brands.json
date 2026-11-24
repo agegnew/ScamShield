@@ -1,5 +1,5 @@
 {
-  "version": "0.1-draft (20 brands)",
+  "version": "0.2-draft (23 brands)",
   "notes": "Draft by Simon, replaces the 4-brand stub. Samri owns this file: verify domains and helplines. Empty helplines mean not verified yet. domain_tokens are the strings the lookalike radar searches for in new domains; keep them 4+ characters or distinctive.",
   "brands": [
     {
@@ -169,15 +169,18 @@
         "adpolice.gov.ae"
       ],
       "helplines": [
-        "+9718002626"
+        "+9718002626",
+        "2828"
       ],
       "keywords_en": [
         "abu dhabi police fines",
-        "adp traffic fine"
+        "adp traffic fine",
+        "aman abu dhabi police report"
       ],
       "keywords_ar": [
         "شرطة أبوظبي",
-        "مخالفات أبوظبي"
+        "مخالفات أبوظبي",
+        "خدمة أمان"
       ],
       "domain_tokens": [
         "adpolice",
@@ -516,6 +519,89 @@
       "domain_tokens": [
         "rakbank",
         "rak-bank"
+      ],
+      "logo": null
+    },
+    {
+      "id": "consumer_protection",
+      "name_en": "UAE Consumer Protection",
+      "name_ar": "حماية المستهلك",
+      "category": "government",
+      "official_domains": [
+        "moec.gov.ae",
+        "economy.gov.ae",
+        "added.gov.ae"
+      ],
+      "helplines": [],
+      "keywords_en": [
+        "consumer protection complaint uae",
+        "file complaint consumer protection abu dhabi"
+      ],
+      "keywords_ar": [
+        "حماية المستهلك",
+        "تقديم شكوى حماية المستهلك"
+      ],
+      "domain_tokens": [
+        "consumerprotection",
+        "consumer-protection",
+        "consumer-uae",
+        "moec-",
+        "-moec"
+      ],
+      "logo": null
+    },
+    {
+      "id": "darb",
+      "name_en": "Darb (Abu Dhabi toll)",
+      "name_ar": "درب",
+      "category": "transport",
+      "official_domains": [
+        "itc.gov.ae"
+      ],
+      "helplines": [],
+      "keywords_en": [
+        "darb toll",
+        "darb fine payment",
+        "darb recharge"
+      ],
+      "keywords_ar": [
+        "درب",
+        "مخالفات درب",
+        "بوابات درب"
+      ],
+      "domain_tokens": [
+        "darb-",
+        "-darb",
+        "darbtoll",
+        "darb-toll",
+        "darbpay",
+        "darb-ae"
+      ],
+      "logo": null
+    },
+    {
+      "id": "adcustoms",
+      "name_en": "Abu Dhabi Customs",
+      "name_ar": "جمارك أبوظبي",
+      "category": "government",
+      "official_domains": [
+        "adcustoms.gov.ae"
+      ],
+      "helplines": [],
+      "keywords_en": [
+        "abu dhabi customs",
+        "customs fee parcel uae"
+      ],
+      "keywords_ar": [
+        "جمارك أبوظبي",
+        "رسوم جمركية طرد"
+      ],
+      "domain_tokens": [
+        "adcustoms",
+        "ad-customs",
+        "customs-uae",
+        "uae-customs",
+        "customsuae"
       ],
       "logo": null
     }
