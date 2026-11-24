@@ -5,3 +5,4 @@ phonenumbers
 tldextract
 dnstwist
 python-dotenv
+pillow

@@ -18,6 +18,7 @@ from urllib.parse import urljoin, urlsplit
 from playwright.sync_api import Error as PlaywrightError
 from playwright.sync_api import sync_playwright
 
+from workers import fingerprint as fp
 from workers.safety import UnsafeURL, Unresolvable, check_url
 
 ARTIFACTS_DIR = Path(os.getenv("SCAMSHIELD_ARTIFACTS", Path(__file__).resolve().parent.parent / "backend" / "artifacts"))
@@ -113,6 +114,16 @@ def _screenshot_path(url: str) -> Path:
     return SCREENSHOT_DIR / f"{stamp}_{hashlib.sha256(url.encode()).hexdigest()[:12]}.png"
 
 
+def _favicon(context, page) -> bytes:
+    try:
+        icon_url = page.evaluate(fp.FAVICON_JS)
+        check_url(icon_url)
+        resp = context.request.get(icon_url, timeout=5_000, max_redirects=3)
+        return resp.body() if resp.ok and len(resp.body()) < 500_000 else b""
+    except (PlaywrightError, UnsafeURL):
+        return b""
+
+
 def fetch(url: str) -> dict:
     result = {
         "url": url,
@@ -125,6 +136,7 @@ def fetch(url: str) -> dict:
         "text_excerpt": None,
         "forms": [],
         "download_signals": [],
+        "fingerprints": None,
         "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "status": "ok",
         "fetch_error": None,
@@ -173,15 +185,24 @@ def fetch(url: str) -> dict:
             shot = _screenshot_path(url)
             page.screenshot(path=str(shot))
             text = page.evaluate("() => document.body ? document.body.innerText : ''") or ""
+            html = page.content()
+            png = shot.read_bytes()
             result.update(
                 final_url=page.url,
                 http_status=chain[-1]["status"] if chain else (response.status if response else None),
                 screenshot_path=str(shot.relative_to(ARTIFACTS_DIR)),
-                screenshot_sha256=hashlib.sha256(shot.read_bytes()).hexdigest(),
+                screenshot_sha256=hashlib.sha256(png).hexdigest(),
                 title=page.title(),
                 text_excerpt=" ".join(text.split())[:TEXT_LIMIT],
                 forms=summarize_forms(page.evaluate(FORM_FIELDS_JS), page.url),
                 download_signals=download_signals(page.evaluate(LINKS_JS), text),
+                fingerprints={
+                    **fp.favicon_hashes(_favicon(context, page)),
+                    "dom_hash": fp.dom_hash(page.evaluate(fp.DOM_SHAPE_JS)),
+                    "screenshot_dhash": fp.screenshot_dhash(png),
+                    "tracking_ids": fp.tracking_ids(html),
+                    "contacts": fp.contacts(text, html),
+                },
             )
         except PlaywrightError as exc:
             result.update(status="error", fetch_error=str(exc).splitlines()[0], final_url=page.url if page.url != "about:blank" else None)
