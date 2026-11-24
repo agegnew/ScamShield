@@ -28,11 +28,20 @@ SETTLE_MS = 1_500
 TEXT_LIMIT = 2_000
 
 # Scam pages often show their real content only to phones with a local setup.
-PROFILE = {
-    "device": "iPhone 13",
-    "locale": "ar-AE",
-    "timezone_id": "Asia/Dubai",
-    "extra_http_headers": {"Accept-Language": "ar-AE,ar;q=0.9,en-AE;q=0.8,en;q=0.7"},
+PROFILES = {
+    "mobile_ae": {
+        "device": "iPhone 13",
+        "locale": "ar-AE",
+        "timezone_id": "Asia/Dubai",
+        "extra_http_headers": {"Accept-Language": "ar-AE,ar;q=0.9,en-AE;q=0.8,en;q=0.7"},
+    },
+    # Looks like a foreign desktop crawler: what cloaking scam kits show a clean page to.
+    "desktop_us": {
+        "device": "Desktop Chrome",
+        "locale": "en-US",
+        "timezone_id": "America/New_York",
+        "extra_http_headers": {"Accept-Language": "en-US,en;q=0.9"},
+    },
 }
 
 FORM_FIELDS_JS = """
@@ -124,9 +133,11 @@ def _favicon(context, page) -> bytes:
         return b""
 
 
-def fetch(url: str) -> dict:
+def fetch(url: str, profile: str = "mobile_ae") -> dict:
+    setup = PROFILES[profile]
     result = {
         "url": url,
+        "profile": profile,
         "final_url": None,
         "redirect_chain": [],
         "http_status": None,
@@ -160,10 +171,10 @@ def fetch(url: str) -> dict:
     with sync_playwright() as p:
         browser = p.chromium.launch()
         context = browser.new_context(
-            **p.devices[PROFILE["device"]],
-            locale=PROFILE["locale"],
-            timezone_id=PROFILE["timezone_id"],
-            extra_http_headers=PROFILE["extra_http_headers"],
+            **p.devices[setup["device"]],
+            locale=setup["locale"],
+            timezone_id=setup["timezone_id"],
+            extra_http_headers=setup["extra_http_headers"],
             accept_downloads=False,
             permissions=[],
         )
