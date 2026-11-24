@@ -11,6 +11,10 @@ class UnsafeURL(ValueError):
     pass
 
 
+class Unresolvable(UnsafeURL):
+    """The host has no DNS record: often a scam domain already taken down."""
+
+
 def _is_public(ip: str) -> bool:
     addr = ipaddress.ip_address(ip)
     return addr.is_global and not addr.is_multicast
@@ -21,7 +25,7 @@ def resolve_public(host: str) -> list[str]:
     try:
         infos = socket.getaddrinfo(host, None)
     except socket.gaierror as exc:
-        raise UnsafeURL(f"cannot resolve {host}") from exc
+        raise Unresolvable(f"cannot resolve {host}") from exc
     ips = sorted({info[4][0] for info in infos})
     blocked = [ip for ip in ips if not _is_public(ip)]
     if blocked:

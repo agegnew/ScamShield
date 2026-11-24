@@ -15,7 +15,7 @@ from urllib.parse import urljoin, urlsplit
 from playwright.sync_api import Error as PlaywrightError
 from playwright.sync_api import sync_playwright
 
-from workers.safety import UnsafeURL, check_url
+from workers.safety import UnsafeURL, Unresolvable, check_url
 
 SCREENSHOT_DIR = Path(__file__).resolve().parent.parent / "data" / "screenshots"
 NAV_TIMEOUT_MS = 20_000
@@ -90,6 +90,8 @@ def fetch(url: str) -> dict:
     }
     try:
         check_url(url)
+    except Unresolvable as exc:
+        return {**result, "status": "offline", "error": str(exc)}
     except UnsafeURL as exc:
         return {**result, "status": "blocked", "error": str(exc)}
 
