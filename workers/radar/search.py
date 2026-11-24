@@ -1,6 +1,7 @@
 """Radars 4 and 5: Google Search (organic results and ads) and Google Maps listings for UAE brand queries, via SerpApi.
 
-Search: any result or ad for a brand query that points outside the brand's official domains is queued.
+Search: any result or ad for a brand query, or for a generic service phrase victims search for ("pay traffic fine
+abu dhabi"), that points outside official domains is queued.
 Maps: a listing that names a brand is queued when its website is not official, or when it presents itself as a
 helpline / customer service and its phone is not an official helpline.
 
@@ -30,6 +31,17 @@ UAE_CENTER = "@24.4539,54.3773,9z"
 HELPLINE_CLAIM = re.compile(
     r"customer\s*(service|care|support)|help\s*line|hotline|call\s*cent|contact|complain|refund|"
     r"خدمة العملاء|خط المساعدة|الدعم|مركز الاتصال", re.I)
+# What victims type when they look for a service; fake sites and ads target these, not only brand names.
+GENERIC_QUERIES = [
+    ("pay traffic fine abu dhabi", "en"), ("دفع المخالفات المرورية أبوظبي", "ar"),
+    ("traffic fine discount uae", "en"), ("خصم المخالفات المرورية", "ar"),
+    ("consumer protection complaint uae", "en"), ("شكوى حماية المستهلك", "ar"),
+    ("darb toll fine payment", "en"), ("دفع مخالفات درب", "ar"),
+    ("parcel delivery fee uae", "en"), ("رسوم توصيل الطرد الإمارات", "ar"),
+    ("uae visa status check", "en"), ("الاستعلام عن التأشيرة الإمارات", "ar"),
+    ("domestic worker visa uae", "en"), ("تأشيرة عاملة منزلية", "ar"),
+]
+GOV_SUFFIXES = (".gov.ae", ".abudhabi", ".dubai")
 # Search results on these hosts are news, social or directories, not impersonation.
 NEUTRAL_HOSTS = {"wikipedia.org", "youtube.com", "facebook.com", "instagram.com", "x.com", "twitter.com",
                  "linkedin.com", "tiktok.com", "gulfnews.com", "khaleejtimes.com", "thenationalnews.com",
@@ -68,29 +80,36 @@ def e164(raw: str) -> str | None:
 
 
 def is_neutral(host: str) -> bool:
-    return any(host == h or host.endswith("." + h) for h in NEUTRAL_HOSTS)
+    return any(host == h or host.endswith("." + h) for h in NEUTRAL_HOSTS) or host.endswith(GOV_SUFFIXES)
 
 
 def search_queries(brand: dict) -> list[tuple[str, str]]:
     return [(q, "en") for q in brand["keywords_en"]] + [(q, "ar") for q in brand["keywords_ar"]]
 
 
-def search_brand(brand: dict) -> list[dict]:
+def google(query: str, lang: str, brand_id: str | None) -> list[dict]:
+    data = serpapi({"engine": "google", "q": query, "google_domain": "google.ae", "gl": "ae", "hl": lang,
+                    "location": "United Arab Emirates", "num": 20})
     hits = []
-    for query, lang in search_queries(brand):
-        data = serpapi({"engine": "google", "q": query, "google_domain": "google.ae", "gl": "ae", "hl": lang,
-                        "location": "United Arab Emirates", "num": 20})
-        results = [("search_ad", r) for r in data.get("ads", [])] + \
-                  [("search", r) for r in data.get("organic_results", [])]
-        for source, result in results:
-            link = result.get("link")
-            host = (urlsplit(link).hostname or "") if link else ""
-            if not host or brands.is_official(host) or is_neutral(host):
-                continue
-            hits.append({"url": link, "source": source, "query": query, "brand": brand["id"],
-                         "extra": {"brand": brand["id"], "title": result.get("title"), "lang": lang,
-                                   "position": result.get("position"), "replayed": data.get("_replayed", False)}})
+    results = [("search_ad", r) for r in data.get("ads", [])] + [("search", r) for r in data.get("organic_results", [])]
+    for source, result in results:
+        link = result.get("link")
+        host = (urlsplit(link).hostname or "") if link else ""
+        if not host or brands.is_official(host) or is_neutral(host):
+            continue
+        target = brand_id or brands.match_brand(host)
+        hits.append({"url": link, "source": source, "query": query, "brand": target,
+                     "extra": {"brand": target, "title": result.get("title"), "lang": lang,
+                               "position": result.get("position"), "replayed": data.get("_replayed", False)}})
     return hits
+
+
+def search_brand(brand: dict) -> list[dict]:
+    return [hit for query, lang in search_queries(brand) for hit in google(query, lang, brand["id"])]
+
+
+def search_generic() -> list[dict]:
+    return [hit for query, lang in GENERIC_QUERIES for hit in google(query, lang, None)]
 
 
 def maps_brand(brand: dict) -> list[dict]:
@@ -137,7 +156,7 @@ def main() -> None:
     if not os.environ.get("SERPAPI_KEY"):
         log.warning("SERPAPI_KEY not set: replaying saved results from %s", CACHE_DIR)
 
-    hits = []
+    hits = [] if args.maps_only or args.brand else search_generic()
     for brand in brands.load():
         if args.brand and brand["id"] not in args.brand:
             continue
