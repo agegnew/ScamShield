@@ -24,7 +24,7 @@ from workers.safety import UnsafeURL, Unresolvable, check_url
 ARTIFACTS_DIR = Path(os.getenv("SCAMSHIELD_ARTIFACTS", Path(__file__).resolve().parent.parent / "backend" / "artifacts"))
 SCREENSHOT_DIR = ARTIFACTS_DIR / "screenshots"
 NAV_TIMEOUT_MS = 20_000
-SETTLE_MS = 2_500
+SETTLE_MS = 1_500
 TEXT_LIMIT = 2_000
 
 # Scam pages often show their real content only to phones with a local setup.
@@ -179,7 +179,7 @@ def fetch(url: str) -> dict:
             response = page.goto(url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT_MS)
             page.wait_for_timeout(SETTLE_MS)
             try:
-                page.wait_for_load_state("networkidle", timeout=5_000)
+                page.wait_for_load_state("networkidle", timeout=3_000)
             except PlaywrightError:
                 pass
             shot = _screenshot_path(url)
