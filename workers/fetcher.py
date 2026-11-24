@@ -66,8 +66,8 @@ LINKS_JS = """
 """
 
 # Scam scripts push victims to install remote-control apps or sideloaded APKs, then log in to their bank.
-REMOTE_ACCESS = re.compile(r"anydesk|teamviewer|rustdesk|quicksupport|airdroid|supremo|ultraviewer|splashtop|"
-                           r"remote\s*(support|desktop|access)", re.I)
+REMOTE_ACCESS = re.compile(r"\b(anydesk|teamviewer|rustdesk|quicksupport|airdroid|supremo|ultraviewer|splashtop)\b",
+                           re.I)
 APK = re.compile(r"\.apk(\b|$)|تحميل التطبيق|download (our |the )?app", re.I)
 
 
@@ -82,6 +82,37 @@ def download_signals(links: list[dict], text: str) -> list[dict]:
     if match := REMOTE_ACCESS.search(text):
         signals.append({"kind": "remote_access_text", "href": None, "text": match.group(0)})
     return signals[:20]
+
+
+# Placeholder pages say nothing about the owner; the engine and the network map must not read them as content.
+PAGE_KINDS = [
+    ("blocked", re.compile(r"access denied|just a moment|attention required|checking your browser|request blocked|"
+                           r"403 forbidden|captcha|restricted domain|not authorized|security verification|"
+                           r"إجراء التحقق|لحظة…", re.I)),
+    ("expired", re.compile(r"domain (is|has) expired|renew (the|this|your) domain|expired domain", re.I)),
+    ("for_sale", re.compile(r"(domain|this name) (is |may be )?for sale|buy this domain|make an offer|"
+                            r"available on godaddy|available for purchase|reserved for strategic use|forsale\.|/lander|"
+                            r"atom\.com|dan\.com|sedo\.com|afternic|hugedomains|buydomains|namingsystem|brandbucket",
+                            re.I)),
+    ("parked", re.compile(r"parked (domain|free)|domain parking|this domain (is|was|has been) (registered|parked|"
+                          r"purchased)|domain (is now )?reserved|registered at .{0,40}(hostinger|namecheap|godaddy)|"
+                          r"if this is your domain|déjà enregistré|secureserver\.net|related searches", re.I)),
+    ("error", re.compile(r"\b404\b|not found|error establishing|critical error|site not configured|"
+                         r"cannot be displayed|chrome-error://", re.I)),
+    ("coming_soon", re.compile(r"launching soon|coming soon|under construction|website is (being built|coming)|"
+                               r"brand new|almost here|check back|still being worked on|hello world", re.I)),
+    ("default_host_page", re.compile(r"welcome to nginx|apache2? .{0,20}default page|it works!|"
+                                     r"index of /|default web site page", re.I)),
+]
+
+
+def page_kind(final_url: str, title: str, text: str, form_count: int = 0) -> str:
+    """'content' for a real page; otherwise the kind of placeholder (parked, for_sale, blocked, error...)."""
+    sample = f"{final_url} {title} {text[:600]}"
+    kind = next((kind for kind, pattern in PAGE_KINDS if pattern.search(sample)), "content")
+    if kind == "content" and len(text.strip()) < 20 and not form_count:
+        return "empty"
+    return kind
 
 
 FIELD_KINDS = [
@@ -147,6 +178,7 @@ def fetch(url: str, profile: str = "mobile_ae") -> dict:
         "text_excerpt": None,
         "forms": [],
         "download_signals": [],
+        "page_kind": None,
         "fingerprints": None,
         "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "status": "ok",
@@ -198,6 +230,7 @@ def fetch(url: str, profile: str = "mobile_ae") -> dict:
             text = page.evaluate("() => document.body ? document.body.innerText : ''") or ""
             html = page.content()
             png = shot.read_bytes()
+            raw_forms = page.evaluate(FORM_FIELDS_JS)
             result.update(
                 final_url=page.url,
                 http_status=chain[-1]["status"] if chain else (response.status if response else None),
@@ -205,8 +238,9 @@ def fetch(url: str, profile: str = "mobile_ae") -> dict:
                 screenshot_sha256=hashlib.sha256(png).hexdigest(),
                 title=page.title(),
                 text_excerpt=" ".join(text.split())[:TEXT_LIMIT],
-                forms=summarize_forms(page.evaluate(FORM_FIELDS_JS), page.url),
+                forms=summarize_forms(raw_forms, page.url),
                 download_signals=download_signals(page.evaluate(LINKS_JS), text),
+                page_kind=page_kind(page.url, page.title(), text, len(raw_forms)),
                 fingerprints={
                     **fp.favicon_hashes(_favicon(context, page)),
                     "dom_hash": fp.dom_hash(page.evaluate(fp.DOM_SHAPE_JS)),
