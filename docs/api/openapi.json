@@ -1516,6 +1516,18 @@
             "type": "array",
             "title": "Download Signals"
           },
+          "page_kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page Kind",
+            "description": "'content' for a real page; otherwise a placeholder: parked, for_sale, expired, blocked, error, coming_soon, default_host_page, empty. Placeholders say nothing about the owner"
+          },
           "fingerprints": {
             "anyOf": [
               {

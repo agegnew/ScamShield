@@ -577,6 +577,11 @@ export interface components {
             forms?: components["schemas"]["FormInfo"][];
             /** Download Signals */
             download_signals?: components["schemas"]["DownloadSignal"][];
+            /**
+             * Page Kind
+             * @description 'content' for a real page; otherwise a placeholder: parked, for_sale, expired, blocked, error, coming_soon, default_host_page, empty. Placeholders say nothing about the owner
+             */
+            page_kind?: string | null;
             fingerprints?: components["schemas"]["Fingerprints"] | null;
             visual_match?: components["schemas"]["VisualMatch"] | null;
             cloaking?: components["schemas"]["CloakingCheck"] | null;
