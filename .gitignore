@@ -14,5 +14,8 @@ node_modules/
 
 kickoff/
 
+# Downloaded or generated data (rebuilt by scripts / the worker)
 data/datasets/raw/
 data/datasets/train.csv
+data/cache/
+data/*.db
