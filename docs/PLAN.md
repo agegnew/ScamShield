@@ -130,6 +130,7 @@ Everyone works on mock data until 17:00 so nobody waits on anyone.
 - [ ] **21:00** — Accessibility pass: WCAG AA contrast, keyboard-only run, visible focus, screen-reader labels, verdict shown by icon + text not colour alone, text-size toggle
 - [ ] **P1** — Network graph view; read-aloud verdict (browser speech, Arabic + English)
 - [ ] **00:00–02:00** — Polish for the video; operate the laptop during the demo
+- [ ] **Next** — Radar page v2: a tab per source, sector chips, "Run radar now" + animated radar scope, daily-run status → [radar-ui.md](radar-ui.md) (build on its sample JSON first)
 
 ### Agegnew (+ Claude Code) — backend, DB, users, engine
 
@@ -142,7 +143,8 @@ Everyone works on mock data until 17:00 so nobody waits on anyone.
 - [x] Batch CLI: `python -m scripts.batch urls.txt -o verdicts.csv` (P0 item 7); demo-page support (`SCAMSHIELD_DEMO_HOSTS`, `docker compose --profile demo`)
 - [x] Engine fixes from Simon's live checks: page impersonation beats a normal-looking URL (moi-portal.com SUSPICIOUS 38 → FRAUD 75); parked lookalikes are SUSPICIOUS, not FRAUD (tamm-service.site 100 → 60); a reported phishing URL on a hacked old site is FRAUD
 - [x] **21:00** — Graph edges (shared IP, registration day, final host, favicon, template, tracker, contact); thresholds swept on the held-out set and kept at SUSPICIOUS ≥ 30 / FRAUD ≥ 70 (see Accuracy)
-- [ ] **P1** — LLM vision check for borderline cases (not built: no LLM key; visual match by favicon/template covers part of it)
+- [ ] **Next** — LLM check for borderline cases with Claude (decided 25 Nov; key available): screenshot + page text of SUSPICIOUS pages → impersonation verdict
+- [ ] **Next** — Radar v2 backend: about 45 brands with sectors (+ `shopping`, `travel`), `brand_category` + `source_details` in the feed, `POST /api/radar/run`, `GET /api/radar/status`, daily 03:00 run, SerpApi budget cap → [radar-ui.md](radar-ui.md)
 - [x] **00:00** — Seed demo data (`python -m scripts.seed_demo`, `data/demo/`, `SCAMSHIELD_SEED_DEMO=1`); final accuracy numbers for the deck in the README (Results)
 - [ ] **00:00** — Freeze
 
