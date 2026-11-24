@@ -147,6 +147,21 @@ a {
   animation: radar-pulse 2.2s ease-out infinite;
 }
 
+/* Radar scope sweep (runs only while a run is going; stopped by reduced motion below) */
+@keyframes radar-sweep {
+  to { transform: rotate(360deg); }
+}
+.radar-sweep {
+  animation: radar-sweep 4s linear infinite;
+}
+@keyframes blip-in {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+.radar-blip {
+  animation: blip-in 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 /* Score ring fill */
 @keyframes ring-in {
   from { stroke-dashoffset: var(--ring-circ); }
