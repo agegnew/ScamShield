@@ -34,19 +34,23 @@ def test_case_detail_and_404(client):
     assert client.get("/api/cases/c-9999").status_code == 404
 
 
-def test_decision_updates_status_and_records_user(client):
+def test_decision_updates_status_and_records_user(client, admin_headers):
     res = client.post(
         "/api/cases/c-0002/decision",
         json={"action": "confirm", "reason": "Copies UAE PASS login"},
-        headers={"Authorization": "Bearer mock-admin"},
+        headers=admin_headers,
     )
     case = Case.model_validate(res.json())
     assert case.status == "confirmed"
     assert case.decisions[-1].by == "admin"
 
 
-def test_decision_rejects_unknown_action(client):
-    res = client.post("/api/cases/c-0002/decision", json={"action": "delete", "reason": "nope"})
+def test_decision_rejects_unknown_action(client, analyst_headers):
+    res = client.post(
+        "/api/cases/c-0002/decision",
+        json={"action": "delete", "reason": "nope"},
+        headers=analyst_headers,
+    )
     assert res.status_code == 422
 
 
@@ -127,7 +131,8 @@ def test_takedown_includes_abuse_contacts_and_both_languages(client):
 
 
 def test_login_and_screenshot_served(client):
-    assert client.post("/api/auth/login", json={"username": "admin", "password": "x"}).status_code == 200
+    login = client.post("/api/auth/login", json={"username": "admin", "password": "admin123"})
+    assert login.status_code == 200
     assert client.post("/api/auth/login", json={"username": "eve", "password": "x"}).status_code == 401
     assert client.get("/artifacts/mock/screenshot.svg").status_code == 200
 

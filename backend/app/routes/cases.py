@@ -10,14 +10,15 @@ from ..api_models import (
     Takedown,
     UserInfo,
 )
-from ..auth import current_user
+from ..auth import analyst_access, require_user
 from ..contracts import Label, Source
 from ..deps import get_repo
 from ..graph import build_graph
 from ..repo import CaseRepo
 from ..takedown import build_takedown
 
-router = APIRouter(prefix="/api", tags=["cases"])
+# Analyst reads are open unless SCAMSHIELD_REQUIRE_LOGIN=1 (see auth.py).
+router = APIRouter(prefix="/api", tags=["cases"], dependencies=[Depends(analyst_access)])
 
 
 def _case_or_404(repo: CaseRepo, case_id: str) -> Case:
@@ -70,9 +71,10 @@ def get_case(case_id: str, repo: CaseRepo = Depends(get_repo)) -> Case:
 def decide(
     case_id: str,
     body: DecisionRequest,
-    user: UserInfo = Depends(current_user),
+    user: UserInfo = Depends(require_user),
     repo: CaseRepo = Depends(get_repo),
 ) -> Case:
+    """Confirm or dismiss. Needs a logged-in analyst or admin; the log keeps who, when, why."""
     _case_or_404(repo, case_id)
     return repo.decide(case_id, body.action, body.reason, user.username)
 

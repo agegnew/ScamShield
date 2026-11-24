@@ -8,6 +8,7 @@ venv/
 backend/artifacts/*
 !backend/artifacts/mock/
 backend/scamshield.db*
+backend/.jwt-secret
 
 node_modules/
 .next/

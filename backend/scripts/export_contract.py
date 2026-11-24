@@ -15,6 +15,11 @@ os.environ["DATABASE_URL"] = (
 )
 os.environ["SCAMSHIELD_MODE"] = "mock"
 os.environ["SCAMSHIELD_SEED_MOCK"] = "1"
+# Demo accounts and a throwaway signing key, so the sample token is useless elsewhere.
+os.environ["SCAMSHIELD_ADMIN_PASSWORD"] = "admin123"
+os.environ["SCAMSHIELD_ANALYST_PASSWORD"] = "analyst123"
+os.environ["SCAMSHIELD_JWT_SECRET"] = "export-only-secret-never-used-by-a-real-api"
+os.environ["SCAMSHIELD_REQUIRE_LOGIN"] = "0"
 
 from fastapi.testclient import TestClient  # noqa: E402
 
@@ -47,7 +52,14 @@ POSTS = {
         "/api/batch",
         {"urls": ["https://tamm-fines-pay.test/pay?ref=AD-55120", "https://www.rta.ae/"]},
     ),
-    "login": ("/api/auth/login", {"username": "analyst", "password": "any"}),
+    "login": ("/api/auth/login", {"username": "analyst", "password": "analyst123"}),
+}
+
+# Sent with an admin token.
+ADMIN_GETS = {
+    "auth_me": "/api/auth/me",
+    "users": "/api/users",
+    "decisions": "/api/decisions",
 }
 
 
@@ -67,7 +79,15 @@ def main() -> None:
             res = client.post(path, json=body)
             res.raise_for_status()
             write(MOCK / f"{name}.json", res.json())
-    print(f"Wrote {len(GETS) + len(POSTS)} mock files and openapi.json to {OUT}")
+        login = client.post("/api/auth/login", json={"username": "admin", "password": "admin123"})
+        login.raise_for_status()
+        headers = {"Authorization": f"Bearer {login.json()['access_token']}"}
+        for name, path in ADMIN_GETS.items():
+            res = client.get(path, headers=headers)
+            res.raise_for_status()
+            write(MOCK / f"{name}.json", res.json())
+    total = len(GETS) + len(POSTS) + len(ADMIN_GETS)
+    print(f"Wrote {total} mock files and openapi.json to {OUT}")
 
 
 if __name__ == "__main__":

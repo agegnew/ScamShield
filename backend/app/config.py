@@ -39,3 +39,13 @@ CACHE_DIR = Path(os.getenv("SCAMSHIELD_CACHE", str(REPO_DIR / "data" / "cache"))
 JOB_MAX_ATTEMPTS = int(os.getenv("SCAMSHIELD_JOB_MAX_ATTEMPTS", "3"))
 
 SERPAPI_KEY = os.getenv("SERPAPI_KEY", "")
+
+# Login (JWT). Without SCAMSHIELD_JWT_SECRET a random secret is made once and
+# kept in backend/.jwt-secret (gitignored), so tokens survive API reloads.
+JWT_SECRET = os.getenv("SCAMSHIELD_JWT_SECRET", "")
+JWT_SECRET_FILE = Path(os.getenv("SCAMSHIELD_JWT_SECRET_FILE", str(BACKEND_DIR / ".jwt-secret")))
+TOKEN_HOURS = float(os.getenv("SCAMSHIELD_TOKEN_HOURS", "12"))
+# Accounts created when the users table is empty (defaults are for the local demo).
+ADMIN_PASSWORD = os.getenv("SCAMSHIELD_ADMIN_PASSWORD") or "admin123"
+ANALYST_PASSWORD = os.getenv("SCAMSHIELD_ANALYST_PASSWORD") or "analyst123"
+# SCAMSHIELD_REQUIRE_LOGIN=1 also closes the analyst reads; auth.py reads it per request.

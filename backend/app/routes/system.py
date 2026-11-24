@@ -1,7 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
-from ..api_models import Health, LoginRequest, LoginResponse, Metrics
-from ..auth import mock_login
+from ..api_models import Health, Metrics
 from ..brands import load_registry
 from ..config import BACKEND_DIR, MODE, VERSION
 from ..contracts import Brand
@@ -30,10 +29,3 @@ def metrics() -> Metrics:
         return Metrics.model_validate_json(EVAL_RESULTS.read_text(encoding="utf-8"))
     return MOCK_METRICS
 
-
-@router.post("/auth/login", response_model=LoginResponse)
-def login(body: LoginRequest) -> LoginResponse:
-    user = mock_login(body.username, body.password)
-    if user is None:
-        raise HTTPException(status_code=401, detail="Wrong username or password")
-    return LoginResponse(access_token=f"mock-{user.username}", user=user)

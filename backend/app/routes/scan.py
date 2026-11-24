@@ -7,12 +7,14 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from .. import engine as detection
 from .. import jobs
 from ..api_models import BatchItem, BatchRequest, BatchResponse, ScanRequest, ScanResponse
+from ..auth import analyst_access
 from ..contracts import Candidate, Source
 from ..deps import get_repo
 from ..repo import CaseRepo
 from ..urls import InvalidURL, normalize_url
 
-router = APIRouter(prefix="/api", tags=["scan"])
+# Analyst tools: open unless SCAMSHIELD_REQUIRE_LOGIN=1 (see auth.py).
+router = APIRouter(prefix="/api", tags=["scan"], dependencies=[Depends(analyst_access)])
 
 
 @router.post("/scan", response_model=ScanResponse)
