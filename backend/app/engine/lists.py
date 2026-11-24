@@ -81,6 +81,11 @@ USER_CONTENT_HOSTS = {
     "linktr.ee", "bit.ly",
 }
 
+# UAE government hosting networks: a site there is run by a government entity. Verified on
+# 24 Nov 2026: adpolice.gov.ae, adpolice.ae, tamm.abudhabi resolve into AS201678 (ADNET).
+GOVERNMENT_ASNS = {201678}
+GOVERNMENT_NETWORKS = ("abu dhabi digital authority",)
+
 SUSPICIOUS_TLDS = {
     "top", "xyz", "shop", "cfd", "sbs", "icu", "click", "buzz", "rest", "cyou", "lol", "online",
     "site", "store", "vip", "live", "life", "monster", "quest", "bond", "zip", "mov", "work",

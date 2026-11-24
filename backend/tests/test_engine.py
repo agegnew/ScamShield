@@ -280,3 +280,56 @@ def test_typos_of_an_ordinary_word_are_not_brand_typosquats():
 def test_ordinary_words_in_a_title_are_not_a_brand_claim():
     ev = page("https://news.example/", title="The Economy Times - Recently added stories")
     assert "brand_on_wrong_domain" not in codes(engine.score("https://news.example/", evidence=ev))
+
+
+def test_for_sale_page_naming_the_brand_is_not_a_brand_claim():
+    ev = page("http://emiratespost.com/", title="EmiratesPost.com is for sale - Premium Domain", page_kind="for_sale")
+    v = engine.score("http://emiratespost.com/", evidence=ev)
+    assert "brand_on_wrong_domain" not in codes(v) and v.verdict == Label.SUSPICIOUS
+
+
+def test_business_sharing_a_brand_name_is_not_confirmed_impersonation():
+    ev = page("http://uaetamm.com/", title="Tamm Real Estate | Sales | Buying | Leasing")
+    v = engine.score("http://uaetamm.com/", evidence=ev)
+    assert "brand_on_wrong_domain" in codes(v) and "impersonation_confirmed" not in codes(v)
+    assert v.verdict == Label.SUSPICIOUS
+
+
+def test_site_on_a_uae_government_network_is_not_flagged():
+    ev = page(
+        "http://adpol1ce.ae/",
+        title="الرئيسية | عن شرطة أبوظبي",
+        text_excerpt="أهلا بكم في الموقع الرسمي للقيادة العامة لشرطة ابوظبي",
+        asn=201678,
+        hosting_org="ADNET - Abu Dhabi Digital Authority, AE",
+    )
+    v = engine.score("http://adpol1ce.ae/", evidence=ev)
+    assert "government_network" in codes(v) and v.verdict == Label.LEGIT
+
+
+def test_reported_phishing_on_a_government_network_is_still_flagged(monkeypatch):
+    monkeypatch.setattr(feeds, "load", lambda: feeds.FeedIndex(urls={"https://site.ae/x/login": "PhishTank"}))
+    ev = page("https://site.ae/x/login", asn=201678, hosting_org="ADNET - Abu Dhabi Digital Authority, AE")
+    v = engine.score("https://site.ae/x/login", evidence=ev, use_feeds=True)
+    assert "government_network" not in codes(v) and v.verdict == Label.FRAUD
+
+
+def test_abu_dhabi_police_alias_domain_is_official():
+    assert (engine.score("https://adpolice.ae/").verdict, engine.score("https://adpolice.ae/").score) == (Label.LEGIT, 0)
+
+
+def test_live_unrelated_business_on_a_brand_token_is_not_fraud(monkeypatch):
+    # icp-online.xyz: a Japanese company's site, nothing about the UAE's ICP, no form.
+    monkeypatch.setattr(model, "phishing_probability", lambda url: 0.93)
+    ev = page("http://icp-online.xyz/", title="ICP株式会社", text_excerpt="会社概要 事業内容 お問い合わせ", page_kind="content")
+    v = engine.score("http://icp-online.xyz/", evidence=ev)
+    assert "unrelated_content" in codes(v) and v.verdict == Label.SUSPICIOUS
+
+
+def test_unrelated_content_rule_needs_a_page_without_any_scam_sign(monkeypatch):
+    monkeypatch.setattr(model, "phishing_probability", lambda url: 0.93)
+    names_brand = page("http://aramex-track.xyz/", title="Track your parcel", text_excerpt="Aramex shipment on hold", page_kind="content")
+    with_form = page("http://aramex-track.xyz/", title="Track", forms=[FormInfo(input_types=["text"], field_hints=["card number"])], page_kind="content")
+    parked = page("http://aramex-track.xyz/", title="Parked", page_kind="parked")
+    for ev in (names_brand, with_form, parked):
+        assert "unrelated_content" not in codes(engine.score("http://aramex-track.xyz/", evidence=ev))

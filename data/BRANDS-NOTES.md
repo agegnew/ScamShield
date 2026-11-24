@@ -54,6 +54,11 @@ These are real, but for other customer groups. Add them if the helpline check fl
 - FAB: housing loan 600560137
 - MOI: child protection 116111
 
+## Official alias domains found by the radar
+
+- `adpolice.ae` (Abu Dhabi Police), added 24 Nov 2026: serves the official site ("الموقع الرسمي للقيادة العامة لشرطة أبوظبي") from the same IP as `adpolice.gov.ae` (5.194.255.186, AS201678 ADNET, Abu Dhabi Digital Authority) without redirecting. Before this it scored FRAUD 75 as a lookalike.
+- `tamm.ae` and `moi.ae` redirect to `tamm.abudhabi` and `moi.gov.ae`, so they are already LEGIT; no entry needed.
+
 ## Still to do
 
 - [ ] Logo files in `data/logos/`

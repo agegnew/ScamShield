@@ -12,7 +12,14 @@ from ..brands import GENERIC_LABELS, normalize_uae_phone
 from ..contracts import Brand, Candidate, Evidence, Reason, ScamTheme
 from ..urls import domain_label
 from . import feeds, model
-from .lists import GLOBAL_BRANDS, SUSPICIOUS_TLDS, URL_SHORTENERS, top_domains
+from .lists import (
+    GLOBAL_BRANDS,
+    GOVERNMENT_ASNS,
+    GOVERNMENT_NETWORKS,
+    SUSPICIOUS_TLDS,
+    URL_SHORTENERS,
+    top_domains,
+)
 
 HOMOGLYPHS = (("rn", "m"), ("vv", "w"), ("0", "o"), ("1", "l"), ("3", "e"), ("5", "s"))
 
@@ -434,8 +441,13 @@ def page_signals(ctx: Ctx) -> list[Reason]:
     # for sensitive data. A blog or news page that only mentions TAMM is not impersonating it.
     title_raw = ev.title or ""
     asks_sensitive = bool(asks_en)
+    ctx.notes["asks_sensitive"] = asks_sensitive
+    ctx.notes["official_claim"] = bool(OFFICIAL_CLAIM.search(raw_text[:1500]))
+    # A parked or for-sale page names the domain it sits on ("emiratespost.com is for sale");
+    # that is not the page presenting itself as the brand.
+    claims_allowed = (ev.page_kind or "") not in HOLDING_PAGES
     for brand in ctx.brands:
-        if _is_official(brand, ctx.final_host):
+        if not claims_allowed or _is_official(brand, ctx.final_host):
             continue
         names = _page_names(brand)
         hit = next((n for n in names if _name_in_page(n, title_raw.lower(), title_raw)), None)
@@ -497,6 +509,26 @@ def page_signals(ctx: Ctx) -> list[Reason]:
             )
         )
     return reasons
+
+
+def government_network(ctx: Ctx) -> list[Reason]:
+    """Hosted on a UAE government network, where scammers cannot put a site (e.g. adpolice.ae,
+    an Abu Dhabi Police alias on the Abu Dhabi Digital Authority network)."""
+    ev = ctx.evidence
+    if ev is None or ev.shared_hosting:
+        return []
+    org = (ev.hosting_org or "").lower()
+    if ev.asn not in GOVERNMENT_ASNS and not any(name in org for name in GOVERNMENT_NETWORKS):
+        return []
+    return [
+        _r(
+            "government_network",
+            -60,
+            f"Hosted on a UAE government network ({ev.hosting_org or f'AS{ev.asn}'})",
+            f"مستضاف على شبكة حكومية إماراتية ({ev.hosting_org or f'AS{ev.asn}'})",
+            "asn",
+        )
+    ]
 
 
 def domain_age(ctx: Ctx) -> list[Reason]:
@@ -570,6 +602,7 @@ CHECKS = (
     url_shape,
     scam_themes_in_url,
     page_signals,
+    government_network,
     domain_age,
     helpline,
 )
@@ -580,8 +613,14 @@ CHECKS = (
 PAGE_IMPERSONATION = {"brand_on_wrong_domain", "visual_match"}
 # Reasons that lower risk because a site looks ordinary or established.
 TRUST_DISCOUNTS = {"url_model", "old_domain"}
+# The page says it is the official or government site ("Official Government Portal", "الموقع الرسمي").
+OFFICIAL_CLAIM = re.compile(r"\bofficial\b|\bgovernment\b|\bministry\b|رسمي|حكوم|وزارة", re.I)
 # Signs of an active scam: a page showing them is not a mere placeholder, whatever it says.
 ACTIVE_SCAM = PAGE_IMPERSONATION | {"credential_form", "remote_access", "app_download", "cloaking"}
+# Anything that points to a scam; a live page with none of them is probably an unrelated business.
+SCAM_SIGNS = ACTIVE_SCAM | {
+    "threat_feed", "scam_theme_page", "new_domain", "helpline_mismatch", "cross_domain_redirect",
+}
 # The domain is held but shows no site of its own. There is nothing to take down yet, so it is
 # watched (SUSPICIOUS) instead of reported, unless a phishing feed already lists it.
 HOLDING_PAGES = {
@@ -603,10 +642,15 @@ def combine(ctx: Ctx, reasons: list[Reason]) -> list[Reason]:
         # A normal-looking URL and an old domain are how such pages hide (phishing kits are often
         # planted on hacked, years-old business sites), so they no longer count in the site's favour.
         reasons = [r for r in reasons if r.code not in TRUST_DISCOUNTS or r.weight >= 0]
+    if ctx.notes.get("feed_kind") == "url":
+        reasons = [r for r in reasons if r.code != "government_network"]  # reported phishing on a hacked site
     if codes & PAGE_IMPERSONATION:
         domain_brand = ctx.notes.get("domain_brand")
         brand = next((b for b in ctx.brands if b.id == domain_brand), None)
-        if brand and domain_brand in ctx.notes.get("page_brands", set()):
+        # A business that merely shares the name ("Tamm Real Estate", the ad-fraud firm AdPolice)
+        # is not confirmed: the page must also claim official status or ask for sensitive data.
+        claims_more = ctx.notes.get("official_claim") or ctx.notes.get("asks_sensitive")
+        if brand and domain_brand in ctx.notes.get("page_brands", set()) and claims_more:
             reasons.append(
                 _r(
                     "impersonation_confirmed",
@@ -619,6 +663,26 @@ def combine(ctx: Ctx, reasons: list[Reason]) -> list[Reason]:
             )
 
     ev = ctx.evidence
+    named = next((b for b in ctx.brands if b.id == ctx.notes.get("domain_brand")), None)
+    live_content = ev is not None and not ev.fetch_error and ev.page_kind == "content"
+    if named and live_content and not codes & SCAM_SIGNS:
+        raw = f"{ev.title or ''} {ev.text_excerpt or ''}"
+        if not any(_name_in_page(n, raw.lower(), raw) for n in _page_names(named)):
+            # A working site that never names the brand and shows no scam sign at all: a foreign
+            # business whose name happens to contain a short brand token ("ICP株式会社" on
+            # icp-online.xyz). Watched as SUSPICIOUS at most, not reported as FRAUD.
+            reasons.append(
+                _r(
+                    "unrelated_content",
+                    -40,
+                    f"The site is live but never mentions {named.name_en} and shows no sign of a "
+                    "scam (no login, payment or ID form, no scam wording)",
+                    f"الموقع يعمل لكنه لا يذكر {named.name_ar} ولا يُظهر أي علامة احتيال "
+                    "(لا نموذج دخول أو دفع أو هوية، ولا عبارات احتيال)",
+                    "screenshot",
+                )
+            )
+
     holding = HOLDING_PAGES.get(ev.page_kind or "") if ev and not ev.fetch_error else None
     if holding and "threat_feed" not in codes and not codes & ACTIVE_SCAM:
         total = sum(r.weight for r in reasons)
