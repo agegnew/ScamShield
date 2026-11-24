@@ -4,3 +4,4 @@ requests
 phonenumbers
 tldextract
 dnstwist
+python-dotenv
