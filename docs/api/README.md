@@ -28,6 +28,7 @@ The engine, radar and worker are real. The API still starts in **mock mode** by 
 | POST | `/api/scan` `{url}` | "Scan a URL" box. Returns `status: queued` with a quick URL-only verdict; poll `GET /api/cases/{case_id}` every 2 s until `evidence` is filled | `scan.json` |
 | POST | `/api/batch` `{urls: [...]}` (`?format=csv` for a file) | Batch upload | `batch.json` |
 | POST | `/api/check` `{input}` | **Public citizen checker** — link or phone number | `check_*.json` |
+| GET | `/api/blocklist` | **Public.** Scam domains for the browser extension to block: analyst-confirmed cases and FRAUD cases nobody dismissed, one per host, confirmed first; never official, government, popular or shared hosts; at most 1,000 | `blocklist.json` |
 | POST | `/api/auth/login` `{username, password}` | Login. Returns `{access_token, token_type: "bearer", user: {username, role}}`; **401** "Wrong username or password" | `login.json` |
 | GET | `/api/auth/me` | Who is logged in (restore the session on page load); **401** if the token is missing, invalid or expired | `auth_me.json` |
 | GET | `/api/users` | **Admin only.** Accounts: `username, role, disabled, created_at` (never passwords) | `users.json` |
@@ -46,7 +47,7 @@ The engine, radar and worker are real. The API still starts in **mock mode** by 
 - **Sources:** `lookalike`, `ct` (new certificate), `nrd` (newly registered domain), `search`, `search_ad`, `maps`, `manual`, `citizen`, `batch`.
 - **Case status:** `new`, `confirmed`, `dismissed`.
 - **Auth:** log in with `POST /api/auth/login` and send `Authorization: Bearer <access_token>` on every request. Tokens are JWTs that expire after 12 hours; on any **401** (it carries `WWW-Authenticate: Bearer`) clear the token and show the login page. Demo accounts: `admin` / `admin123` (role `admin`) and `analyst` / `analyst123` (role `analyst`).
-  - **Public, no login:** `/api/health`, `/api/brands`, `/api/metrics`, `/api/check`, `/api/auth/login`.
+  - **Public, no login:** `/api/health`, `/api/brands`, `/api/metrics`, `/api/check`, `/api/blocklist`, `/api/auth/login`.
   - **Logged in (analyst or admin):** `POST /api/radar/run`, `POST /api/cases/{id}/decision`. The decision is stored with the token's username as `by`, the server time as `at`, and your `reason`.
   - **Admin only:** `/api/users`, `/api/decisions`. Analysts get **403**; hide these screens for them.
   - **Dashboard reads** (radar, cases, case page, graph, takedown, report.pdf, scan, batch) are open for the demo, so a stale token there is ignored. With `SCAMSHIELD_REQUIRE_LOGIN=1` they need a token too, so always send it if you have one.

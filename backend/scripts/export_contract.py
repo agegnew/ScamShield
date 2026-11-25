@@ -35,6 +35,7 @@ MOCK = OUT / "mock"
 GETS = {
     "health": "/api/health",
     "brands": "/api/brands",
+    "blocklist": "/api/blocklist",
     "radar_feed": "/api/radar/feed",
     "cases": "/api/cases",
     "case_c-0001_fraud_lookalike": "/api/cases/c-0001",

@@ -1,0 +1,34 @@
+{
+  "generated_at": "2026-11-25T00:11:25.242107Z",
+  "count": 4,
+  "domains": [
+    {
+      "domain": "tamm-fines-pay.test",
+      "brand_target": "tamm",
+      "score": 94,
+      "confirmed": true,
+      "case_id": "c-0001"
+    },
+    {
+      "domain": "s.test",
+      "brand_target": "tamm",
+      "score": 90,
+      "confirmed": false,
+      "case_id": "c-0005"
+    },
+    {
+      "domain": "uaepass-login.test",
+      "brand_target": "uaepass",
+      "score": 89,
+      "confirmed": false,
+      "case_id": "c-0002"
+    },
+    {
+      "domain": "emiratesnbd-support.test",
+      "brand_target": "emiratesnbd",
+      "score": 81,
+      "confirmed": false,
+      "case_id": "c-0003"
+    }
+  ]
+}

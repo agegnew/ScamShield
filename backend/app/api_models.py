@@ -253,6 +253,20 @@ class CheckResponse(BaseModel):
     reasons: list[Reason] = Field(default_factory=list)
 
 
+class BlocklistEntry(BaseModel):
+    domain: str
+    brand_target: str | None = None
+    score: int
+    confirmed: bool  # an analyst confirmed it (otherwise the engine rated it FRAUD)
+    case_id: str
+
+
+class Blocklist(BaseModel):
+    generated_at: datetime
+    count: int
+    domains: list[BlocklistEntry]
+
+
 class GraphNode(BaseModel):
     id: str  # case id
     domain: str

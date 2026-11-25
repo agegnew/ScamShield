@@ -163,6 +163,22 @@ class CaseRepo:
         )
         return {s.value: found.get(s.value, 0) for s in Source}
 
+    def scam_domains(self) -> list[tuple[str, str | None, int, bool, str]]:
+        """(host, brand, score, analyst-confirmed, case id) for confirmed or FRAUD cases nobody dismissed,
+        one row per host (confirmed first, then the highest score)."""
+        rows = self.s.execute(
+            select(CaseRow.id, CaseRow.domain, CaseRow.final_host, CaseRow.brand_target, CaseRow.score, CaseRow.status)
+            .where(or_(CaseRow.status == "confirmed", (CaseRow.verdict == "FRAUD") & (CaseRow.status != "dismissed")))
+        ).all()
+        best: dict[str, tuple[str, str | None, int, bool, str]] = {}
+        for case_id, domain, final_host, brand, score, status in rows:
+            host = (domain or final_host or "").lower().removeprefix("www.")
+            entry = (host, brand, score, status == "confirmed", case_id)
+            rank = (entry[3], entry[2])  # confirmed beats unconfirmed, then the higher score
+            if host and (host not in best or rank > (best[host][3], best[host][2])):
+                best[host] = entry
+        return sorted(best.values(), key=lambda e: (not e[3], -e[2], e[0]))
+
     def is_empty(self) -> bool:
         return not self.s.scalar(select(func.count()).select_from(CaseRow))
 

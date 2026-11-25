@@ -1131,6 +1131,28 @@
           }
         }
       }
+    },
+    "/api/blocklist": {
+      "get": {
+        "tags": [
+          "citizen"
+        ],
+        "summary": "Blocklist",
+        "description": "Scam domains for the browser extension to block (public; synced every 10 minutes).",
+        "operationId": "blocklist_api_blocklist_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Blocklist"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1304,6 +1326,72 @@
           "items"
         ],
         "title": "BatchResponse"
+      },
+      "Blocklist": {
+        "properties": {
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "domains": {
+            "items": {
+              "$ref": "#/components/schemas/BlocklistEntry"
+            },
+            "type": "array",
+            "title": "Domains"
+          }
+        },
+        "type": "object",
+        "required": [
+          "generated_at",
+          "count",
+          "domains"
+        ],
+        "title": "Blocklist"
+      },
+      "BlocklistEntry": {
+        "properties": {
+          "domain": {
+            "type": "string",
+            "title": "Domain"
+          },
+          "brand_target": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand Target"
+          },
+          "score": {
+            "type": "integer",
+            "title": "Score"
+          },
+          "confirmed": {
+            "type": "boolean",
+            "title": "Confirmed"
+          },
+          "case_id": {
+            "type": "string",
+            "title": "Case Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "domain",
+          "score",
+          "confirmed",
+          "case_id"
+        ],
+        "title": "BlocklistEntry"
       },
       "Brand": {
         "properties": {

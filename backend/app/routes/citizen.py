@@ -1,9 +1,11 @@
 import re
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 
 from .. import engine as detection
-from ..api_models import CheckRequest, CheckResponse, CheckVerdict
+from ..api_models import Blocklist, BlocklistEntry, CheckRequest, CheckResponse, CheckVerdict
+from ..blocklist import MAX_DOMAINS, blockable
 from ..brands import brand_for_helpline, normalize_uae_phone
 from ..contracts import Reason
 from ..deps import get_repo
@@ -58,3 +60,14 @@ def check(body: CheckRequest, repo: CaseRepo = Depends(get_repo)) -> CheckRespon
     case = repo.find_by_url(url)
     v = case.verdict if case else detection.score(url)
     return _response("url", raw, v.verdict.value, v.score, v.brand_target, v.reasons)
+
+
+@router.get("/blocklist", response_model=Blocklist)
+def blocklist(repo: CaseRepo = Depends(get_repo)) -> Blocklist:
+    """Scam domains for the browser extension to block (public; synced every 10 minutes)."""
+    entries = [
+        BlocklistEntry(domain=host, brand_target=brand, score=score, confirmed=confirmed, case_id=case_id)
+        for host, brand, score, confirmed, case_id in repo.scam_domains()
+        if blockable(host)
+    ][:MAX_DOMAINS]
+    return Blocklist(generated_at=datetime.now(timezone.utc), count=len(entries), domains=entries)
