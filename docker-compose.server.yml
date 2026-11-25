@@ -2,7 +2,8 @@
 #   docker compose -f docker-compose.server.yml --env-file .env up -d --build
 # Nothing here publishes a port: the host's Caddy reaches scamshield-web and scamshield-api
 # over the shared Docker network named by EDGE_NETWORK. Every name starts with "scamshield"
-# so nothing clashes with the other project on that network.
+# so nothing clashes with the other project on that network. CPU and memory caps keep the
+# other project responsive (the host has 4 CPUs and 16 GB).
 name: scamshield
 
 x-backend-env: &backend-env
@@ -19,6 +20,8 @@ services:
     image: postgres:16-alpine
     container_name: scamshield-db
     restart: unless-stopped
+    cpus: 1.0
+    mem_limit: 1g
     environment:
       POSTGRES_USER: scamshield
       POSTGRES_PASSWORD: scamshield
@@ -35,6 +38,8 @@ services:
     build: ./backend
     container_name: scamshield-api
     restart: unless-stopped
+    cpus: 1.0
+    mem_limit: 1g
     env_file: .env
     environment: *backend-env
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips="*"
@@ -57,6 +62,8 @@ services:
       dockerfile: Dockerfile.worker
     container_name: scamshield-worker
     restart: unless-stopped
+    cpus: 1.5
+    mem_limit: 3g
     env_file: .env
     environment:
       <<: *backend-env
@@ -77,6 +84,8 @@ services:
       dockerfile: Dockerfile.worker
     container_name: scamshield-radar
     restart: unless-stopped
+    cpus: 1.0
+    mem_limit: 2g
     env_file: .env
     environment:
       <<: *backend-env
@@ -97,6 +106,8 @@ services:
         NEXT_PUBLIC_API_URL: ${PUBLIC_URL:?set PUBLIC_URL in .env}
     container_name: scamshield-web
     restart: unless-stopped
+    cpus: 0.5
+    mem_limit: 768m
     depends_on:
       scamshield-api:
         condition: service_healthy
