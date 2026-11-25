@@ -1,5 +1,7 @@
 "use client";
 
+import { BackButton } from "@/components/ui/BackButton";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -91,8 +93,9 @@ export default function ExtensionPage() {
 
   return (
     <div className="flex min-h-dvh flex-col bg-bg">
-      <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-4 py-4">
-        <Link href="/check" className="flex items-center gap-2">
+      <header className="mx-auto flex w-full max-w-5xl items-center justify-between gap-2 px-4 py-4">
+        <BackButton fallback="/check" className="-ms-3" />
+        <Link href="/check" className="me-auto flex items-center gap-2">
           <Image src="/icon-256.png" alt="" width={36} height={36} className="size-9 rounded-xl" />
           <span className="font-extrabold text-ink">{L(["ScamShield", "درع الاحتيال"], lang)}</span>
         </Link>

@@ -345,7 +345,7 @@ function StatusLine({ status, preview }: { status?: { run: RadarRun | null; sche
   );
 }
 
-function RunButton({ disabled, onRun, sourcesInfo }: { disabled: boolean; onRun: (s?: string[]) => void; sourcesInfo?: { name: string; needs_key: string | null }[] }) {
+function RunButton({ disabled, onRun, sourcesInfo }: { disabled: boolean; onRun: (s?: string[]) => void; sourcesInfo?: { name: string; enabled: boolean; needs_key: string | null }[] }) {
   const { lang } = useLang();
   const tr = (k: keyof typeof T) => L(T[k], lang);
   const [open, setOpen] = useState(false);
@@ -362,7 +362,8 @@ function RunButton({ disabled, onRun, sourcesInfo }: { disabled: boolean; onRun:
     };
   }, [open]);
   const names = ["lookalikes", "ct", "nrd", "search", "maps"];
-  const needsKey = (n: string) => sourcesInfo?.find((s) => s.name === n)?.needs_key ?? (n === "search" || n === "maps" ? "SERPAPI_KEY" : null);
+  // "needs key" only when the server says the key is missing (enabled: false), not merely because the source uses one.
+  const missingKey = (n: string) => sourcesInfo?.find((s) => s.name === n)?.enabled === false;
   return (
     <div ref={ref} className="relative" title={disabled ? tr("signInToRun") : undefined}>
       <div className="inline-flex overflow-hidden rounded-full shadow-[0_6px_20px_-8px_var(--glow)]">
@@ -382,13 +383,13 @@ function RunButton({ disabled, onRun, sourcesInfo }: { disabled: boolean; onRun:
             </button>
           </li>
           {names.map((n) => {
-            const key = needsKey(n);
+            const key = missingKey(n);
             return (
               <li key={n}>
                 <button
                   role="menuitem"
                   type="button"
-                  disabled={Boolean(key)}
+                  disabled={key}
                   onClick={() => (setOpen(false), onRun([n]))}
                   className="flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-start text-sm hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >

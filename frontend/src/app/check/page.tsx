@@ -1,5 +1,7 @@
 "use client";
 
+import { BackButton } from "@/components/ui/BackButton";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -96,6 +98,7 @@ export default function CheckPage() {
     try {
       const r = await checkInput(v);
       setResult(r);
+      window.history.pushState({ scamshieldResult: true }, "");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e));
@@ -121,7 +124,6 @@ export default function CheckPage() {
   }, [result]);
 
   // Whole SMS / WhatsApp message: pasted text and/or a screenshot, read by the server (and Claude).
-  const [msgOpen, setMsgOpen] = useState(false);
   const [msgText, setMsgText] = useState("");
   const [msgImage, setMsgImage] = useState<string | null>(null);
   const [msgImageName, setMsgImageName] = useState("");
@@ -160,6 +162,7 @@ export default function CheckPage() {
     try {
       const r = await checkMessage({ text: msgText.trim() || undefined, image: msgImage ?? undefined });
       setResult(r);
+      window.history.pushState({ scamshieldResult: true }, "");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e));
@@ -167,6 +170,16 @@ export default function CheckPage() {
       setBusy(false);
     }
   }
+
+  // Back (header button or the phone's back key) from a result returns to the form, not off the site.
+  const [canBack, setCanBack] = useState(false);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCanBack(Number(sessionStorage.getItem("scamshield-pages-this-tab") || "0") > 1);
+    const onPop = () => setResult(null);
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
 
   // Opened from the browser extension's "View details": /check?q=<address> checks it straight away.
   useEffect(() => {
@@ -217,8 +230,9 @@ export default function CheckPage() {
         </div>
       </div>
 
-      <header className="relative mx-auto flex w-full max-w-5xl items-center justify-between px-4 py-4">
-        <Link href="/check" className="flex items-center gap-2">
+      <header className="relative mx-auto flex w-full max-w-5xl items-center justify-between gap-2 px-4 py-4">
+        {(result || canBack) && <BackButton fallback="/check" onBack={result ? () => window.history.back() : undefined} className="-ms-3" />}
+        <Link href="/check" className="me-auto flex items-center gap-2">
           <Image src="/icon-256.png" alt="" width={36} height={36} className="size-9 rounded-xl" />
           <span className="leading-tight">
             <span className="block font-extrabold text-ink">{t("appName")}</span>
@@ -286,12 +300,7 @@ export default function CheckPage() {
 
               {/* Whole message: paste the SMS / WhatsApp text or add a screenshot */}
               <div className="mt-4 rounded-[22px] border border-line-2 bg-surface/90 text-start backdrop-blur">
-                <button
-                  type="button"
-                  onClick={() => setMsgOpen((o) => !o)}
-                  aria-expanded={msgOpen}
-                  className="flex w-full items-center gap-3 rounded-[22px] px-4 py-3 text-start hover:bg-primary-soft/60"
-                >
+                <div className="flex w-full items-center gap-3 px-4 py-3 text-start">
                   <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary">
                     <MessageSquareText aria-hidden className="size-5" />
                   </span>
@@ -299,10 +308,8 @@ export default function CheckPage() {
                     <span className="block font-extrabold text-ink">{L(["Got a whole SMS or WhatsApp message?", "وصلتك رسالة نصية أو واتساب كاملة؟"], lang)}</span>
                     <span className="block text-sm text-ink-2">{L(["Paste it or add a screenshot. We check every link and number in it.", "الصقها أو أضف لقطة شاشة. نفحص كل رابط ورقم فيها."], lang)}</span>
                   </span>
-                  <ChevronDown aria-hidden className={cn("size-5 shrink-0 text-muted transition-transform", msgOpen && "rotate-180")} />
-                </button>
-                {msgOpen && (
-                  <div className="flex flex-col gap-3 px-4 pb-4">
+                </div>
+                <div className="flex flex-col gap-3 px-4 pb-4">
                     <label htmlFor="msg" className="sr-only">
                       {L(["The message", "الرسالة"], lang)}
                     </label>
@@ -336,8 +343,7 @@ export default function CheckPage() {
                       </Button>
                     </div>
                     <p className="text-xs text-muted">{L(["The message is checked and not stored. Screenshots are read by AI (Claude).", "تُفحص الرسالة ولا تُحفظ. تُقرأ لقطات الشاشة بالذكاء الاصطناعي (Claude)."], lang)}</p>
-                  </div>
-                )}
+                </div>
               </div>
 
               {err && (
@@ -495,9 +501,11 @@ export default function CheckPage() {
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setResult(null);
                     setInput("");
                     stopSpeaking();
+                    // Drop the history entry the result added; popstate then clears the result.
+                    if (window.history.state?.scamshieldResult) window.history.back();
+                    else setResult(null);
                   }}
                 >
                   {t("checkAgain")}

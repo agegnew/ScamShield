@@ -1,9 +1,10 @@
 "use client";
 
+import { BackButton } from "@/components/ui/BackButton";
+
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft } from "lucide-react";
 import { useBrands, useCase, type Case, type Reason } from "@/lib/api";
 import { useLang } from "@/lib/i18n";
 import { cn, fmtTime } from "@/lib/utils";
@@ -15,7 +16,6 @@ import { DecisionPanel, ExportButtons, TakedownDialog } from "@/components/case/
 export default function CasePage() {
   const { id } = useParams<{ id: string }>();
   const { t, lang, pick } = useLang();
-  const router = useRouter();
   const { data: brands } = useBrands();
   const [active, setActive] = useState<string | null>(null);
   const [takedownOpen, setTakedownOpen] = useState(false);
@@ -64,10 +64,7 @@ export default function CasePage() {
 
   return (
     <div className="mx-auto max-w-6xl">
-      <button type="button" onClick={() => router.back()} className="inline-flex items-center gap-1.5 text-sm font-bold text-ink-2 hover:text-ink">
-        <ArrowLeft aria-hidden className="size-4 rtl:rotate-180" />
-        {t("backToRadar")}
-      </button>
+      <BackButton fallback="/cases" className="-ms-3" />
 
       {/* Header */}
       <header className={cn("mt-3 rounded-[16px] border p-4 sm:p-5 transition-[box-shadow] duration-300", is("url") ? "border-primary ring-4 ring-primary/15 bg-surface" : "border-line bg-surface")} id="ev-url">

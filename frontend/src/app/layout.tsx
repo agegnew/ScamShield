@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Nunito, Tajawal } from "next/font/google";
 import "./globals.css";
 import { LangProvider } from "@/lib/i18n";
+import { NavTracker } from "@/components/ui/BackButton";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -33,7 +34,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" dir="ltr" className={`${nunito.variable} ${tajawal.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col">
-        <LangProvider>{children}</LangProvider>
+        <LangProvider>
+          <NavTracker />
+          {children}
+        </LangProvider>
       </body>
     </html>
   );
