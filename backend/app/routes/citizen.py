@@ -4,7 +4,16 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException
 
 from .. import engine as detection
-from ..api_models import Blocklist, BlocklistEntry, CheckRequest, CheckResponse, CheckVerdict
+from .. import message_check as mc
+from ..api_models import (
+    Blocklist,
+    BlocklistEntry,
+    CheckRequest,
+    CheckResponse,
+    CheckVerdict,
+    MessageCheckRequest,
+    MessagePart,
+)
 from ..blocklist import MAX_DOMAINS, blockable
 from ..brands import brand_for_helpline, normalize_uae_phone
 from ..contracts import Reason
@@ -25,6 +34,7 @@ def _response(
     score: int | None,
     brand: str | None,
     reasons: list[Reason],
+    **extra,
 ) -> CheckResponse:
     return CheckResponse(
         kind=kind,
@@ -34,6 +44,7 @@ def _response(
         brand_target=brand,
         reasons=reasons,
         **CITIZEN_TEXT[verdict],
+        **extra,
     )
 
 
@@ -71,3 +82,67 @@ def blocklist(repo: CaseRepo = Depends(get_repo)) -> Blocklist:
         if blockable(host)
     ][:MAX_DOMAINS]
     return Blocklist(generated_at=datetime.now(timezone.utc), count=len(entries), domains=entries)
+
+
+@router.post("/check/message", response_model=CheckResponse)
+def check_message(body: MessageCheckRequest, repo: CaseRepo = Depends(get_repo)) -> CheckResponse:
+    """Public: a whole SMS / WhatsApp message (text or screenshot). Each link and number is checked,
+    the wording is matched against UAE scam types, and Claude reads the message (see message_check.py)."""
+    text = (body.text or "").strip()
+    image = None
+    if body.image:
+        try:
+            image = mc.parse_image(body.image)
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+    if not text and not image:
+        raise HTTPException(status_code=422, detail="Paste the message or add a screenshot")
+
+    ai = mc.ask_ai(text or None, image)
+    if image and ai is None and not text:
+        raise HTTPException(status_code=503, detail="Reading screenshots is unavailable right now. Paste the message text instead.")
+    full = "\n".join(filter(None, [text, ai.get("transcript") if ai else None]))
+
+    links = list(dict.fromkeys(mc.find_links(full) + [l for l in (ai or {}).get("links", []) if l.strip()]))
+    phones: dict[str, str] = {}
+    for raw in mc.find_phones(full) + [p for p in (ai or {}).get("phone_numbers", []) if p.strip()]:
+        phones.setdefault(mc.phone_key(raw), raw)
+
+    parts: list[MessagePart] = []
+    part_reasons: list[Reason] = []
+    for kind, value in [("url", v) for v in links[:8]] + [("phone", v) for v in list(phones.values())[:5]]:
+        try:
+            r = check(CheckRequest(input=value[:2048]), repo)
+        except Exception:  # an unreadable link or number: skip it, check the rest
+            continue
+        parts.append(MessagePart(kind=r.kind, input=value, verdict=r.verdict, score=r.score, brand_target=r.brand_target))
+        what_en, what_ar = ("Link", "الرابط") if r.kind == "url" else ("Number", "الرقم")
+        if r.verdict in ("FRAUD", "SUSPICIOUS"):
+            top = max(r.reasons, key=lambda x: x.weight, default=None)
+            part_reasons.append(Reason(
+                code="message_part_flagged", weight=r.score or 0,
+                text_en=f"{what_en} {value}: {r.verdict} {r.score}/100" + (f" ({top.text_en})" if top else ""),
+                text_ar=f"{what_ar} {value}: {r.verdict} {r.score}/100" + (f" ({top.text_ar})" if top else ""),
+                evidence_ref=r.kind))
+        elif r.verdict == "LEGIT" and r.reasons:
+            part_reasons.append(Reason(
+                code="message_part_official", weight=-10,
+                text_en=f"{what_en} {value}: {r.reasons[0].text_en}", text_ar=f"{what_ar} {value}: {r.reasons[0].text_ar}",
+                evidence_ref=r.kind))
+
+    wording = mc.wording_reasons(full)
+    ai_r, ai_floor = mc.ai_reason(ai) if ai else (None, None)
+    flagged = [p.score or 0 for p in parts if p.verdict in ("FRAUD", "SUSPICIOUS")]
+    score = max([*flagged, min(60, 40 + 10 * (len(wording) - 1)) if wording else 0, ai_floor or 0])
+    if ai_r is not None and ai_r.code == "ai_cleared" and not wording and max(flagged, default=0) < 70:
+        score = min(score, 20)
+    if not parts and not wording and ai is None:
+        verdict: CheckVerdict = "UNKNOWN"
+    else:
+        verdict = "FRAUD" if score >= 70 else "SUSPICIOUS" if score >= 30 else "LEGIT"
+    brand = next((p.brand_target for p in parts if p.brand_target and p.verdict != "LEGIT"), None)
+    reasons = ([ai_r] if ai_r else []) + sorted(part_reasons, key=lambda r: -r.weight) + wording
+    return _response(
+        "message", text[:300] or "(screenshot)", verdict, score if verdict != "UNKNOWN" else None, brand, reasons,
+        parts=parts, transcript=(ai or {}).get("transcript") if image else None,
+    )

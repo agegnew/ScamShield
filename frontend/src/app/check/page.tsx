@@ -3,8 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, Building2, Car, ChevronDown, ClipboardPaste, Globe2, Landmark, Package, Phone, PhoneCall, Puzzle, Search, ShieldAlert, TrendingUp, Volume2, VolumeX, type LucideIcon } from "lucide-react";
-import { checkInput, type CheckResponse } from "@/lib/api";
+import { ArrowUpRight, Building2, Car, ChevronDown, ClipboardPaste, Globe2, ImagePlus, Landmark, MessageSquareText, Package, Phone, PhoneCall, Puzzle, Search, ShieldAlert, TrendingUp, Volume2, VolumeX, type LucideIcon } from "lucide-react";
+import { checkInput, checkMessage, type CheckResponse } from "@/lib/api";
 import { useLang } from "@/lib/i18n";
 import { L, type Pair } from "@/lib/radar";
 import { cn } from "@/lib/utils";
@@ -120,10 +120,60 @@ export default function CheckPage() {
     if (result) resultRef.current?.focus();
   }, [result]);
 
+  // Whole SMS / WhatsApp message: pasted text and/or a screenshot, read by the server (and Claude).
+  const [msgOpen, setMsgOpen] = useState(false);
+  const [msgText, setMsgText] = useState("");
+  const [msgImage, setMsgImage] = useState<string | null>(null);
+  const [msgImageName, setMsgImageName] = useState("");
+
+  async function pickScreenshot(file: File | undefined) {
+    if (!file) return;
+    // Shrink big phone screenshots before upload (max 1600 px, JPEG), keeping them readable.
+    const url = URL.createObjectURL(file);
+    try {
+      const img = document.createElement("img");
+      await new Promise<void>((ok, fail) => {
+        img.onload = () => ok();
+        img.onerror = () => fail(new Error("unreadable image"));
+        img.src = url;
+      });
+      const scale = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(img.naturalWidth * scale);
+      canvas.height = Math.round(img.naturalHeight * scale);
+      canvas.getContext("2d")?.drawImage(img, 0, 0, canvas.width, canvas.height);
+      setMsgImage(canvas.toDataURL("image/jpeg", 0.88));
+      setMsgImageName(file.name);
+      setErr(null);
+    } catch {
+      setErr(L(["That file is not an image we can read.", "لا يمكن قراءة هذا الملف كصورة."], lang));
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  async function runMessage() {
+    if (!msgText.trim() && !msgImage) return;
+    setBusy(true);
+    setErr(null);
+    stopSpeaking();
+    try {
+      const r = await checkMessage({ text: msgText.trim() || undefined, image: msgImage ?? undefined });
+      setResult(r);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   // Opened from the browser extension's "View details": /check?q=<address> checks it straight away.
   useEffect(() => {
     const q = new URLSearchParams(window.location.search).get("q");
     if (q) {
+      // One-time sync from the address bar on first load, not a render loop.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setInput(q);
       run(q);
     }
@@ -233,6 +283,62 @@ export default function CheckPage() {
                   </div>
                 )}
               </form>
+
+              {/* Whole message: paste the SMS / WhatsApp text or add a screenshot */}
+              <div className="mt-4 rounded-[22px] border border-line-2 bg-surface/90 text-start backdrop-blur">
+                <button
+                  type="button"
+                  onClick={() => setMsgOpen((o) => !o)}
+                  aria-expanded={msgOpen}
+                  className="flex w-full items-center gap-3 rounded-[22px] px-4 py-3 text-start hover:bg-primary-soft/60"
+                >
+                  <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary">
+                    <MessageSquareText aria-hidden className="size-5" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-extrabold text-ink">{L(["Got a whole SMS or WhatsApp message?", "وصلتك رسالة نصية أو واتساب كاملة؟"], lang)}</span>
+                    <span className="block text-sm text-ink-2">{L(["Paste it or add a screenshot. We check every link and number in it.", "الصقها أو أضف لقطة شاشة. نفحص كل رابط ورقم فيها."], lang)}</span>
+                  </span>
+                  <ChevronDown aria-hidden className={cn("size-5 shrink-0 text-muted transition-transform", msgOpen && "rotate-180")} />
+                </button>
+                {msgOpen && (
+                  <div className="flex flex-col gap-3 px-4 pb-4">
+                    <label htmlFor="msg" className="sr-only">
+                      {L(["The message", "الرسالة"], lang)}
+                    </label>
+                    <textarea
+                      id="msg"
+                      value={msgText}
+                      onChange={(e) => setMsgText(e.target.value)}
+                      rows={4}
+                      dir="auto"
+                      placeholder={L(["e.g. Abu Dhabi Police: you have an unpaid fine of AED 300, pay now at …", "مثال: شرطة أبوظبي: لديك مخالفة غير مدفوعة بقيمة 300 درهم، ادفع الآن عبر …"], lang)}
+                      className="w-full resize-y rounded-2xl border border-line-2 bg-surface px-4 py-3 text-base text-ink placeholder:text-muted focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/15"
+                    />
+                    <div className="flex flex-wrap items-center gap-2">
+                      <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full border border-line-2 bg-surface px-4 text-sm font-bold text-ink-2 hover:border-primary/40 hover:bg-primary-soft hover:text-primary">
+                        <ImagePlus aria-hidden className="size-4" />
+                        {msgImage ? L(["Change screenshot", "تغيير لقطة الشاشة"], lang) : L(["Add a screenshot", "أضف لقطة شاشة"], lang)}
+                        <input type="file" accept="image/*" className="sr-only" onChange={(e) => pickScreenshot(e.target.files?.[0])} />
+                      </label>
+                      {msgImage && (
+                        <span className="ltr inline-flex max-w-[14rem] items-center gap-2 truncate rounded-full bg-primary-soft px-3 py-1.5 text-sm font-semibold text-primary">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={msgImage} alt="" className="size-6 rounded object-cover" />
+                          <span className="truncate">{msgImageName}</span>
+                          <button type="button" onClick={() => setMsgImage(null)} className="font-extrabold" aria-label={L(["Remove screenshot", "إزالة لقطة الشاشة"], lang)}>
+                            ×
+                          </button>
+                        </span>
+                      )}
+                      <Button type="button" className="ms-auto h-11 rounded-full px-6" loading={busy} disabled={!msgText.trim() && !msgImage} onClick={runMessage}>
+                        {busy ? t("checking") : L(["Check message", "افحص الرسالة"], lang)}
+                      </Button>
+                    </div>
+                    <p className="text-xs text-muted">{L(["The message is checked and not stored. Screenshots are read by AI (Claude).", "تُفحص الرسالة ولا تُحفظ. تُقرأ لقطات الشاشة بالذكاء الاصطناعي (Claude)."], lang)}</p>
+                  </div>
+                )}
+              </div>
 
               {err && (
                 <p role="alert" className="mt-4 rounded-xl bg-fraud-soft px-3 py-2 text-sm font-semibold text-fraud">

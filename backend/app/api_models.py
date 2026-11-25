@@ -240,8 +240,23 @@ class CheckRequest(BaseModel):
     input: str = Field(min_length=3, max_length=2048, description="A link or a phone number")
 
 
-class CheckResponse(BaseModel):
+class MessageCheckRequest(BaseModel):
+    text: str | None = Field(default=None, max_length=5000, description="The SMS / WhatsApp message as pasted")
+    image: str | None = Field(default=None, max_length=7_000_000, description="A screenshot as a data URL: data:image/png;base64,...")
+
+
+class MessagePart(BaseModel):
+    """One link or phone number found in a message, with its own check."""
+
     kind: Literal["url", "phone"]
+    input: str
+    verdict: CheckVerdict
+    score: int | None = None
+    brand_target: str | None = None
+
+
+class CheckResponse(BaseModel):
+    kind: Literal["url", "phone", "message"]
     input: str
     verdict: CheckVerdict
     score: int | None = None
@@ -251,6 +266,8 @@ class CheckResponse(BaseModel):
     advice_en: list[str]
     advice_ar: list[str]
     reasons: list[Reason] = Field(default_factory=list)
+    parts: list[MessagePart] = Field(default_factory=list, description="kind=message: each link and number found")
+    transcript: str | None = Field(default=None, description="kind=message with a screenshot: the text read from it")
 
 
 class BlocklistEntry(BaseModel):

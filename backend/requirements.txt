@@ -13,3 +13,9 @@ python-dotenv>=1.0
 # report.py relies on fpdf2 internals for a font fix, so stay on 2.9.x.
 fpdf2>=2.9,<2.10
 uharfbuzz>=0.39
+anthropic>=2.14,<3  # Claude reads SMS screenshots in the citizen checker (app/message_check.py)
+# The radar status endpoint imports the radar sources (DNS lookups, phone parsing).
+dnspython>=2.6
+phonenumbers>=8.13
+requests>=2.31
+dnstwist>=20240116

@@ -424,6 +424,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/check/message": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check Message
+         * @description Public: a whole SMS / WhatsApp message (text or screenshot). Each link and number is checked,
+         *     the wording is matched against UAE scam types, and Claude reads the message (see message_check.py).
+         */
+        post: operations["check_message_api_check_message_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -676,7 +697,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "url" | "phone";
+            kind: "url" | "phone" | "message";
             /** Input */
             input: string;
             /**
@@ -698,6 +719,16 @@ export interface components {
             advice_ar: string[];
             /** Reasons */
             reasons?: components["schemas"]["Reason"][];
+            /**
+             * Parts
+             * @description kind=message: each link and number found
+             */
+            parts?: components["schemas"]["MessagePart"][];
+            /**
+             * Transcript
+             * @description kind=message with a screenshot: the text read from it
+             */
+            transcript?: string | null;
         };
         /**
          * CloakingCheck
@@ -1027,6 +1058,41 @@ export interface components {
              */
             token_type: "bearer";
             user: components["schemas"]["UserInfo"];
+        };
+        /** MessageCheckRequest */
+        MessageCheckRequest: {
+            /**
+             * Text
+             * @description The SMS / WhatsApp message as pasted
+             */
+            text?: string | null;
+            /**
+             * Image
+             * @description A screenshot as a data URL: data:image/png;base64,...
+             */
+            image?: string | null;
+        };
+        /**
+         * MessagePart
+         * @description One link or phone number found in a message, with its own check.
+         */
+        MessagePart: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "url" | "phone";
+            /** Input */
+            input: string;
+            /**
+             * Verdict
+             * @enum {string}
+             */
+            verdict: "FRAUD" | "SUSPICIOUS" | "LEGIT" | "UNKNOWN";
+            /** Score */
+            score?: number | null;
+            /** Brand Target */
+            brand_target?: string | null;
         };
         /** Metrics */
         Metrics: {
@@ -2127,6 +2193,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Blocklist"];
+                };
+            };
+        };
+    };
+    check_message_api_check_message_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MessageCheckRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

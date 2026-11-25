@@ -1153,6 +1153,48 @@
           }
         }
       }
+    },
+    "/api/check/message": {
+      "post": {
+        "tags": [
+          "citizen"
+        ],
+        "summary": "Check Message",
+        "description": "Public: a whole SMS / WhatsApp message (text or screenshot). Each link and number is checked,\nthe wording is matched against UAE scam types, and Claude reads the message (see message_check.py).",
+        "operationId": "check_message_api_check_message_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageCheckRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1781,7 +1823,8 @@
             "type": "string",
             "enum": [
               "url",
-              "phone"
+              "phone",
+              "message"
             ],
             "title": "Kind"
           },
@@ -1849,6 +1892,26 @@
             },
             "type": "array",
             "title": "Reasons"
+          },
+          "parts": {
+            "items": {
+              "$ref": "#/components/schemas/MessagePart"
+            },
+            "type": "array",
+            "title": "Parts",
+            "description": "kind=message: each link and number found"
+          },
+          "transcript": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transcript",
+            "description": "kind=message with a screenshot: the text read from it"
           }
         },
         "type": "object",
@@ -2701,6 +2764,94 @@
           "user"
         ],
         "title": "LoginResponse"
+      },
+      "MessageCheckRequest": {
+        "properties": {
+          "text": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text",
+            "description": "The SMS / WhatsApp message as pasted"
+          },
+          "image": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 7000000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image",
+            "description": "A screenshot as a data URL: data:image/png;base64,..."
+          }
+        },
+        "type": "object",
+        "title": "MessageCheckRequest"
+      },
+      "MessagePart": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "url",
+              "phone"
+            ],
+            "title": "Kind"
+          },
+          "input": {
+            "type": "string",
+            "title": "Input"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "FRAUD",
+              "SUSPICIOUS",
+              "LEGIT",
+              "UNKNOWN"
+            ],
+            "title": "Verdict"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "brand_target": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand Target"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind",
+          "input",
+          "verdict"
+        ],
+        "title": "MessagePart",
+        "description": "One link or phone number found in a message, with its own check."
       },
       "Metrics": {
         "properties": {

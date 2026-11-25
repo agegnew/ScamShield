@@ -121,6 +121,9 @@ export const decide = (id: string, action: "confirm" | "dismiss", reason: string
 export const scanUrl = (url: string) => apiFetch<ScanResponse>("/api/scan", { method: "POST", body: JSON.stringify({ url }) });
 export const batchUrls = (urls: string[]) => apiFetch<BatchResponse>("/api/batch", { method: "POST", body: JSON.stringify({ urls }) });
 export const checkInput = (input: string) => apiFetch<CheckResponse>("/api/check", { method: "POST", body: JSON.stringify({ input }) });
+/** Public: a whole SMS / WhatsApp message as text and/or a screenshot (data URL). Same answer shape, kind "message". */
+export const checkMessage = (body: { text?: string; image?: string }) =>
+  apiFetch<CheckResponse>("/api/check/message", { method: "POST", body: JSON.stringify(body) });
 export const login = (username: string, password: string) =>
   apiFetch<LoginResponse>("/api/auth/login", { method: "POST", body: JSON.stringify({ username, password }) });
 export const me = () => apiFetch<UserInfo>("/api/auth/me");
