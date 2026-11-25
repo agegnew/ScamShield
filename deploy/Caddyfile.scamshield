@@ -1,0 +1,13 @@
+# ScamShield site block for a Caddy that already serves another site on this host.
+# Append it to that Caddyfile; its container must be on EDGE_NETWORK (see deploy/README.md).
+scamshield.42studio.fit {
+	encode zstd gzip
+	@scamshield_api path /api/* /artifacts/* /docs /docs/* /openapi.json
+	handle @scamshield_api {
+		reverse_proxy scamshield-api:8000
+	}
+	handle {
+		reverse_proxy scamshield-web:3000
+	}
+	tls {$ACME_EMAIL}
+}

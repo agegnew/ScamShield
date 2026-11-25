@@ -1,0 +1,113 @@
+# ScamShield on a shared server behind an existing Caddy (see deploy/README.md).
+#   docker compose -f docker-compose.server.yml --env-file .env up -d --build
+# Nothing here publishes a port: the host's Caddy reaches scamshield-web and scamshield-api
+# over the shared Docker network named by EDGE_NETWORK. Every name starts with "scamshield"
+# so nothing clashes with the other project on that network.
+name: scamshield
+
+x-backend-env: &backend-env
+  DATABASE_URL: postgresql+psycopg://scamshield:scamshield@scamshield-db:5432/scamshield
+  SCAMSHIELD_BRANDS: /data/brands.json
+  SCAMSHIELD_THEMES: /data/scam_themes.json
+  SCAMSHIELD_FEEDS: /data/datasets/raw
+  SCAMSHIELD_CACHE: /data/cache
+  SCAMSHIELD_DEMO_DATA: /data/demo
+  SCAMSHIELD_ARTIFACTS: /artifacts
+
+services:
+  scamshield-db:
+    image: postgres:16-alpine
+    container_name: scamshield-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: scamshield
+      POSTGRES_PASSWORD: scamshield
+      POSTGRES_DB: scamshield
+    volumes:
+      - scamshield_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scamshield"]
+      interval: 3s
+      retries: 20
+    networks: [internal]
+
+  scamshield-api:
+    build: ./backend
+    container_name: scamshield-api
+    restart: unless-stopped
+    env_file: .env
+    environment: *backend-env
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips="*"
+    volumes:
+      - ./data:/data:ro
+      - scamshield_artifacts:/artifacts
+    depends_on:
+      scamshield-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 5s
+      retries: 30
+    networks: [internal, edge]
+
+  # Page checks: user scans first, then radar finds.
+  scamshield-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.worker
+    container_name: scamshield-worker
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      <<: *backend-env
+      SCAMSHIELD_WORKER_JOBS: scan,fetch,feeds
+      SCAMSHIELD_WORKER_SCHEDULE: "0"
+    volumes:
+      - ./data:/data
+      - scamshield_artifacts:/artifacts
+    depends_on:
+      scamshield-api:
+        condition: service_healthy
+    networks: [internal]
+
+  # Discovery: daily radar at 03:00 UAE + "Run radar now", hourly phishing-feed refresh.
+  scamshield-radar:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.worker
+    container_name: scamshield-radar
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      <<: *backend-env
+      SCAMSHIELD_WORKER_JOBS: radar
+      SCAMSHIELD_WORKER_SCHEDULE: "1"
+    volumes:
+      - ./data:/data
+      - scamshield_artifacts:/artifacts
+    depends_on:
+      scamshield-api:
+        condition: service_healthy
+    networks: [internal]
+
+  scamshield-web:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${PUBLIC_URL:?set PUBLIC_URL in .env}
+    container_name: scamshield-web
+    restart: unless-stopped
+    depends_on:
+      scamshield-api:
+        condition: service_healthy
+    networks: [edge]
+
+networks:
+  internal: {}
+  edge:
+    external: true
+    name: ${EDGE_NETWORK:?set EDGE_NETWORK in .env}
+
+volumes:
+  scamshield_pgdata:
+  scamshield_artifacts:
