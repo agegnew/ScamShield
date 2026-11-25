@@ -4,7 +4,7 @@
 
 ScamShield watches for new websites, certificates, search results and Maps listings that imitate UAE government services, banks and delivery companies. It opens each one the way a UAE resident's phone would, scores it FRAUD / SUSPICIOUS / LEGIT with reasons in Arabic and English, and packages police-ready evidence for a takedown.
 
-**Live: https://scamshield.42studio.fit** · citizen checker at [/check](https://scamshield.42studio.fit/check) (public) · browser extension at [/extension](https://scamshield.42studio.fit/extension) · analyst console (account needed; ask the team) · API docs at [/docs](https://scamshield.42studio.fit/docs).
+**Live: https://scamshield.42studio.fit** · citizen checker at [/check](https://scamshield.42studio.fit/check) (public) · browser extension at [/extension](https://scamshield.42studio.fit/extension) · analyst console at [/](https://scamshield.42studio.fit) (log in as **`admin` / `admin123`** or **`analyst` / `analyst123`**) · API docs at [/docs](https://scamshield.42studio.fit/docs).
 
 > Team plan, task lists and timeline: [docs/PLAN.md](docs/PLAN.md).
 
