@@ -49,8 +49,8 @@ Residents receive SMS and WhatsApp links, search ads and Maps listings for "TAMM
 
 | Counted as positive | Feeds | Precision | Recall | False-positive rate | F1 | UAE official pages flagged |
 | --- | --- | --- | --- | --- | --- | --- |
-| FRAUD or SUSPICIOUS (score ≥ 30) | off | **0.942** | **0.778** | 1.8% | 0.852 | **0 of 230** |
-| FRAUD or SUSPICIOUS (score ≥ 30) | on | 0.944 | 0.826 | 1.8% | 0.881 | 0 of 230 |
+| FRAUD or SUSPICIOUS (score ≥ 30) | off | **0.942** | **0.782** | 1.8% | 0.855 | **0 of 230** |
+| FRAUD or SUSPICIOUS (score ≥ 30) | on | 0.944 | 0.827 | 1.8% | 0.882 | 0 of 230 |
 | FRAUD only (score ≥ 70) | off | 0.995 | 0.514 | 0.09% | 0.678 | 0 of 230 |
 
 "Feeds off" is the honest number: the test set's phishing URLs come from the same feeds, so with lookups on, part of the recall is lookup, not detection. FRAUD is the near-certain tier (7 false positives in 8,134 legitimate URLs); SUSPICIOUS widens the net for analysts. The thresholds come from a sweep on this set: 25 would gain 1.9 points of recall for a 2.1% false-positive rate, 35 would cut false positives by 0.3 points for 1.6 points of recall.
@@ -133,7 +133,7 @@ docker compose up --build        # Postgres + API + page worker + radar
 - The API starts with 8 labelled sample cases (`SCAMSHIELD_MODE=mock`). For real data set `SCAMSHIELD_MODE=live` and `SCAMSHIELD_SEED_DEMO=1` in `.env`: the database then starts with the real cases scanned for the demo (`data/demo/`), and the radar adds new ones as it runs.
 - Optional: `SERPAPI_KEY` turns on the Search and Maps radars.
 
-**Without Docker:** see [backend/README.md](backend/README.md) (SQLite, `uvicorn` + `python -m app.workers.runner`). Tests: `pytest -q` in `backend/` (193 tests).
+**Without Docker:** see [backend/README.md](backend/README.md) (SQLite, `uvicorn` + `python -m app.workers.runner`). Tests: `pytest -q` in `backend/` (197 tests).
 
 **Dashboard (analyst console + citizen checker):** needs Node.js 20+ and the API running on port 8000.
 
@@ -175,7 +175,7 @@ Input: a `.txt` file with one URL per line, or a `.csv` with a `url` column. Out
 | `backend/app/workers/` | Fetcher, enrichment, fingerprints, cloaking, visual match, SSRF guard, the five radars, job runner |
 | `backend/app/routes/`, `auth.py`, `report.py`, `takedown.py`, `graph.py` | HTTP API, login and roles, PDF report, takedown email, scam-network graph |
 | `backend/scripts/` | Dataset build, model training, evaluation, batch mode, demo seeding, contract export |
-| `backend/tests/` | 193 tests (`pytest -m live` adds real-network checks) |
+| `backend/tests/` | 197 tests (`pytest -m live` adds real-network checks) |
 | `frontend/` | Next.js dashboard: analyst console (radar, cases, case page, network, accuracy, scan, audit, users) and the public citizen checker, English and Arabic |
 | `extension/` | ScamShield Guardian browser extension (Manifest V3, plain JavaScript): block page, toolbar verdict, form warning |
 | `data/` | Brand registry, scam themes, official-site references, held-out test set, demo snapshot |

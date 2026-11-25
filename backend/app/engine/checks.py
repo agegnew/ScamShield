@@ -651,6 +651,8 @@ CHECKS = (
 # ---- Combination rules (run once, after every check) -----------------------
 
 PAGE_IMPERSONATION = {"brand_on_wrong_domain", "visual_match"}
+# The domain name itself claims a brand it does not own.
+DOMAIN_BRAND_CLAIM = {"lookalike_domain", "typosquat"}
 # Reasons that lower risk because a site looks ordinary or established.
 TRUST_DISCOUNTS = {"url_model", "old_domain"}
 # The page says it is the official or government site ("Official Government Portal", "الموقع الرسمي").
@@ -694,6 +696,11 @@ def combine(ctx: Ctx, reasons: list[Reason]) -> list[Reason]:
         # A normal-looking URL and an old domain are how such pages hide (phishing kits are often
         # planted on hacked, years-old business sites), so they no longer count in the site's favour.
         reasons = [r for r in reasons if r.code not in TRUST_DISCOUNTS or r.weight >= 0]
+    elif codes & DOMAIN_BRAND_CLAIM and ctx.evidence is None:
+        # URL only (no page to look at): the domain name claims a brand it doesn't own (roblox.ly,
+        # paypal-verify.com). The URL model's "looks normal" mostly reflects a short clean URL, which
+        # says nothing against that claim. With a page, the page decides (car parts on moi-portal.com).
+        reasons = [r for r in reasons if r.code != "url_model" or r.weight >= 0]
     if ctx.notes.get("feed_kind") == "url":
         reasons = [r for r in reasons if r.code != "government_network"]  # reported phishing on a hacked site
     if codes & PAGE_IMPERSONATION:
