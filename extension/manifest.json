@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ScamShield Guardian",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Warns UAE users about fake government, bank and delivery websites before they enter their details.",
   "icons": {
     "16": "icons/icon-16.png",

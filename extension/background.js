@@ -1,5 +1,6 @@
 // ScamShield Guardian service worker.
-// - Colours the toolbar badge for every page (sends only the site's origin, never the path or page content).
+// - Colours the toolbar badge for every page (sends only the site's origin, never the path or page content)
+//   and opens the popup by itself on a site rated FRAUD.
 // - Keeps a local list of confirmed scam domains and blocks them before the page loads (declarativeNetRequest).
 // - Caches the UAE brand registry for the form warning in content.js.
 
@@ -57,22 +58,56 @@ function badgeFor(result) {
   return addressOnly ? BADGE.UNKNOWN : BADGE[result.verdict] || BADGE.UNKNOWN;
 }
 
-async function updateBadge(tabId, url) {
-  const origin = siteOf(url);
-  if (!origin) return chrome.action.setBadgeText({ tabId, text: "" });
+async function updateBadge(tab) {
+  const origin = siteOf(tab.url);
+  if (!origin) return chrome.action.setBadgeText({ tabId: tab.id, text: "" });
   try {
     const result = await checkSite(origin);
     const badge = badgeFor(result);
-    await chrome.action.setBadgeText({ tabId, text: badge.text });
-    await chrome.action.setBadgeBackgroundColor({ tabId, color: badge.color });
+    await chrome.action.setBadgeText({ tabId: tab.id, text: badge.text });
+    await chrome.action.setBadgeBackgroundColor({ tabId: tab.id, color: badge.color });
+    if (badge === BADGE.FRAUD) await openScamPopup(tab, origin);
   } catch {
-    await chrome.action.setBadgeText({ tabId, text: "" });
+    await chrome.action.setBadgeText({ tabId: tab.id, text: "" });
+  }
+}
+
+// --- Scam detected: the popup opens by itself ---
+// On a FRAUD site the popup (Scam detected, risk score, who it imitates, View details) opens without a
+// click, once per tab and site. chrome.action.openPopup works for every extension from Chrome 127. It
+// opens in the focused window over its active tab, so a scam loading in a background tab waits until
+// the user switches to it. Where it cannot open (older Chrome), the red "!" badge still shows.
+
+async function openScamPopup(tab, origin) {
+  const key = `popup:${tab.id}`;
+  if ((await chrome.storage.session.get(key))[key] === origin) return;
+  if (!tab.active) return;
+  const win = await chrome.windows.get(tab.windowId).catch(() => null);
+  if (!win || !win.focused) return;
+  try {
+    await chrome.action.openPopup({ windowId: tab.windowId });
+    await chrome.storage.session.set({ [key]: origin });
+  } catch {
+    // Not supported here, or the window is busy (another popup open): the badge is enough.
   }
 }
 
 chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
-  if (info.status === "complete" && tab.url) updateBadge(tabId, tab.url);
+  if (info.status === "complete" && tab.url) updateBadge(tab);
 });
+
+chrome.tabs.onActivated.addListener(async ({ tabId }) => {
+  const tab = await chrome.tabs.get(tabId).catch(() => null);
+  if (tab && tab.url && tab.status === "complete") updateBadge(tab);  // verdict is cached: no new request
+});
+
+chrome.windows.onFocusChanged.addListener(async (windowId) => {
+  if (windowId === chrome.windows.WINDOW_ID_NONE) return;
+  const [tab] = await chrome.tabs.query({ active: true, windowId });
+  if (tab && tab.url && tab.status === "complete") updateBadge(tab);
+});
+
+chrome.tabs.onRemoved.addListener((tabId) => chrome.storage.session.remove(`popup:${tabId}`));
 
 // --- Brand registry (for the form warning) ---
 
