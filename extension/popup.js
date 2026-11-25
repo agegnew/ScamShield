@@ -198,9 +198,11 @@ $("details").addEventListener("click", async () => {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   const url = (tab && tab.url) || "";
   const blockPage = chrome.runtime.getURL("blocked.html");
-  const stored = await chrome.storage.local.get(["brands", "blocklist"]);
+  const stored = await chrome.storage.local.get(["brands", "blocklist", "blocklistAt"]);
   brands = stored.brands || [];
   listed = Object.keys(stored.blocklist || {}).length;
+  // Opening the popup refreshes a list older than a minute, so an analyst's new confirm blocks right away.
+  if (!stored.blocklistAt || Date.now() - stored.blocklistAt > 60 * 1000) chrome.runtime.sendMessage({ type: "sync" });
 
   if (url.startsWith(blockPage)) {
     target = new URL(url).searchParams.get("u");
