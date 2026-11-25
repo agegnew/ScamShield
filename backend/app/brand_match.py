@@ -35,6 +35,15 @@ def _only_context(rest: str) -> bool:
     return any(w in CONTEXT_WORDS for w in words) and all(w in CONTEXT_WORDS or w.isdigit() for w in words)
 
 
+def _glued_letter(label: str, core: str) -> bool:
+    """A single letter written straight onto a short brand name makes a different word: e + sewa is
+    eSewa (a Nepali wallet), not SEWA. e-sewa or tammpay still read as the brand plus a word."""
+    before, _, after = label.partition(core)
+    glued_before = re.search(r"[a-z]+$", before)
+    glued_after = re.match(r"[a-z]+", after)
+    return any(m is not None and len(m.group()) == 1 for m in (glued_before, glued_after))
+
+
 def match_token(host: str) -> tuple[str, str] | None:
     """(brand id, token) if the host's name (minus its TLD) names a brand and isn't official."""
     host = host.lower().rstrip(".")
@@ -50,7 +59,7 @@ def match_token(host: str) -> tuple[str, str] | None:
         if len(core) >= DISTINCTIVE_LENGTH:
             return brand_id, core
         rest = label.replace(core, " ", 1)
-        if _only_context(rest.replace(".", " ")):
+        if _only_context(rest.replace(".", " ")) and not _glued_letter(label, core):
             return brand_id, core
     return None
 

@@ -8,11 +8,11 @@ Try it: python -m app.workers.radar.maps
 """
 
 import logging
-import re
 from datetime import datetime, timezone
 from urllib.parse import urlsplit
 
 from ...brand_match import is_official, match_brand
+from ...brands import HELPLINE_CLAIM
 from ...contracts import Brand, Candidate, CandidateExtra, Source
 from .base import RadarSource
 from .serp import Query, e164, is_neutral, plan_into_budget, serpapi
@@ -20,9 +20,6 @@ from .serp import Query, e164, is_neutral, plan_into_budget, serpapi
 log = logging.getLogger("scamshield.radar.maps")
 
 UAE_CENTER = "@24.4539,54.3773,9z"
-HELPLINE_CLAIM = re.compile(
-    r"customer\s*(service|care|support)|help\s*line|hotline|call\s*cent|contact|complain|refund|"
-    r"خدمة العملاء|خط المساعدة|الدعم|مركز الاتصال", re.I)
 
 
 def _params(query: str) -> dict:

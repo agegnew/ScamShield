@@ -32,6 +32,7 @@ from app.config import ARTIFACTS_DIR
 from app.contracts import Candidate, Source
 from app.db import CaseRow, JobRow, SessionLocal, init_db, utcnow
 from app.demo_data import SNAPSHOT, load_snapshot, screenshots_of
+from app.page_kinds import effective_kind
 from app.repo import CaseRepo
 from app.urls import InvalidURL, normalize_url
 
@@ -151,16 +152,23 @@ def cmd_export(args) -> int:
 
 
 def cmd_rescore(args) -> int:
-    """Score every stored case again with the current engine, from its saved evidence (no fetch)."""
+    """Score every stored case again with the current engine, from its saved evidence (no fetch).
+    The page kind is re-read with today's patterns too (a stored "content" page may be a parking
+    lander or a 502 error page), so the radar shows what the engine now sees."""
     changed = 0
     with SessionLocal() as session:
         repo = CaseRepo(session)
         for case in repo.all():
-            verdict = engine.score(case.candidate.url, evidence=case.evidence, candidate=case.candidate)
+            evidence = case.evidence
+            if evidence is not None and not evidence.fetch_error:
+                kind = effective_kind(evidence, case.candidate.url)
+                if kind != evidence.page_kind:
+                    evidence = evidence.model_copy(update={"page_kind": kind})
+            verdict = engine.score(case.candidate.url, evidence=evidence, candidate=case.candidate)
             if (verdict.verdict, verdict.score) != (case.verdict.verdict, case.verdict.score):
                 changed += 1
                 print(f"{case.verdict.verdict.value} {case.verdict.score} -> {verdict.verdict.value} {verdict.score}  {case.candidate.url}")
-            repo.save_analysis(case.id, case.evidence, verdict)  # evidence may be None (URL only)
+            repo.save_analysis(case.id, evidence, verdict)  # evidence may be None (URL only)
     print(f"rescored; {changed} verdicts changed")
     return 0
 

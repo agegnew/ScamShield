@@ -18,6 +18,7 @@ from urllib.parse import urljoin
 
 from ..config import ARTIFACTS_DIR
 from ..contracts import DownloadSignal, Evidence, Fingerprints, FormInfo, RedirectHop
+from ..page_kinds import page_kind
 from . import fingerprint as fp
 from .safety import UnsafeURL, Unresolvable, assert_public_url
 
@@ -70,39 +71,6 @@ REMOTE_ACCESS = re.compile(
     r"\b(anydesk|teamviewer|rustdesk|quicksupport|airdroid|supremo|ultraviewer|splashtop)\b", re.I
 )
 APK = re.compile(r"\.apk(\b|$)|تحميل التطبيق|download (our |the )?app", re.I)
-
-# Placeholder pages say nothing about the owner; the engine and the network map must not read them as content.
-PAGE_KINDS = [
-    ("blocked", re.compile(r"access denied|just a moment|attention required|checking your browser|request blocked|"
-                           r"403 forbidden|captcha|restricted domain|not authorized|security verification|"
-                           r"إجراء التحقق|لحظة…", re.I)),
-    ("expired", re.compile(r"domain (is|has) expired|renew (the|this|your) domain|expired domain", re.I)),
-    ("for_sale", re.compile(r"(domain|this name) (is |may be )?for sale|buy this domain|make an offer|"
-                            r"available on godaddy|available for purchase|reserved for strategic use|forsale\.|/lander|"
-                            r"atom\.com|dan\.com|sedo\.com|afternic|hugedomains|buydomains|namingsystem|brandbucket",
-                            re.I)),
-    ("parked", re.compile(r"parked (domain|free)|domain parking|this domain (is|was|has been) (registered|parked|"
-                          r"purchased)|domain (is now )?reserved|registered at .{0,40}(hostinger|namecheap|godaddy)|"
-                          r"if this is your domain|déjà enregistré|secureserver\.net|related searches", re.I)),
-    ("error", re.compile(r"\b404\b|not found|error establishing|critical error|site not configured|"
-                         r"cannot be displayed|chrome-error://", re.I)),
-    # Whole phrases only: "brand new" or "check back" alone also appear on shop pages ("brand new iPhone").
-    ("coming_soon", re.compile(r"launching soon|coming soon|under construction|website is (being built|coming)|"
-                               r"(site|website|page) is brand new|please check back|check back (soon|later)|"
-                               r"still being worked on|welcome to wordpress\. this is your first post", re.I)),
-    ("default_host_page", re.compile(r"welcome to nginx|apache2? .{0,20}default page|it works!|"
-                                     r"index of /|default web site page", re.I)),
-]
-
-
-def page_kind(final_url: str, title: str, text: str, form_count: int = 0) -> str:
-    """'content' for a real page; otherwise the kind of placeholder (parked, for_sale, blocked, error...)."""
-    sample = f"{final_url} {title} {text[:600]}"
-    kind = next((kind for kind, pattern in PAGE_KINDS if pattern.search(sample)), "content")
-    if kind == "content" and len(text.strip()) < 20 and not form_count:
-        return "empty"
-    return kind
-
 
 FIELD_KINDS = [
     ("password", ("password", "كلمة المرور", "كلمة السر")),
@@ -232,7 +200,7 @@ def fetch(url: str, profile: str = "mobile_ae") -> Evidence:
                 "title": title,
                 "text_excerpt": " ".join(text.split())[:TEXT_LIMIT],
                 "forms": summarize_forms(raw_forms, page.url),
-                "page_kind": page_kind(page.url, title, text, len(raw_forms)),
+                "page_kind": page_kind(page.url, title, text, len(raw_forms), start_url=url),
                 "download_signals": download_signals(page.evaluate(LINKS_JS), text),
                 "fingerprints": Fingerprints(
                     **fp.favicon_hashes(favicon(context, page)),

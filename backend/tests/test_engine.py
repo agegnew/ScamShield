@@ -319,11 +319,13 @@ def test_abu_dhabi_police_alias_domain_is_official():
 
 
 def test_live_unrelated_business_on_a_brand_token_is_not_fraud(monkeypatch):
-    # icp-online.xyz: a Japanese company's site, nothing about the UAE's ICP, no form.
+    # icp-online.xyz: a Japanese company's site, nothing about the UAE's ICP, no form. The name match
+    # is a coincidence, so neither it nor the URL model's view of the name counts.
     monkeypatch.setattr(model, "phishing_probability", lambda url: 0.93)
     ev = page("http://icp-online.xyz/", title="ICP株式会社", text_excerpt="会社概要 事業内容 お問い合わせ", page_kind="content")
     v = engine.score("http://icp-online.xyz/", evidence=ev)
-    assert "unrelated_content" in codes(v) and v.verdict == Label.SUSPICIOUS
+    assert "unrelated_content" in codes(v) and v.verdict == Label.LEGIT
+    assert v.brand_target is None
 
 
 def test_unrelated_content_rule_needs_a_page_without_any_scam_sign(monkeypatch):

@@ -8,7 +8,7 @@ import re
 from dataclasses import dataclass, field
 
 from ..brand_match import match_token
-from ..brands import GENERIC_LABELS, NO_TYPOSQUAT_LABELS, normalize_uae_phone
+from ..brands import GENERIC_LABELS, HELPLINE_CLAIM, NO_TYPOSQUAT_LABELS, normalize_uae_phone
 from ..contracts import Brand, Candidate, Evidence, Reason, ScamTheme
 from ..urls import domain_label
 from . import feeds, model
@@ -42,8 +42,17 @@ class Ctx:
     brands: list[Brand]
     themes: list[ScamTheme]
     use_feeds: bool
+    kind: str | None = None  # page kind with today's patterns (page_kinds.effective_kind)
     brand_target: str | None = None
     notes: dict = field(default_factory=dict)
+
+    @property
+    def live_page(self) -> bool:
+        """The fetcher saw a real page (not an error, a placeholder or nothing at all)."""
+        ev = self.evidence
+        if ev is None or ev.fetch_error or self.kind not in (None, "content"):
+            return False
+        return bool(ev.title or ev.text_excerpt or ev.forms)
 
 
 def _r(code: str, weight: int, en: str, ar: str, ref: str | None = None) -> Reason:
@@ -80,6 +89,14 @@ def _token_in(token: str, text: str) -> bool:
     if len(token) >= 5:
         return token in text
     return re.search(rf"(^|[.\-_/]){re.escape(token)}([.\-_/]|$)", text) is not None
+
+
+def _without_own_address(text: str, ctx: "Ctx") -> str:
+    """Error, for-sale and parking pages print the site's own address ("emiratespost-track.com | 522:
+    Connection timed out"); the address is not the page claiming to be the brand."""
+    for name in sorted({ctx.host, ctx.final_host, ctx.domain, ctx.final_domain} - {""}, key=len, reverse=True):
+        text = re.sub(re.escape(name), " ", text, flags=re.I)
+    return text
 
 
 def _is_official(brand: Brand, host: str) -> bool:
@@ -138,7 +155,13 @@ def threat_feed(ctx: Ctx) -> list[Reason]:
     return []
 
 
+# Links that open a chat (wa.me/message/RJ2UYB55M77RP1): the random code says nothing about phishing.
+CHAT_LINK_HOSTS = {"wa.me", "api.whatsapp.com", "chat.whatsapp.com", "t.me", "telegram.me"}
+
+
 def url_model(ctx: Ctx) -> list[Reason]:
+    if ctx.host.removeprefix("www.") in CHAT_LINK_HOSTS:
+        return []
     p = model.phishing_probability(ctx.url)
     if p is None:
         return []
@@ -189,7 +212,9 @@ def brand_lookalike(ctx: Ctx) -> list[Reason]:
                 for a, b in HOMOGLYPHS:
                     folded = folded.replace(a, b)
                 dist = _levenshtein(label, off_label)
-                if folded == off_label or 0 < dist <= (1 if len(off_label) < 7 else 2):
+                # Two edits on a name of 7-8 letters already reach ordinary words and other companies'
+                # names (akbank, aramix, talaat), so short names allow one edit only.
+                if folded == off_label or 0 < dist <= (1 if len(off_label) < 9 else 2):
                     ctx.brand_target = ctx.notes["domain_brand"] = brand.id
                     return [
                         _r(
@@ -203,6 +228,7 @@ def brand_lookalike(ctx: Ctx) -> list[Reason]:
     hit = _global_brand_in(ctx)
     if hit:
         token, official = hit
+        ctx.notes["global_brand"] = token
         return [
             _r(
                 "lookalike_domain",
@@ -435,6 +461,8 @@ def page_signals(ctx: Ctx) -> list[Reason]:
             asks_en.append("a one-time code"), asks_ar.append("رمز التحقق")
         if "emirates_id" in kinds:
             asks_en.append("your Emirates ID"), asks_ar.append("رقم الهوية الإماراتية")
+    # Card, one-time code or Emirates ID: what scams are after. A password alone is every login page.
+    ctx.notes["asks_payment"] = any(a != "a password" for a in asks_en)
     if asks_en:
         en = ", ".join(dict.fromkeys(asks_en))
         ar = " و".join(dict.fromkeys(asks_ar))
@@ -444,20 +472,21 @@ def page_signals(ctx: Ctx) -> list[Reason]:
 
     # "Presents itself as" = the brand is in the page title, or the page names the brand AND asks
     # for sensitive data. A blog or news page that only mentions TAMM is not impersonating it.
-    title_raw = ev.title or ""
+    title_raw = _without_own_address(ev.title or "", ctx)
+    page_raw = _without_own_address(raw_text, ctx)
     asks_sensitive = bool(asks_en)
     ctx.notes["asks_sensitive"] = asks_sensitive
     ctx.notes["official_claim"] = bool(OFFICIAL_CLAIM.search(raw_text[:1500]))
     # A parked or for-sale page names the domain it sits on ("emiratespost.com is for sale");
     # that is not the page presenting itself as the brand.
-    claims_allowed = (ev.page_kind or "") not in HOLDING_PAGES
+    claims_allowed = (ctx.kind or "") not in HOLDING_PAGES
     for brand in ctx.brands:
         if not claims_allowed or _is_official(brand, ctx.final_host):
             continue
         names = _page_names(brand)
         hit = next((n for n in names if _name_in_page(n, title_raw.lower(), title_raw)), None)
         if hit is None and asks_sensitive:
-            hit = next((n for n in names if _name_in_page(n, text, raw_text)), None)
+            hit = next((n for n in names if _name_in_page(n, page_raw.lower(), page_raw)), None)
         if hit:
             ctx.brand_target = ctx.brand_target or brand.id
             ctx.notes.setdefault("page_brands", set()).add(brand.id)
@@ -489,6 +518,18 @@ def page_signals(ctx: Ctx) -> list[Reason]:
                 )
             )
 
+    warned_by = _platform_warning(ev.title or "", ev.text_excerpt or "")
+    if warned_by:
+        reasons.append(
+            _r(
+                "platform_warning",
+                50,
+                f"{warned_by} already shows visitors a phishing warning for this link",
+                f"تعرض {warned_by} بالفعل تحذيرًا من التصيّد لزوار هذا الرابط",
+                "screenshot",
+            )
+        )
+
     if ev.cloaking and ev.cloaking.signals:
         strong = {"different_destination", "forms_hidden_from_desktop", "different_page"}
         weight = 25 if strong & set(ev.cloaking.signals) else 10
@@ -514,6 +555,19 @@ def page_signals(ctx: Ctx) -> list[Reason]:
             )
         )
     return reasons
+
+
+def _platform_warning(title: str, text: str) -> str | None:
+    """The interstitial a security service shows instead of a reported page."""
+    t, x = title.lower(), text[:400].lower()
+    if ("phishing" in t and "cloudflare" in t) or "suspected phishing site ahead" in x:
+        return "Cloudflare"
+    if re.search(r"the account that created this link has been|there might be a problem with the requested link|"
+                 r"this link has been (flagged|disabled|blocked)", f"{t} {x}"):
+        return "Bitly"
+    if "deceptive site ahead" in f"{t} {x}":
+        return "Google Safe Browsing"
+    return None
 
 
 def government_network(ctx: Ctx) -> list[Reason]:
@@ -571,6 +625,11 @@ def helpline(ctx: Ctx) -> list[Reason]:
     if cand is None or not cand.extra.phone:
         return []
     listing = (cand.extra.listing_name or "").lower()
+    # A shop or branch ("ETISALAT STORE, E& DMCC MARINA") has its own number; only a listing that
+    # presents itself as customer service is claiming to be the brand's helpline.
+    flagged = "helpline_not_official" in (cand.extra.details.get("flags") or [])
+    if not flagged and not HELPLINE_CLAIM.search(listing):
+        return []
     phone = normalize_uae_phone(cand.extra.phone)
     for brand in ctx.brands:
         if not brand.helplines:
@@ -657,24 +716,36 @@ DOMAIN_BRAND_CLAIM = {"lookalike_domain", "typosquat"}
 TRUST_DISCOUNTS = {"url_model", "old_domain"}
 # The page says it is the official or government site ("Official Government Portal", "الموقع الرسمي").
 OFFICIAL_CLAIM = re.compile(r"\bofficial\b|\bgovernment\b|\bministry\b|رسمي|حكوم|وزارة", re.I)
-# Signs of an active scam: a page showing them is not a mere placeholder, whatever it says.
-ACTIVE_SCAM = PAGE_IMPERSONATION | {"credential_form", "remote_access", "app_download", "cloaking"}
+# Firm, specific evidence of a scam. An unusual URL, a cheap domain ending or a login form are not:
+# plenty of honest sites have them (the hackathon's own submission site had all three).
+HARD_EVIDENCE = PAGE_IMPERSONATION | {"threat_feed", "platform_warning", "remote_access", "app_download", "ai_flagged"}
 # Anything that points to a scam; a live page with none of them is probably an unrelated business.
-SCAM_SIGNS = ACTIVE_SCAM | {
-    "threat_feed", "scam_theme_page", "new_domain", "helpline_mismatch", "cross_domain_redirect", "ai_flagged",
-}
+SCAM_SIGNS = HARD_EVIDENCE | {"scam_theme_page", "helpline_mismatch", "cloaking"}
 # Hard evidence an AI "looks legitimate" answer may not outweigh.
-AI_CANNOT_CLEAR = {"threat_feed", "cloaking", "visual_match", "remote_access", "app_download"}
-# The domain is held but shows no site of its own. There is nothing to take down yet, so it is
-# watched (SUSPICIOUS) instead of reported, unless a phishing feed already lists it.
+AI_CANNOT_CLEAR = {"threat_feed", "platform_warning", "cloaking", "visual_match", "remote_access", "app_download"}
+# The domain shows no site of its own. There is nothing to take down yet, so it is watched
+# (SUSPICIOUS) instead of reported, unless there is hard evidence or the page asks for payment data.
 HOLDING_PAGES = {
     "parked": ("parked-domain", "صفحة نطاق محجوز"),
     "for_sale": ("domain-for-sale", "صفحة بيع النطاق"),
-    "expired": ("expired-domain", "صفحة نطاق منتهي الصلاحية"),
+    "expired": ("expired or suspended domain", "صفحة نطاق منتهي الصلاحية أو موقوف"),
     "coming_soon": ("coming-soon", "صفحة «قريبًا»"),
     "default_host_page": ("default hosting", "صفحة الاستضافة الافتراضية"),
+    "error": ("server-error", "صفحة خطأ في الخادم"),
+    "offline": ("", ""),  # no site answers at that name (fetch error): worded on its own below
 }
 HOLDING_PAGE_CAP = 60
+# With the page in front of us, the page decides: the URL model's view adds at most this much.
+LIVE_PAGE_MODEL_CAP = 20
+# No brand named anywhere (domain, page, Maps listing, AI) and no hard evidence: watched, not reported.
+NO_BRAND_CAP = 60
+
+
+def _cap(reasons: list[Reason], cap: int, code: str, en: str, ar: str) -> list[Reason]:
+    total = sum(r.weight for r in reasons)
+    if total <= cap:
+        return reasons
+    return reasons + [_r(code, cap - total, en, ar, "screenshot" if code == "holding_page" else None)]
 
 
 def combine(ctx: Ctx, reasons: list[Reason]) -> list[Reason]:
@@ -703,6 +774,15 @@ def combine(ctx: Ctx, reasons: list[Reason]) -> list[Reason]:
         reasons = [r for r in reasons if r.code != "url_model" or r.weight >= 0]
     if ctx.notes.get("feed_kind") == "url":
         reasons = [r for r in reasons if r.code != "government_network"]  # reported phishing on a hacked site
+    if ctx.live_page:
+        # The URL model only reads the address. Once the page itself is in front of us, an unusual
+        # address (podium.aevsoft.cc/HackathonMngtWebApp/...) is a hint, not the verdict.
+        reasons = [
+            r.model_copy(update={"weight": LIVE_PAGE_MODEL_CAP})
+            if r.code == "url_model" and r.weight > LIVE_PAGE_MODEL_CAP
+            else r
+            for r in reasons
+        ]
     if codes & PAGE_IMPERSONATION:
         domain_brand = ctx.notes.get("domain_brand")
         brand = next((b for b in ctx.brands if b.id == domain_brand), None)
@@ -723,39 +803,52 @@ def combine(ctx: Ctx, reasons: list[Reason]) -> list[Reason]:
 
     ev = ctx.evidence
     named = next((b for b in ctx.brands if b.id == ctx.notes.get("domain_brand")), None)
-    live_content = ev is not None and not ev.fetch_error and ev.page_kind == "content"
-    if named and live_content and not codes & SCAM_SIGNS:
-        raw = f"{ev.title or ''} {ev.text_excerpt or ''}"
+    if named and ctx.live_page and not codes & SCAM_SIGNS and not ctx.notes.get("asks_payment"):
+        raw = _without_own_address(f"{ev.title or ''} {ev.text_excerpt or ''}", ctx)
         if not any(_name_in_page(n, raw.lower(), raw) for n in _page_names(named)):
-            # A working site that never names the brand and shows no scam sign at all: a foreign
-            # business whose name happens to contain a short brand token ("ICP株式会社" on
-            # icp-online.xyz). Watched as SUSPICIOUS at most, not reported as FRAUD.
+            # A working site that never names the brand and shows no scam sign: a business whose name
+            # happens to be close to the brand's (Aramix Concreto on aramix.site, ICP株式会社 on
+            # icp-online.xyz). The name match was a coincidence, so it and the URL model's view of
+            # that name no longer count.
+            claim = sum(r.weight for r in reasons if r.code in DOMAIN_BRAND_CLAIM)
+            url_view = sum(max(0, r.weight) for r in reasons if r.code == "url_model")
             reasons.append(
                 _r(
                     "unrelated_content",
-                    -40,
+                    -(claim + url_view),
                     f"The site is live but never mentions {named.name_en} and shows no sign of a "
-                    "scam (no login, payment or ID form, no scam wording)",
+                    "scam (no payment or ID form, no scam wording), so the name looks like a coincidence",
                     f"الموقع يعمل لكنه لا يذكر {named.name_ar} ولا يُظهر أي علامة احتيال "
-                    "(لا نموذج دخول أو دفع أو هوية، ولا عبارات احتيال)",
+                    "(لا نموذج دفع أو هوية، ولا عبارات احتيال)، لذا يبدو تشابه الاسم مصادفة",
                     "screenshot",
                 )
             )
+            ctx.brand_target = None
+            ctx.notes["brand_refuted"] = True
 
-    holding = HOLDING_PAGES.get(ev.page_kind or "") if ev and not ev.fetch_error else None
-    if holding and "threat_feed" not in codes and not codes & ACTIVE_SCAM:
-        total = sum(r.weight for r in reasons)
-        if total > HOLDING_PAGE_CAP:
-            kind_en, kind_ar = holding
-            reasons.append(
-                _r(
-                    "holding_page",
-                    HOLDING_PAGE_CAP - total,
-                    f"Shows only a {kind_en} page: the domain is registered but not used yet, "
-                    "so it is watched rather than reported",
-                    f"تعرض {kind_ar} فقط: النطاق مسجّل لكنه غير مستخدم بعد، "
-                    "لذا يبقى تحت المراقبة بدل الإبلاغ عنه",
-                    "screenshot",
-                )
-            )
+    codes = {r.code for r in reasons}
+    firm = bool(codes & HARD_EVIDENCE) or bool(ctx.notes.get("asks_payment"))
+    holding = HOLDING_PAGES.get(ctx.kind or "") if ev else None
+    if holding and not firm:
+        kind_en, kind_ar = holding
+        if ctx.kind == "offline":
+            en = ("No web site answers at this address now, so there is nothing to take down: "
+                  "it is watched rather than reported")
+            ar = "لا يوجد موقع يعمل على هذا العنوان الآن، فلا شيء لإزالته: يبقى تحت المراقبة بدل الإبلاغ عنه"
+        else:
+            en = (f"Shows only a {kind_en} page: there is no site of its own on it now, "
+                  "so it is watched rather than reported")
+            ar = f"تعرض {kind_ar} فقط: لا يوجد عليه موقع فعلي الآن، لذا يبقى تحت المراقبة بدل الإبلاغ عنه"
+        reasons = _cap(reasons, HOLDING_PAGE_CAP, "holding_page", en, ar)
+    brand_claim = ctx.brand_target or ctx.notes.get("global_brand")
+    if not brand_claim and not firm:
+        reasons = _cap(
+            reasons,
+            NO_BRAND_CAP,
+            "no_brand_claim",
+            "Names no brand and shows no firm sign of a scam (no reported phishing, copied page or "
+            "security warning), so it is watched rather than reported",
+            "لا ينتحل أي علامة ولا يُظهر علامة احتيال مؤكدة (لا بلاغ تصيّد ولا صفحة منسوخة ولا تحذير أمني)، "
+            "لذا يبقى تحت المراقبة بدل الإبلاغ عنه",
+        )
     return reasons

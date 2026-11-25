@@ -14,6 +14,10 @@ GENERIC_LABELS = frozenset({
 })
 # Labels whose one-letter misspellings are common words (mohre -> "more"): no typosquat check.
 NO_TYPOSQUAT_LABELS = frozenset({"mohre"})
+# A Maps listing that presents itself as a brand's helpline or customer service (fake helplines hide there).
+HELPLINE_CLAIM = re.compile(
+    r"customer\s*(service|care|support)|help\s*line|hotline|call\s*cent|contact|complain|refund|"
+    r"خدمة العملاء|خط المساعدة|الدعم|مركز الاتصال", re.I)
 
 
 @lru_cache(maxsize=1)

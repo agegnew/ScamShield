@@ -47,12 +47,22 @@ async function checkSite(origin) {
   return result;
 }
 
+// Only the address was judged and it names no brand: plenty of honest small sites have an unusual
+// address, so this stays off the badge (the popup still shows it when the user asks).
+const ADDRESS_ONLY = new Set(["url_model", "suspicious_tld", "free_platform", "shortener", "no_brand_claim"]);
+
+function badgeFor(result) {
+  const addressOnly = result.verdict === "SUSPICIOUS" && !result.brand_target &&
+    (result.reasons || []).every((r) => r.weight <= 0 || ADDRESS_ONLY.has(r.code));
+  return addressOnly ? BADGE.UNKNOWN : BADGE[result.verdict] || BADGE.UNKNOWN;
+}
+
 async function updateBadge(tabId, url) {
   const origin = siteOf(url);
   if (!origin) return chrome.action.setBadgeText({ tabId, text: "" });
   try {
     const result = await checkSite(origin);
-    const badge = BADGE[result.verdict] || BADGE.UNKNOWN;
+    const badge = badgeFor(result);
     await chrome.action.setBadgeText({ tabId, text: badge.text });
     await chrome.action.setBadgeBackgroundColor({ tabId, color: badge.color });
   } catch {

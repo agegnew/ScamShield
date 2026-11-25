@@ -37,6 +37,7 @@ from ..config import (
 )
 from ..contracts import AiReview, Candidate, Evidence, Verdict
 from ..engine.checks import HOLDING_PAGES
+from ..page_kinds import effective_kind
 
 log = logging.getLogger("scamshield.ai_review")
 
@@ -88,7 +89,7 @@ def enabled() -> bool:
 def should_review(evidence: Evidence | None, verdict: Verdict) -> bool:
     if not enabled() or evidence is None or evidence.fetch_error:
         return False
-    if (evidence.page_kind or "") in HOLDING_PAGES:
+    if (effective_kind(evidence, evidence.url) or "") in HOLDING_PAGES:
         return False
     if any(r.code == "official_domain" for r in verdict.reasons):
         return False

@@ -1,6 +1,9 @@
 // ScamShield Guardian form warning.
-// When a page asks for a card, OTP, password or Emirates ID and either names a UAE brand on a domain the brand
-// does not own, or is already flagged by ScamShield, a warning bar appears above the page.
+// When a page asks for a card, OTP, password or Emirates ID on a domain no UAE brand owns, and either
+// presents itself as that brand (its name in the page title, main heading or logo, or in the domain name
+// as ScamShield reads it) or ScamShield rates the site FRAUD, a warning bar appears above the page.
+// A brand merely mentioned in the page text is not enough: "42 Abu Dhabi x Abu Dhabi Police" in the
+// footer of a login page is a partner credit, not a fake police site.
 // Typed values are never read: only the type, name, placeholder and label of each field are looked at.
 
 (() => {
@@ -40,17 +43,42 @@
     return [...kinds];
   }
 
-  function brandNamedHere(brands) {
-    const page = `${document.title} ${(document.body?.innerText || "").slice(0, 4000)}`.toLowerCase();
-    for (const brand of brands) {
-      if (brand.official_domains.some(owns)) return null;  // the brand's own site: never warn
-      const names = [brand.name_en.split(" (")[0], brand.name_ar, ...(brand.domain_tokens || [])]
-        .map((n) => n.replace(/^-|-$/g, "").toLowerCase())
-        .filter((n) => n.length >= 4);
-      const inHost = (brand.domain_tokens || []).some((t) => t.replace(/^-|-$/g, "").length >= 4 && host.includes(t.replace(/^-|-$/g, "")));
-      if (inHost || names.some((n) => page.includes(n))) return brand;
+  // Brand names that are also ordinary words ("noon", Arabic "orders" for Talabat, "communications"
+  // for e&): in a title they say nothing about who runs the page.
+  const GENERIC = new Set(["du", "noon", "نون", "طلبات", "اتصالات", "سالك", "sewa", "parkin", "emirates",
+    "etihad", "economy", "tax", "added", "itc"]);
+  const escapeRe = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  function namesOf(brand) {
+    const full = brand.name_en.split(" (")[0];
+    return [full, full.split(" - ")[0], brand.name_ar]
+      .map((n) => n.trim().toLowerCase())
+      .filter((n) => n.length >= 3 && !GENERIC.has(n));
+  }
+
+  // Whole words only: "tamm" is not in "stammer", "noon" is not in "afternoon".
+  function says(text, name) {
+    const edge = /^[a-z0-9 &.'-]+$/.test(name) ? "a-z0-9" : "\\u0600-\\u06ff";
+    return new RegExp(`(^|[^${edge}])${escapeRe(name)}([^${edge}]|$)`, "i").test(text);
+  }
+
+  // What the page puts at the top: its title, its main headings and its logo's alt text.
+  function headline() {
+    const parts = [document.title];
+    for (const el of document.querySelectorAll("h1, h2, header img[alt], img[alt*='logo' i]")) {
+      parts.push(el.tagName === "IMG" ? el.getAttribute("alt") : el.innerText);
+      if (parts.length > 8) break;
     }
-    return null;
+    return parts.join(" | ").toLowerCase();
+  }
+
+  function brandClaimed(brands, verdict) {
+    if (verdict && verdict.brand_target && verdict.verdict !== "LEGIT") {
+      const byDomain = brands.find((b) => b.id === verdict.brand_target);
+      if (byDomain) return byDomain;  // the domain name itself imitates the brand (the server's matcher)
+    }
+    const top = headline();
+    return brands.find((brand) => namesOf(brand).some((n) => says(top, n))) || null;
   }
 
   const esc = (text) => String(text).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
@@ -114,10 +142,10 @@
         chrome.runtime.sendMessage({ type: "brands" }),
         chrome.runtime.sendMessage({ type: "verdict", origin: location.origin }),
       ]);
-      const brand = brandNamedHere(brands || []);
-      const ownedByBrand = (brands || []).some((b) => b.official_domains.some(owns));
-      const flagged = verdict && (verdict.verdict === "FRAUD" || verdict.verdict === "SUSPICIOUS");
-      if (!ownedByBrand && (brand || flagged)) showBanner({ brand, kinds, verdict: flagged ? verdict : null });
+      if ((brands || []).some((b) => b.official_domains.some(owns))) return;  // a brand's own site: never warn
+      const brand = brandClaimed(brands || [], verdict);
+      const flagged = verdict && verdict.verdict === "FRAUD";
+      if (brand || flagged) showBanner({ brand, kinds, verdict: flagged ? verdict : null });
     } finally {
       checking = false;
     }

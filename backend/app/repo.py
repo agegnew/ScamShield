@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from . import engine as detection
 from .api_models import Case, CaseSummary, Decision
+from .blocklist import blockable, firm_evidence
 from .brands import load_registry, normalize_uae_phone
 from .contracts import Candidate, Evidence, Source, Verdict
 from .db import CaseRow, DecisionRow, utcnow
@@ -68,9 +69,15 @@ class CaseRepo:
         return [self._to_case(r) for r in self.s.scalars(stmt)]
 
     def find_by_url(self, url: str) -> Case | None:
-        """Exact URL first, then any case on the same host or redirecting to it."""
+        """Exact URL first, then any case on the same host or redirecting to it.
+
+        The host fallback is only for a site of its own (aramex-track.info/login matches the case on
+        aramex-track.info). A shared host never inherits one link's verdict: one reported bit.ly
+        link or Google Form says nothing about the others, and a lookalike that redirects to
+        google.com says nothing about Google.
+        """
         row = self.s.scalars(self._query().where(CaseRow.url == url)).first()
-        if row is None:
+        if row is None and blockable(hostname(url)):
             host = hostname(url)
             row = self.s.scalars(
                 self._query()
@@ -164,14 +171,19 @@ class CaseRepo:
         return {s.value: found.get(s.value, 0) for s in Source}
 
     def scam_domains(self) -> list[tuple[str, str | None, int, bool, str]]:
-        """(host, brand, score, analyst-confirmed, case id) for confirmed or FRAUD cases nobody dismissed,
-        one row per host (confirmed first, then the highest score)."""
+        """(host, brand, score, analyst-confirmed, case id) for cases an analyst confirmed, or rated
+        FRAUD on firm evidence (blocklist.firm_evidence) and not dismissed. One row per host
+        (confirmed first, then the highest score)."""
         rows = self.s.execute(
-            select(CaseRow.id, CaseRow.domain, CaseRow.final_host, CaseRow.brand_target, CaseRow.score, CaseRow.status)
-            .where(or_(CaseRow.status == "confirmed", (CaseRow.verdict == "FRAUD") & (CaseRow.status != "dismissed")))
+            select(
+                CaseRow.id, CaseRow.domain, CaseRow.final_host, CaseRow.brand_target, CaseRow.score,
+                CaseRow.status, CaseRow.verdict_json,
+            ).where(or_(CaseRow.status == "confirmed", (CaseRow.verdict == "FRAUD") & (CaseRow.status != "dismissed")))
         ).all()
         best: dict[str, tuple[str, str | None, int, bool, str]] = {}
-        for case_id, domain, final_host, brand, score, status in rows:
+        for case_id, domain, final_host, brand, score, status, verdict_json in rows:
+            if status != "confirmed" and not firm_evidence((verdict_json or {}).get("reasons") or []):
+                continue
             host = (domain or final_host or "").lower().removeprefix("www.")
             entry = (host, brand, score, status == "confirmed", case_id)
             rank = (entry[3], entry[2])  # confirmed beats unconfirmed, then the higher score

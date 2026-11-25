@@ -48,6 +48,32 @@ def _response(
     )
 
 
+ANALYST_DISMISSED = Reason(
+    code="analyst_dismissed",
+    weight=0,
+    text_en="A ScamShield analyst reviewed this site and found no scam",
+    text_ar="راجع محلل في ScamShield هذا الموقع ولم يجد احتيالًا",
+    evidence_ref="decisions",
+)
+ANALYST_CONFIRMED = Reason(
+    code="analyst_confirmed",
+    weight=0,
+    text_en="A ScamShield analyst confirmed this is a scam",
+    text_ar="أكّد محلل في ScamShield أن هذا احتيال",
+    evidence_ref="decisions",
+)
+
+
+def _from_case(kind: str, raw: str, case) -> CheckResponse:
+    """A stored case's verdict, with the analyst's decision on top of the engine's."""
+    v = case.verdict
+    if case.status == "dismissed":
+        return _response(kind, raw, "LEGIT", 0, None, [ANALYST_DISMISSED])
+    if case.status == "confirmed":
+        return _response(kind, raw, "FRAUD", max(v.score, 70), v.brand_target, [ANALYST_CONFIRMED, *v.reasons])
+    return _response(kind, raw, v.verdict.value, v.score, v.brand_target, v.reasons)
+
+
 @router.post("/check", response_model=CheckResponse)
 def check(body: CheckRequest, repo: CaseRepo = Depends(get_repo)) -> CheckResponse:
     """Public checker: paste a link or a phone number. No login needed."""
@@ -60,8 +86,7 @@ def check(body: CheckRequest, repo: CaseRepo = Depends(get_repo)) -> CheckRespon
             return _response("phone", raw, "LEGIT", 0, brand.id, [official_helpline_reason(brand)])
         case = repo.find_by_phone(normalize_uae_phone(raw))
         if case:
-            v = case.verdict
-            return _response("phone", raw, v.verdict.value, v.score, v.brand_target, v.reasons)
+            return _from_case("phone", raw, case)
         return _response("phone", raw, "UNKNOWN", None, None, [])
 
     try:
@@ -69,7 +94,9 @@ def check(body: CheckRequest, repo: CaseRepo = Depends(get_repo)) -> CheckRespon
     except InvalidURL as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     case = repo.find_by_url(url)
-    v = case.verdict if case else detection.score(url)
+    if case:
+        return _from_case("url", raw, case)
+    v = detection.score(url)
     return _response("url", raw, v.verdict.value, v.score, v.brand_target, v.reasons)
 
 

@@ -21,6 +21,7 @@ from ..brands import load_registry, official_brand_for_domain
 from ..config import USE_FEEDS
 from ..contracts import Candidate, Evidence, Label, Verdict
 from ..messages import official_domain_reason
+from ..page_kinds import effective_kind
 from ..themes import load_themes
 from ..urls import hostname, registrable_domain
 from . import model
@@ -96,6 +97,7 @@ def score(
         platform=platform,
         evidence=evidence,
         candidate=candidate,
+        kind=effective_kind(evidence, url) if evidence else None,
         brands=load_registry().brands,
         themes=load_themes().themes,
         use_feeds=USE_FEEDS if use_feeds is None else use_feeds,
