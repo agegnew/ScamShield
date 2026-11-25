@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from . import engine as detection
 from .api_models import Case, CaseSummary, Decision
-from .blocklist import blockable, firm_evidence
+from .blocklist import blockable, firm_evidence, gone
 from .brands import load_registry, normalize_uae_phone
 from .contracts import Candidate, Evidence, Source, Verdict
 from .db import CaseRow, DecisionRow, utcnow
@@ -177,12 +177,14 @@ class CaseRepo:
         rows = self.s.execute(
             select(
                 CaseRow.id, CaseRow.domain, CaseRow.final_host, CaseRow.brand_target, CaseRow.score,
-                CaseRow.status, CaseRow.verdict_json,
+                CaseRow.status, CaseRow.verdict_json, CaseRow.evidence_json,
             ).where(or_(CaseRow.status == "confirmed", (CaseRow.verdict == "FRAUD") & (CaseRow.status != "dismissed")))
         ).all()
         best: dict[str, tuple[str, str | None, int, bool, str]] = {}
-        for case_id, domain, final_host, brand, score, status, verdict_json in rows:
-            if status != "confirmed" and not firm_evidence((verdict_json or {}).get("reasons") or []):
+        for case_id, domain, final_host, brand, score, status, verdict_json, evidence_json in rows:
+            if status != "confirmed" and (
+                not firm_evidence((verdict_json or {}).get("reasons") or []) or gone(evidence_json)
+            ):
                 continue
             host = (domain or final_host or "").lower().removeprefix("www.")
             entry = (host, brand, score, status == "confirmed", case_id)

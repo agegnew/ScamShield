@@ -69,3 +69,21 @@ def test_analyst_decisions_win(session):
     _case(repo, "http://aramex-track.info/", 100, "url_model", "lookalike_domain", status="confirmed")
     _case(repo, "http://fly-dubai.co/", 100, "platform_warning", status="dismissed")
     assert blocked_hosts(session) == {"aramex-track.info"}
+
+
+def test_a_reported_page_that_is_gone_is_not_blocked(session):
+    from app.contracts import Evidence
+
+    repo = CaseRepo(session)
+    gone = Evidence(url="https://rallysteelworks.ae/fonts/", final_url="https://rallysteelworks.ae/fonts/",
+                    title="Page Not Found (404) | Rally Steel Works", page_kind="error", fetched_at=NOW)
+    case = _case(repo, "https://rallysteelworks.ae/fonts/", 70, "threat_feed")
+    repo.save_analysis(case.id, gone, case.verdict)
+    offline = Evidence(url="https://2h.ae/pPGKr", fetch_error="Offline: cannot resolve 2h.ae", fetched_at=NOW)
+    case = _case(repo, "https://2h.ae/pPGKr", 84, "threat_feed")
+    repo.save_analysis(case.id, offline, case.verdict)
+    live = Evidence(url="https://sunnysoldesign.ae/calkie/", final_url="https://sunnysoldesign.ae/calkie/",
+                    title="Roundcube Webmail", page_kind="content", fetched_at=NOW)
+    case = _case(repo, "https://sunnysoldesign.ae/calkie/", 95, "threat_feed")
+    repo.save_analysis(case.id, live, case.verdict)
+    assert blocked_hosts(session) == {"sunnysoldesign.ae"}

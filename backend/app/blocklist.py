@@ -4,7 +4,7 @@ A block replaces the whole site with a warning, so it needs more than a high sco
 listed when an analyst confirmed its case, or when the engine rated it FRAUD on firm evidence nobody
 dismissed: a phishing feed lists it, a security service already warns about it, the page itself
 poses as the brand or copies its look, it pushes a remote-access app or APK, or the AI review is
-confident it is a scam. A FRAUD rating from the address alone (a lookalike name the fetcher could
+confident it is a scam, and the last visit still found it online. A FRAUD rating from the address alone (a lookalike name the fetcher could
 not open) or from an unusual URL with a login form is not enough: on 25 Nov 2026 that blocked the
 hackathon's own submission site.
 
@@ -14,6 +14,9 @@ page on them. A scam *on* a platform (tamm-pay.pages.dev) is still listed.
 """
 
 from .brands import official_brand_for_domain
+from .contracts import Evidence
+from .engine.checks import HOLDING_PAGES
+from .page_kinds import effective_kind
 from .engine.lists import USER_CONTENT_HOSTS, platform_of, top_domains
 from .urls import registrable_domain
 
@@ -34,6 +37,16 @@ def firm_evidence(reasons: list[dict]) -> bool:
         if r.get("code") in FIRM or (r.get("code") == "ai_flagged" and (r.get("weight") or 0) >= AI_SURE):
             return True
     return False
+
+
+def gone(evidence_json: dict | None) -> bool:
+    """The last visit found nothing harmful online any more: the site does not resolve, or shows an
+    error, parked or for-sale page (a phishing kit removed from a hacked business site leaves a 404;
+    blocking the business's whole site after that would be the false positive)."""
+    if not evidence_json:
+        return False
+    evidence = Evidence.model_validate(evidence_json)
+    return effective_kind(evidence, evidence.url) in HOLDING_PAGES
 
 
 def blockable(host: str) -> bool:
