@@ -101,7 +101,8 @@
       "name_ar": "وزارة الداخلية",
       "category": "government",
       "official_domains": [
-        "moi.gov.ae"
+        "moi.gov.ae",
+        "xn--mgbagtd9jd2c.xn--mgbaam7a8h"
       ],
       "helplines": [
         "8005000",
@@ -572,7 +573,8 @@
       "category": "bank",
       "official_domains": [
         "mashreq.com",
-        "mashreqbank.com"
+        "mashreqbank.com",
+        "mashreqalislami.com"
       ],
       "helplines": [
         "044244444"
@@ -635,7 +637,8 @@
       "name_ar": "بنك رأس الخيمة الوطني",
       "category": "bank",
       "official_domains": [
-        "rakbank.ae"
+        "rakbank.ae",
+        "rakbankonline.ae"
       ],
       "helplines": [
         "042130000"
@@ -669,7 +672,8 @@
       "category": "transport",
       "official_domains": [
         "itc.gov.ae",
-        "admobility.gov.ae"
+        "admobility.gov.ae",
+        "qmobility.ae"
       ],
       "helplines": [
         "800850"

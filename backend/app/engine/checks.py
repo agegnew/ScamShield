@@ -5,6 +5,7 @@ Weights are points added to the 0-100 risk score (negative = lowers risk).
 
 import os
 import re
+import unicodedata
 from dataclasses import dataclass, field
 
 from ..brand_match import match_token
@@ -19,6 +20,7 @@ from .lists import (
     SUSPICIOUS_TLDS,
     URL_SHORTENERS,
     USER_CONTENT_HOSTS,
+    VENDOR_TENANT_DOMAINS,
     top_domains,
 )
 
@@ -173,10 +175,28 @@ def threat_feed(ctx: Ctx) -> list[Reason]:
 CHAT_LINK_HOSTS = {"wa.me", "api.whatsapp.com", "chat.whatsapp.com", "t.me", "telegram.me"}
 
 
+# Added by Google, ad networks and mailers (srsltid on every Google Shopping result): they say
+# nothing about the site, and their random values read as phishing tokens to the URL model.
+TRACKING_PARAM = re.compile(r"^(utm_\w+|srsltid|gclid|gbraid|wbraid|fbclid|msclkid|yclid|_gl|mc_cid|mc_eid|igshid)$", re.I)
+
+
+def without_tracking(url: str) -> str:
+    """The URL minus tracking parameters; everything else stays byte for byte as it was."""
+    base, sep, rest = url.partition("?")
+    if not sep:
+        return url
+    query, hash_, fragment = rest.partition("#")
+    pieces = query.split("&")
+    kept = [p for p in pieces if not TRACKING_PARAM.match(p.split("=", 1)[0])]
+    if len(kept) == len(pieces):
+        return url
+    return base + ("?" + "&".join(kept) if kept else "") + hash_ + fragment
+
+
 def url_model(ctx: Ctx) -> list[Reason]:
     if ctx.host.removeprefix("www.") in CHAT_LINK_HOSTS:
         return []
-    p = model.phishing_probability(ctx.url)
+    p = model.phishing_probability(without_tracking(ctx.url))
     if p is None:
         return []
     ctx.notes["url_model_p"] = p
@@ -191,7 +211,21 @@ def url_model(ctx: Ctx) -> list[Reason]:
     return [_r("url_model", weight, en, ar, "url")]
 
 
+# Government domains (portal.moi.gov.qa, any .gov.ae) cannot be registered by a scammer: Qatar's
+# Ministry of Interior is not imitating the UAE's.
+GOVERNMENT_HOST = re.compile(r"\.(gov|mil)(\.[a-z]{2})?$")
+
+
+def _own_name_space(host: str) -> bool:
+    """A host whose name a scammer cannot pick: a government domain or a recruitment platform tenant."""
+    from ..urls import registrable_domain as _reg
+
+    return bool(GOVERNMENT_HOST.search(host)) or _reg(host) in VENDOR_TENANT_DOMAINS
+
+
 def brand_lookalike(ctx: Ctx) -> list[Reason]:
+    if any(_own_name_space(h) for h in (ctx.host, ctx.final_host) if h):
+        return []
     by_id = {b.id: b for b in ctx.brands}
     for host in dict.fromkeys((ctx.host, ctx.final_host)):
         hit = match_token(host)
@@ -271,10 +305,30 @@ def brand_lookalike(ctx: Ctx) -> list[Reason]:
     return []
 
 
+def _lookalike_letters(host: str) -> bool:
+    """Punycode used to fake a Latin name (pаypal with a Cyrillic а), as opposed to a name written in
+    its own script (الداخلية.امارات, the Ministry of Interior's Arabic domain)."""
+    for label in host.split("."):
+        if not label.startswith("xn--"):
+            continue
+        try:
+            text = label.encode("ascii").decode("idna")
+        except (UnicodeError, ValueError):
+            return True
+        scripts = set()
+        for ch in text:
+            if ch.isalpha():
+                name = unicodedata.name(ch, "")
+                scripts.add(name.split(" ")[0])
+        if {"CYRILLIC", "GREEK"} & scripts or ("LATIN" in scripts and len(scripts) > 1):
+            return True
+    return False
+
+
 def url_shape(ctx: Ctx) -> list[Reason]:
     reasons = []
     host = ctx.host
-    if "xn--" in host:
+    if "xn--" in host and _lookalike_letters(host):
         reasons.append(
             _r(
                 "punycode",
@@ -336,6 +390,11 @@ FORM_FIELD_WORDS = {
 }
 # Themes whose single words are already specific enough (anydesk, teamviewer, .apk).
 DISTINCTIVE_THEMES = {"remote_access"}
+# ...except these: every article about the Salik or RTA app says "download the app".
+GENERIC_APP_PHRASES = {
+    "download the app", "install the app", "security app", "screen share",
+    "حمّل التطبيق", "تحميل التطبيق", "ثبّت التطبيق", "مشاركة الشاشة", "تطبيق الحماية",
+}
 
 
 def _theme_hits(text: str, theme: ScamTheme, url_mode: bool) -> str | None:
@@ -361,12 +420,18 @@ def _theme_hits(text: str, theme: ScamTheme, url_mode: bool) -> str | None:
     hits = list(dict.fromkeys(hits))
     if not hits:
         return None
+    if theme.id in DISTINCTIVE_THEMES:
+        # A named tool (AnyDesk, an .apk) is enough; generic app wording needs a second hit.
+        specific = next((h for h in hits if h not in GENERIC_APP_PHRASES), None)
+        if specific:
+            return specific
+        return f"{hits[0]} / {hits[1]}" if len(hits) >= 2 else None
     phrase = next((h for h in hits if " " in h.strip()), None)
     if phrase:
         return phrase
     if len(hits) >= 2:
         return f"{hits[0]} / {hits[1]}"
-    return hits[0] if theme.id in DISTINCTIVE_THEMES else None
+    return None
 
 
 def scam_themes_in_url(ctx: Ctx) -> list[Reason]:
@@ -495,7 +560,7 @@ def page_signals(ctx: Ctx) -> list[Reason]:
     # that is not the page presenting itself as the brand.
     claims_allowed = (ctx.kind or "") not in HOLDING_PAGES
     for brand in ctx.brands:
-        if not claims_allowed or _is_official(brand, ctx.final_host):
+        if not claims_allowed or _is_official(brand, ctx.final_host) or _own_name_space(ctx.final_host):
             continue
         names = _page_names(brand)
         hit = next((n for n in names if _name_in_page(n, title_raw.lower(), title_raw)), None)
@@ -582,6 +647,28 @@ def _platform_warning(title: str, text: str) -> str | None:
     if "deceptive site ahead" in f"{t} {x}":
         return "Google Safe Browsing"
     return None
+
+
+def search_rank(ctx: Ctx) -> list[Reason]:
+    """An organic Google result for the brand's own search. Scam pages buy ads (search_ad) far more
+    often than they rank on the first page, so this counts a little in the site's favour, unless
+    there is hard evidence (combine() then drops it)."""
+    cand = ctx.candidate
+    if cand is None or cand.source.value != "search":
+        return []
+    position = cand.extra.details.get("position")
+    if not isinstance(position, int) or position > 10:
+        return []
+    query = cand.query or ""
+    return [
+        _r(
+            "organic_search",
+            -20,
+            f"Ranks #{position} in Google's organic results for '{query}' (scam pages usually buy ads instead)",
+            f"يظهر في المرتبة {position} من نتائج Google العادية للبحث «{query}» (صفحات الاحتيال تشتري الإعلانات عادةً)",
+            "candidate.extra.details",
+        )
+    ]
 
 
 def government_network(ctx: Ctx) -> list[Reason]:
@@ -714,6 +801,7 @@ CHECKS = (
     url_shape,
     scam_themes_in_url,
     page_signals,
+    search_rank,
     government_network,
     domain_age,
     helpline,
@@ -766,6 +854,9 @@ def combine(ctx: Ctx, reasons: list[Reason]) -> list[Reason]:
     """Rules that read several checks at once. Weights stay additive: the score is their sum."""
     codes = {r.code for r in reasons}
 
+    if codes & HARD_EVIDENCE:
+        reasons = [r for r in reasons if r.code != "organic_search"]  # ranking excuses no hard evidence
+        codes.discard("organic_search")
     if codes & AI_CANNOT_CLEAR:
         # A phishing-feed hit, cloaking, a copied official template or a pushed app outweighs an
         # AI answer that the page looks legitimate.

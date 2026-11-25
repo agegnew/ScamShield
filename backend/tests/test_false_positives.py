@@ -322,3 +322,83 @@ def test_one_reported_page_does_not_list_a_popular_site(monkeypatch):
     assert "threat_feed" not in codes(engine.score("https://docs.google.com/forms/d/e/other/viewform", use_feeds=True))
     assert "threat_feed" not in codes(engine.score("https://www.google.com/", use_feeds=True))
     assert "threat_feed" in codes(engine.score("https://evil-site.xyz/other-page", use_feeds=True))  # its own site
+
+
+# ---- what the search radar found on Google (25 Nov run) -----------------------------------
+
+
+def search_result(url, query, position=3, ad=False):
+    return Candidate(
+        url=url, source=Source.SEARCH_AD if ad else Source.SEARCH, query=query, discovered_at=NOW,
+        extra=CandidateExtra(details={"position": position, "lang": "en"}),
+    )
+
+
+def test_official_sites_found_on_google_are_official():
+    for url in (
+        "https://retail.rakbankonline.ae/DigiRetailWeb/auth",  # RAKBANK internet banking
+        "https://xn--mgbagtd9jd2c.xn--mgbaam7a8h/en/",  # الداخلية.امارات, the Ministry of Interior
+        "https://darb.qmobility.ae/RucWeb/faq",  # Q Mobility runs the Darb toll gates
+        "https://www.mashreqalislami.com/en/uae/",  # Mashreq Al Islami
+    ):
+        assert engine.score(url).verdict == Label.LEGIT, url
+
+
+def test_a_foreign_government_site_is_not_a_uae_lookalike():
+    assert "lookalike_domain" not in codes(engine.score("https://portal.moi.gov.qa/"))
+
+
+def test_tracking_parameters_do_not_count_as_phishing(url_model, monkeypatch):
+    seen = []
+    monkeypatch.setattr(model, "phishing_probability", lambda url: seen.append(url) or 0.2)
+    engine.score("https://yougotagift.com/shop/?srsltid=AYCX9vIOX2ltBb14&utm_source=x&gclid=abc&page=2")
+    assert seen == ["https://yougotagift.com/shop/?page=2"]
+
+
+def test_an_arabic_domain_name_is_not_a_punycode_trick():
+    assert "punycode" not in codes(engine.score("https://xn--mgbh0fb.xn--mgbaam7a8h/"))  # مثال.امارات
+    assert "punycode" in codes(engine.score("https://xn--pypal-4ve.com/"))  # pаypal with a Cyrillic а
+
+
+def test_ranking_in_googles_organic_results_counts_in_a_sites_favour(url_model):
+    url_model(0.85)
+    url = "https://www.giftcard.ae/"
+    organic = engine.score(url, candidate=search_result(url, "gift card UAE"))
+    ad = engine.score(url, candidate=search_result(url, "gift card UAE", ad=True))
+    assert "organic_search" in codes(organic) and "organic_search" not in codes(ad)
+    assert organic.score < ad.score
+
+
+def test_ranking_does_not_excuse_hard_evidence(url_model, monkeypatch):
+    from app.engine import feeds
+
+    monkeypatch.setattr(feeds, "load", lambda: feeds.FeedIndex(urls={"https://seo-scam.xyz/pay": "PhishTank"}))
+    url = "https://seo-scam.xyz/pay"
+    v = engine.score(url, candidate=search_result(url, "salik pay fine"), use_feeds=True)
+    assert "organic_search" not in codes(v) and v.verdict == Label.FRAUD
+
+
+def test_a_brand_careers_portal_on_a_recruitment_platform_is_not_impersonation(url_model):
+    url = "https://emiratesnbd.talentera.com/en/login/"
+    ev = page(url, title="Log Into Your Account - Emirates NBD",
+              text_excerpt="Log in to your Account Forgot your password? © Emirates NBD All Right Reserved "
+                           "Company Dashboard Search Jobs Post Your CV", forms=[LOGIN])
+    v = engine.score(url, evidence=ev)
+    assert v.verdict != Label.FRAUD
+    assert not {"lookalike_domain", "brand_on_wrong_domain"} & codes(v)
+
+
+def test_an_article_saying_download_the_app_is_not_a_remote_access_scam():
+    url = "https://eyeofemirates.net/979/salik/"
+    ev = page(url, title="دفع مخالفات سالك دبي أون لاين", text_excerpt="يمكنك تحميل التطبيق من المتجر ثم الدخول إلى حسابك")
+    assert "remote_access" not in codes(engine.score(url, evidence=ev))
+    scam = page(url, title="Refund", text_excerpt="To receive your refund install AnyDesk and share the code")
+    assert "remote_access" in codes(engine.score(url, evidence=scam))
+
+
+def test_a_query_without_tracking_parameters_is_left_exactly_as_it_was():
+    from app.engine.checks import without_tracking
+
+    url = "https://dashboard.telemetrydeck.com/register?source={{item.slug.current}}&email=a@b.c&amp;u=x"
+    assert without_tracking(url) == url
+    assert without_tracking("https://a.com/x?utm_source=y&email=a@b.c") == "https://a.com/x?email=a@b.c"

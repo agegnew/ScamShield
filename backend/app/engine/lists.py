@@ -74,6 +74,14 @@ GLOBAL_BRANDS: dict[str, tuple[str, ...]] = {
 }
 
 # Hosts on big trusted domains that serve user-made content (forms, sites, files).
+# Recruitment and HR platforms that give each employer its own subdomain (emiratesnbd.talentera.com is
+# Emirates NBD's careers portal). The vendor sets the tenant up under contract, unlike a website builder
+# where anyone signs up, so a brand name there is the brand's own account, not a lookalike.
+VENDOR_TENANT_DOMAINS = {
+    "talentera.com", "myworkdayjobs.com", "successfactors.com", "successfactors.eu", "taleo.net",
+    "icims.com", "greenhouse.io", "lever.co", "smartrecruiters.com",
+}
+
 USER_CONTENT_HOSTS = {
     "sites.google.com", "docs.google.com", "drive.google.com", "forms.gle", "storage.googleapis.com",
     "forms.office.com", "onedrive.live.com", "1drv.ms", "dropbox.com", "www.dropbox.com",

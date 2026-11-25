@@ -4,15 +4,15 @@
   "model_version": "engine-1/url-model",
   "n_fraud": 3000,
   "n_legit": 8134,
-  "tp": 2321,
+  "tp": 2320,
   "fp": 128,
   "tn": 8006,
-  "fn": 679,
+  "fn": 680,
   "precision": 0.9477,
-  "recall": 0.7737,
+  "recall": 0.7733,
   "fpr": 0.0157,
-  "f1": 0.8519,
-  "evaluated_at": "2026-11-25T04:51:01.516105+00:00",
+  "f1": 0.8517,
+  "evaluated_at": "2026-11-25T05:03:00.371942+00:00",
   "by_source": {
     "crawl_deep": {
       "correct": 7776,
@@ -31,7 +31,7 @@
       "total": 903
     },
     "phiusiil": {
-      "correct": 937,
+      "correct": 936,
       "total": 1353
     },
     "uae_official": {
