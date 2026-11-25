@@ -4,34 +4,34 @@
   "model_version": "engine-1/url-model",
   "n_fraud": 3000,
   "n_legit": 8134,
-  "tp": 2334,
-  "fp": 145,
-  "tn": 7989,
-  "fn": 666,
-  "precision": 0.9415,
-  "recall": 0.778,
-  "fpr": 0.0178,
-  "f1": 0.852,
-  "evaluated_at": "2026-11-24T09:55:02.970488+00:00",
+  "tp": 2321,
+  "fp": 128,
+  "tn": 8006,
+  "fn": 679,
+  "precision": 0.9477,
+  "recall": 0.7737,
+  "fpr": 0.0157,
+  "f1": 0.8519,
+  "evaluated_at": "2026-11-25T04:51:01.516105+00:00",
   "by_source": {
     "crawl_deep": {
-      "correct": 7759,
+      "correct": 7776,
       "total": 7904
     },
     "openphish": {
-      "correct": 249,
+      "correct": 247,
       "total": 296
     },
     "phishtank": {
-      "correct": 350,
+      "correct": 359,
       "total": 448
     },
     "phishing_db": {
-      "correct": 785,
+      "correct": 778,
       "total": 903
     },
     "phiusiil": {
-      "correct": 950,
+      "correct": 937,
       "total": 1353
     },
     "uae_official": {

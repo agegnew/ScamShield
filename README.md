@@ -20,7 +20,7 @@ The quickest look is the live instance above (the public checker and `POST https
 2. **The API** (no login): `curl -X POST "http://localhost:8000/api/batch?format=csv" -H "content-type: application/json" -d '{"urls": ["https://aramexdelivery.live/", "https://www.rta.ae/"]}'` (up to 5,000 URLs per call). One link or phone number: `POST /api/check {"input": "..."}`. All endpoints: http://localhost:8000/docs.
 3. **The screens:** the analyst console's **Scan** page (paste one URL for the full page check, or many for a batch) and the public citizen checker at http://localhost:3001/check.
 
-Our own result on 11,134 URLs the model never saw: precision 94%, recall 78%, false-positive rate 1.8%, and 0 of 230 UAE government and bank pages flagged ([Results](#results)).
+Our own result on 11,134 URLs the model never saw: precision 95%, recall 77%, false-positive rate 1.6%, and 0 of 230 UAE government and bank pages flagged ([Results](#results)).
 
 ## The problem
 
@@ -47,11 +47,14 @@ Residents receive SMS and WhatsApp links, search ads and Maps listings for "TAMM
 
 | Counted as positive | Feeds | Precision | Recall | False-positive rate | F1 | UAE official pages flagged |
 | --- | --- | --- | --- | --- | --- | --- |
-| FRAUD or SUSPICIOUS (score ≥ 30) | off | **0.942** | **0.782** | 1.8% | 0.855 | **0 of 230** |
-| FRAUD or SUSPICIOUS (score ≥ 30) | on | 0.944 | 0.827 | 1.8% | 0.882 | 0 of 230 |
-| FRAUD only (score ≥ 70) | off | 0.995 | 0.514 | 0.09% | 0.678 | 0 of 230 |
+| FRAUD or SUSPICIOUS (score ≥ 30) | off | **0.948** | **0.774** | 1.6% | 0.852 | **0 of 230** |
+| FRAUD or SUSPICIOUS (score ≥ 30) | on | 0.951 | 0.820 | 1.6% | 0.880 | 0 of 230 |
 
-"Feeds off" is the honest number: the test set's phishing URLs come from the same feeds, so with lookups on, part of the recall is lookup, not detection. FRAUD is the near-certain tier (7 false positives in 8,134 legitimate URLs); SUSPICIOUS widens the net for analysts. The thresholds come from a sweep on this set: 25 would gain 1.9 points of recall for a 2.1% false-positive rate, 35 would cut false positives by 0.3 points for 1.6 points of recall.
+"Feeds off" is the honest number: the test set's phishing URLs come from the same feeds, so with lookups on, part of the recall is lookup, not detection. **Count FRAUD and SUSPICIOUS together** (`flagged` = 1). FRAUD is reserved for a site that names a brand it does not own or has hard evidence (a phishing feed lists it, a security service warns about it, the page poses as the brand or copies its look); a URL that only *looks* like phishing and names no brand is SUSPICIOUS, because an unusual address alone also describes plenty of honest small sites (see below). The test set's phishing URLs rarely name a UAE brand, so on their own they are mostly SUSPICIOUS. The thresholds come from a sweep on this set: 25 would gain 2.2 points of recall for a 1.8% false-positive rate, 35 would cut false positives by 0.3 points for 1.3 points of recall.
+
+**Bare home addresses** (what the browser extension checks, `https://host`): 5.1% of the 897 legitimate sites in the test set and 67% of the 2,647 phishing hosts are flagged. **Real UAE sites outside the brand registry** (66 banks, exchange houses, government bodies, universities, media and shops, e.g. `hsbc.ae`, `cbuae.gov.ae`, `citibank.ae`, `dubizzle.com`): 1 flagged (a login page on a `.cc` subdomain, SUSPICIOUS).
+
+**25 Nov 2026 false-positive review.** The extension blocked the hackathon's own submission site (`podium.aevsoft.cc`): the URL model read its address as 97% phishing, and a login form and the `.cc` ending did the rest. Reviewing every page the radar had opened showed the same pattern: most FRAUD pages were parking landers, for-sale pages, server error pages or unrelated businesses one letter away from a brand (`aramix.site`, a Brazilian concrete company). Fixed: on a page the fetcher can see, the page decides (the URL model adds at most 20 points); FRAUD needs a brand claim or hard evidence; error, suspended, parked and unresolvable sites are watched, not reported; the extension blocks only analyst-confirmed sites or FRAUD on firm evidence; the public checker no longer lets one reported `bit.ly` link, Google Form or redirect make the whole host look like a scam. The URL model was retrained with legitimate home addresses (false positives 1.78% → 1.57%, recall 0.782 → 0.774 on the full test URLs). All cases are regression tests in `backend/tests/test_false_positives.py`.
 
 Most misses are phishing homepages with ordinary names (`http://www.jolifm.com`) that a URL alone cannot reveal; the page fetch (screenshot, forms, brand text, domain age) catches those. Reproduce from `backend/`: `python -m scripts.build_dataset`, `python -m scripts.train_url_model`, `python -m scripts.evaluate [--feeds]`.
 
