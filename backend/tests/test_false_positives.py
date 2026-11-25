@@ -304,3 +304,21 @@ def test_a_global_brand_on_its_own_country_domain_is_not_a_lookalike():
 
 def test_emirates_nbd_egypt_is_official():
     assert engine.score("https://www.emiratesnbd.com.eg/").verdict == Label.LEGIT
+
+
+# ---- phishing feeds -----------------------------------------------------------------------
+
+
+def test_one_reported_page_does_not_list_a_popular_site(monkeypatch):
+    from app.engine import feeds
+
+    reported = "https://docs.google.com/forms/d/e/evil/viewform"
+    index = feeds.FeedIndex(
+        urls={reported: "PhishTank", "https://evil-site.xyz/login": "PhishTank"},
+        hosts={"docs.google.com": "PhishTank", "www.google.com": "PhishTank", "evil-site.xyz": "PhishTank"},
+    )
+    monkeypatch.setattr(feeds, "load", lambda: index)
+    assert "threat_feed" in codes(engine.score(reported, use_feeds=True))  # the reported form itself
+    assert "threat_feed" not in codes(engine.score("https://docs.google.com/forms/d/e/other/viewform", use_feeds=True))
+    assert "threat_feed" not in codes(engine.score("https://www.google.com/", use_feeds=True))
+    assert "threat_feed" in codes(engine.score("https://evil-site.xyz/other-page", use_feeds=True))  # its own site

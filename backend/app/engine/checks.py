@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from ..brand_match import match_token
 from ..brands import GENERIC_LABELS, HELPLINE_CLAIM, NO_TYPOSQUAT_LABELS, normalize_uae_phone
 from ..contracts import Brand, Candidate, Evidence, Reason, ScamTheme
-from ..urls import domain_label
+from ..urls import domain_label, registrable_domain
 from . import feeds, model
 from .lists import (
     GLOBAL_BRANDS,
@@ -18,6 +18,7 @@ from .lists import (
     GOVERNMENT_NETWORKS,
     SUSPICIOUS_TLDS,
     URL_SHORTENERS,
+    USER_CONTENT_HOSTS,
     top_domains,
 )
 
@@ -149,7 +150,10 @@ def threat_feed(ctx: Ctx) -> list[Reason]:
     if not ctx.use_feeds:
         return []
     for url, host in {(ctx.url, ctx.host), (ctx.final_url, ctx.final_host)}:
-        hit = feeds.lookup(url, host, bool(ctx.platform))
+        # A host entry only counts for a site of its own: one reported Google Form, Dropbox file or
+        # bit.ly link puts docs.google.com, dropbox.com or bit.ly in the feed's host list.
+        shared = bool(ctx.platform) or host in USER_CONTENT_HOSTS or registrable_domain(host) in top_domains()
+        hit = feeds.lookup(url, host, shared)
         if hit:
             kind, feed = hit
             ctx.notes["feed_kind"] = kind
