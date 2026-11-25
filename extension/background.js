@@ -3,7 +3,7 @@
 // - Keeps a local list of confirmed scam domains and blocks them before the page loads (declarativeNetRequest).
 // - Caches the UAE brand registry for the form warning in content.js.
 
-const DEFAULT_API = "http://localhost:8000";
+const DEFAULT_API = "https://scamshield.42studio.fit";
 const VERDICT_TTL_MS = 30 * 60 * 1000;
 const SYNC_MINUTES = 10;
 const BADGE = {

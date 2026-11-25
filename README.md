@@ -145,7 +145,7 @@ npm run dev                      # http://localhost:3001
 - Another API address: copy `frontend/.env.example` to `frontend/.env.local` and set `NEXT_PUBLIC_API_URL`.
 - Screens, conventions and checks: [frontend/README.md](frontend/README.md).
 
-**Browser extension (ScamShield Guardian):** with the API running, open `chrome://extensions` (or `edge://extensions`), turn on **Developer mode**, click **Load unpacked** and choose the `extension/` folder. Its Settings page holds the API address (default `http://localhost:8000`) and the website address for "View details" (default `http://localhost:3001`). The same folder is offered as a download on http://localhost:3001/extension. Details: [extension/README.md](extension/README.md).
+**Browser extension (ScamShield Guardian):** with the API running, open `chrome://extensions` (or `edge://extensions`), turn on **Developer mode**, click **Load unpacked** and choose the `extension/` folder. It talks to the live instance (`https://scamshield.42studio.fit`) by default; for a local run, set its Settings to `http://localhost:8000` (API) and `http://localhost:3001` (website). The same folder is offered as a download on the website's `/extension` page. Details: [extension/README.md](extension/README.md).
 
 **API contract for the dashboard:** [docs/api/README.md](docs/api/README.md), with TypeScript types and sample JSON for every endpoint.
 

@@ -14,7 +14,7 @@ Brings ScamShield into the browser. Works in Chrome, Edge and Brave on desktop (
 
 1. Start the backend (see the main README).
 2. Open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked** and choose this `extension/` folder.
-3. In the extension's **Settings**, set the ScamShield server (default `http://localhost:8000`) and the website for *View details* (default `http://localhost:3001`), then click **Save and sync**.
+3. In the extension's **Settings**, the ScamShield server and the website for *View details* both default to the live instance, `https://scamshield.42studio.fit`. For a local run set them to `http://localhost:8000` and `http://localhost:3001`, then click **Save and sync**.
 
 ## How it talks to the backend
 

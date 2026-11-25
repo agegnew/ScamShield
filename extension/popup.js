@@ -35,8 +35,8 @@ const ICON = {
   arrow: SVG('<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>', 2.5),
 };
 
-const DEFAULT_API = "http://localhost:8000";
-const DEFAULT_SITE = "http://localhost:3001";
+const DEFAULT_API = "https://scamshield.42studio.fit";
+const DEFAULT_SITE = "https://scamshield.42studio.fit";
 
 let lang = chrome.i18n.getUILanguage().startsWith("ar") ? "ar" : "en";
 let target = null; // the address being judged

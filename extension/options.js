@@ -12,8 +12,8 @@ async function showSync() {
 }
 
 chrome.storage.local.get(["apiBase", "siteBase"]).then(({ apiBase, siteBase }) => {
-  input.value = apiBase || "http://localhost:8000";
-  site.value = siteBase || "http://localhost:3001";
+  input.value = apiBase || "https://scamshield.42studio.fit";
+  site.value = siteBase || "https://scamshield.42studio.fit";
 });
 
 document.getElementById("save").addEventListener("click", async () => {
