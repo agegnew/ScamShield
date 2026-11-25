@@ -6,8 +6,6 @@ ScamShield watches for new websites, certificates, search results and Maps listi
 
 **Live: https://scamshield.42studio.fit** · citizen checker at [/check](https://scamshield.42studio.fit/check) (public) · browser extension at [/extension](https://scamshield.42studio.fit/extension) · analyst console at [/](https://scamshield.42studio.fit) (log in as **`admin` / `admin123`** or **`analyst` / `analyst123`**) · API docs at [/docs](https://scamshield.42studio.fit/docs).
 
-> Team plan, task lists and timeline: [docs/PLAN.md](docs/PLAN.md).
-
 ## Test it on your own URLs (for the judges)
 
 The quickest look is the live instance above (the public checker and `POST https://scamshield.42studio.fit/api/check` need no account). To run your own copy, start it with `docker compose up --build` (see [Build and run](#build-and-run)), then use any of these. Each URL gets **FRAUD**, **SUSPICIOUS** or **LEGIT**, a 0–100 score and its reasons. `flagged` = 1 means FRAUD or SUSPICIOUS (treat it as "phishing").

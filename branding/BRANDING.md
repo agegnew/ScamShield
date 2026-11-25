@@ -10,7 +10,6 @@ For Nati (UI) and the deck.
 | Style | Bright and friendly. Built for everyday residents, not only analysts |
 | Logo (official) | [cipher-guard-logo.png](cipher-guard-logo.png): chrome shield with UAE flag, falcon, Grand Mosque skyline, padlock, laurel and the CIPHER GUARD wordmark (1254×1254, transparent) |
 | Icon / small use | [cipher-guard-icon-256.png](cipher-guard-icon-256.png): the same emblem at 256px. Detail is lost below ~64px, so use it for title slides, splash and header, not as a 16px favicon |
-| Superseded | [logo.svg](logo.svg), [icon.svg](icon.svg) (old SafeTap mark) and [options/](options/) drafts. Don't use them |
 
 ## Colours
 
