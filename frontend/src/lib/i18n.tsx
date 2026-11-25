@@ -294,7 +294,9 @@ const strings = {
   riskyOnly: ["Fraud and suspicious only", "الاحتيال والمشبوه فقط"],
 
   loginTitle: ["Sign in to the analyst console", "تسجيل الدخول إلى لوحة المحلل"],
-  loginSub: ["Proposed pilot with Abu Dhabi Police. Demo accounts: admin / admin123 and analyst / analyst123.", "تجربة مقترحة مع شرطة أبوظبي. حسابات تجريبية: admin / admin123 و analyst / analyst123."],
+  loginSub: ["Proposed pilot with Abu Dhabi Police.", "تجربة مقترحة مع شرطة أبوظبي."],
+  demoAccounts: ["Or try a demo account", "أو جرّب حساباً تجريبياً"],
+  demoAs: ["Sign in as {role}", "الدخول بصفة {role}"],
   username: ["Username", "اسم المستخدم"],
   password: ["Password", "كلمة المرور"],
   loginFailed: ["That username or password is not right.", "اسم المستخدم أو كلمة المرور غير صحيحة."],

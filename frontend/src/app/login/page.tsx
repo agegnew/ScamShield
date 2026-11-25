@@ -4,11 +4,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+import { ShieldCheck, UserRound } from "lucide-react";
 import { login } from "@/lib/api";
 import { setSession } from "@/lib/auth";
 import { useLang } from "@/lib/i18n";
 import { Button, Input } from "@/components/ui/primitives";
 import { LangToggle } from "@/components/shell/AppShell";
+
+// The seeded demo accounts (backend/app/config.py). One click signs a judge or visitor straight in.
+const DEMO_ACCOUNTS = [
+  { username: "analyst", password: "analyst123", role: "analyst", Icon: UserRound },
+  { username: "admin", password: "admin123", role: "admin", Icon: ShieldCheck },
+] as const;
 
 export default function LoginPage() {
   return (
@@ -24,22 +31,26 @@ function LoginInner() {
   const params = useSearchParams();
   const [username, setUsername] = useState("analyst");
   const [password, setPassword] = useState("");
-  const [busy, setBusy] = useState(false);
+  // Which button is working: "form" for the Sign in button, or a demo account's username.
+  const [busy, setBusy] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
+  async function signIn(user: string, pass: string, source: string) {
+    setBusy(source);
     setErr(null);
     try {
-      const r = await login(username.trim(), password);
+      const r = await login(user.trim(), pass);
       setSession(r.access_token, r.user);
       router.replace(params.get("next") || "/");
     } catch {
       setErr(t("loginFailed"));
-    } finally {
-      setBusy(false);
+      setBusy(null);
     }
+  }
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    signIn(username, password, "form");
   }
 
   return (
@@ -89,9 +100,34 @@ function LoginInner() {
             </p>
           )}
 
-          <Button type="submit" size="lg" className="mt-6 w-full" loading={busy}>
+          <Button type="submit" size="lg" className="mt-6 w-full" loading={busy === "form"} disabled={!!busy}>
             {t("signIn")}
           </Button>
+
+          <div className="mt-8 flex items-center gap-3 text-xs font-bold text-muted">
+            <span aria-hidden className="h-px flex-1 bg-line-2" />
+            {t("demoAccounts")}
+            <span aria-hidden className="h-px flex-1 bg-line-2" />
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            {DEMO_ACCOUNTS.map(({ username: u, password: p, role, Icon }) => (
+              <Button
+                key={u}
+                type="button"
+                variant="outline"
+                className="h-auto flex-col gap-1 rounded-2xl py-3"
+                loading={busy === u}
+                disabled={!!busy}
+                onClick={() => signIn(u, p, u)}
+              >
+                {busy !== u && <Icon aria-hidden className="size-5 text-primary" />}
+                <span>{t("demoAs", { role: t(`role_${role}`) })}</span>
+                <span className="ltr text-xs font-semibold text-muted">
+                  {u} / {p}
+                </span>
+              </Button>
+            ))}
+          </div>
 
           <p className="mt-8 text-center text-sm text-muted">
             <Link href="/check" className="font-bold text-primary underline">
