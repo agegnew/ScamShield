@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Ban, Check, Copy, Download, Puzzle, FileWarning, MessageCircle, MousePointerClick, Share2, ShieldCheck, Smartphone } from "lucide-react";
+import { Ban, Check, Copy, Download, Puzzle, FileWarning, MessageCircle, MousePointerClick, Share2, ShieldCheck } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useLang } from "@/lib/i18n";
 import { L, type Pair } from "@/lib/radar";
@@ -23,8 +23,6 @@ const T = {
   download: ["Download for Chrome and Edge", "تنزيل لمتصفح كروم وإيدج"],
   addToChrome: ["Add to Chrome", "أضف إلى كروم"],
   manual: ["Or download the file and install it yourself", "أو نزّل الملف وثبّته بنفسك"],
-  desktopOnly: ["For computers. On a phone, use the free online checker.", "لأجهزة الكمبيوتر. على الهاتف استخدم الفاحص المجاني عبر الإنترنت."],
-  phoneChecker: ["Open the phone checker", "افتح فاحص الهاتف"],
   f1t: ["Blocks known scam sites", "يحجب مواقع الاحتيال المعروفة"],
   f1d: ["Sites police analysts confirmed as fraud open a warning page instead, with a link to the real site.", "المواقع التي أكد المحللون أنها احتيال تفتح صفحة تحذير بدلًا منها مع رابط الموقع الحقيقي."],
   f2t: ["Check any site in one click", "افحص أي موقع بنقرة"],
@@ -139,13 +137,6 @@ export default function ExtensionPage() {
               )}
               <span className="ltr text-sm text-muted">v0.1 · 60 KB</span>
             </div>
-            <p className="mt-4 flex items-center gap-2 text-sm text-ink-2">
-              <Smartphone aria-hidden className="size-4 text-muted" />
-              {tr("desktopOnly")}{" "}
-              <Link href="/check" className="font-bold text-primary underline">
-                {tr("phoneChecker")}
-              </Link>
-            </p>
           </div>
 
           {/* Mock of the warning page, so people see what it does before installing */}

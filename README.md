@@ -6,6 +6,22 @@ ScamShield watches for new websites, certificates, search results and Maps listi
 
 > Team plan, task lists and timeline: [docs/PLAN.md](docs/PLAN.md).
 
+## Test it on your own URLs (for the judges)
+
+Start it with `docker compose up --build` (see [Build and run](#build-and-run)), then use any of these. Each URL gets **FRAUD**, **SUSPICIOUS** or **LEGIT**, a 0–100 score and its reasons. `flagged` = 1 means FRAUD or SUSPICIOUS (treat it as "phishing").
+
+1. **A file of URLs → CSV** (best for a hidden test set). Put `urls.txt` (one URL per line) or `urls.csv` (a `url` column, optionally a `label` column with 1 = phishing, 0 = legitimate) in a folder `judge/`:
+
+   ```bash
+   docker compose run --rm --no-deps -v "$PWD/judge:/judge" api python -m scripts.batch /judge/urls.csv -o /judge/verdicts.csv
+   ```
+
+   About 11,000 URLs in 25 seconds. With a `label` column it also prints precision, recall, false-positive rate and F1. Add `--mode full` to open every page in a browser as well (screenshots, forms, cloaking, AI review; a few seconds per URL). Without Docker, run the same `python -m scripts.batch ...` from `backend/` (see [Batch mode](#batch-mode-for-a-list-of-urls)).
+2. **The API** (no login): `curl -X POST "http://localhost:8000/api/batch?format=csv" -H "content-type: application/json" -d '{"urls": ["https://aramexdelivery.live/", "https://www.rta.ae/"]}'` (up to 5,000 URLs per call). One link or phone number: `POST /api/check {"input": "..."}`. All endpoints: http://localhost:8000/docs.
+3. **The screens:** the analyst console's **Scan** page (paste one URL for the full page check, or many for a batch) and the public citizen checker at http://localhost:3001/check.
+
+Our own result on 11,134 URLs the model never saw: precision 94%, recall 78%, false-positive rate 1.8%, and 0 of 230 UAE government and bank pages flagged ([Results](#results)).
+
 ## The problem
 
 Residents receive SMS and WhatsApp links, search ads and Maps listings for "TAMM traffic fines with 90% discount", "UAE PASS verification", "Emirates Post parcel fee" or a "bank customer care" number. The pages copy the real brand, ask for card details, OTP codes or Emirates ID, and often stay online for days. Police and brand owners usually learn about them from victims, after the money is gone.
