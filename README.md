@@ -20,6 +20,7 @@ Residents receive SMS and WhatsApp links, search ads and Maps listings for "TAMM
 | **Decides and explains** | A detection engine scores 0–100 with reasons in **English and Arabic**: official-domain allowlist, popular sites, phishing feeds, a URL model, brand lookalikes and typosquats, URL shape, Arabic/English scam wording (10 UAE scam types), page signals, domain age, visual match against the real brand sites, cloaking and the Maps helpline check. **Borderline pages get a second look from Claude** (Claude Opus 5.5): it reads the screenshot and page like an analyst would and adds one reason in English and Arabic, e.g. *"AI review (80% sure it is legitimate): real-estate agency named Tamm Real Estate; no government branding, no payment or ID form"* |
 | **Connects the dots** | A scam-network graph links domains that share an IP, registration day, final host, favicon, page template, tracker ID or WhatsApp/phone contact |
 | **Hands police the evidence** | One-click **PDF evidence report** (A4, English + Arabic: verdict, reasons, screenshot + hash, redirect chain, WHOIS, hosting, related domains, analyst decisions), a JSON evidence bundle, and a takedown email in English and Arabic addressed to the registrar and the host |
+| **Protects people in the browser** | **ScamShield Guardian**, a Chrome and Edge extension. A scam site is replaced by a full-page warning (English + Arabic) before anything loads, with the brand it imitates and a button to the real site; the blocklist comes from the server's confirmed and FRAUD cases every 10 minutes (`GET /api/blocklist`), so an analyst's confirm protects every browser within minutes. The toolbar button shows the verdict for any site (risk score, domain, the brand it impersonates, reasons). A page that asks for a card, OTP, password or Emirates ID while naming a UAE brand on a domain that brand doesn't own gets a red warning bar, even if nobody has reported it yet |
 | **Fits the workflow** | Analyst and admin roles (JWT login); every confirm/dismiss is logged with who, when and why. A public citizen checker answers "is this link or phone number safe?" in plain Arabic or English. **Batch mode** scores a file of URLs into a CSV |
 
 ## Results
@@ -114,7 +115,7 @@ docker compose up --build        # Postgres + API + page worker + radar
 - The API starts with 8 labelled sample cases (`SCAMSHIELD_MODE=mock`). For real data set `SCAMSHIELD_MODE=live` and `SCAMSHIELD_SEED_DEMO=1` in `.env`: the database then starts with the real cases scanned for the demo (`data/demo/`), and the radar adds new ones as it runs.
 - Optional: `SERPAPI_KEY` turns on the Search and Maps radars.
 
-**Without Docker:** see [backend/README.md](backend/README.md) (SQLite, `uvicorn` + `python -m app.workers.runner`). Tests: `pytest -q` in `backend/` (158 tests).
+**Without Docker:** see [backend/README.md](backend/README.md) (SQLite, `uvicorn` + `python -m app.workers.runner`). Tests: `pytest -q` in `backend/` (193 tests).
 
 **Dashboard (analyst console + citizen checker):** needs Node.js 20+ and the API running on port 8000.
 
@@ -127,6 +128,8 @@ npm run dev                      # http://localhost:3001
 - Analyst console: http://localhost:3001 (sign in as above). Citizen checker: http://localhost:3001/check (no login).
 - Another API address: copy `frontend/.env.example` to `frontend/.env.local` and set `NEXT_PUBLIC_API_URL`.
 - Screens, conventions and checks: [frontend/README.md](frontend/README.md).
+
+**Browser extension (ScamShield Guardian):** with the API running, open `chrome://extensions` (or `edge://extensions`), turn on **Developer mode**, click **Load unpacked** and choose the `extension/` folder. Its Settings page holds the API address (default `http://localhost:8000`) and the website address for "View details" (default `http://localhost:3001`). The same folder is offered as a download on http://localhost:3001/extension. Details: [extension/README.md](extension/README.md).
 
 **API contract for the dashboard:** [docs/api/README.md](docs/api/README.md), with TypeScript types and sample JSON for every endpoint.
 
@@ -154,8 +157,9 @@ Input: a `.txt` file with one URL per line, or a `.csv` with a `url` column. Out
 | `backend/app/workers/` | Fetcher, enrichment, fingerprints, cloaking, visual match, SSRF guard, the five radars, job runner |
 | `backend/app/routes/`, `auth.py`, `report.py`, `takedown.py`, `graph.py` | HTTP API, login and roles, PDF report, takedown email, scam-network graph |
 | `backend/scripts/` | Dataset build, model training, evaluation, batch mode, demo seeding, contract export |
-| `backend/tests/` | 158 tests (`pytest -m live` adds real-network checks) |
+| `backend/tests/` | 193 tests (`pytest -m live` adds real-network checks) |
 | `frontend/` | Next.js dashboard: analyst console (radar, cases, case page, network, accuracy, scan, audit, users) and the public citizen checker, English and Arabic |
+| `extension/` | ScamShield Guardian browser extension (Manifest V3, plain JavaScript): block page, toolbar verdict, form warning |
 | `data/` | Brand registry, scam themes, official-site references, held-out test set, demo snapshot |
 | `docs/api/` | API contract (OpenAPI, TypeScript types, sample JSON) |
 | `demo-pages/` | Local-only demo scam pages |
@@ -169,6 +173,7 @@ Input: a `.txt` file with one URL per line, or a `.csv` with a `url` column. Out
 - **crt.sh is often slow or down**; the radar falls back to the last good answer.
 - **Short brand names collide with foreign businesses** ("icp", "moi", "rta"): a live site that never mentions the brand is held back from FRAUD, but a cheap `.xyz` name can still reach it on its URL alone (`icp-online.xyz`, a Japanese company, scores 70).
 - **The AI check only helps pages it can see:** Claude reviews borderline pages after the page check, so it improves live cases, Scan a URL and batch `--mode full`, but not the URL-only held-out numbers above (a site that is already offline has no page to look at). It is capped at 300 reviews a day and never clears hard evidence (a phishing-feed hit, cloaking, a copied official template, a pushed app). Visual match still compares favicons and page templates against 10 official sites, not the rendered look of every brand.
+- **The extension is desktop-only and not in the Chrome Web Store yet** (it installs with "Load unpacked"). Phones have no Chrome extensions; there the citizen checker does the same check. A new scam is blocked only once the engine rates it FRAUD or an analyst confirms it; until then the toolbar verdict and the form warning are the protection.
 - **The accuracy numbers are on public phishing feeds**, which are global; UAE-specific scams are a small part of them. The 230 UAE official pages and the live checks above are our UAE evidence.
 
 ## Route to a police pilot

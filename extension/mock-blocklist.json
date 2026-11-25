@@ -1,6 +1,6 @@
 {
   "mock": true,
-  "note": "Demo list, used only while the server has no /api/blocklist. Taken from the demo cases (data/demo/) and the local demo pages. tamm-fines-pay.ae is left out on purpose so the demo can show the form warning on an unconfirmed scam.",
+  "note": "Demo list, used only if the server can't be reached on the first run (the server's GET /api/blocklist replaces it). Taken from the demo cases (data/demo/) and the local demo pages. tamm-fines-pay.ae is left out on purpose so the demo can show the form warning on an unconfirmed scam.",
   "domains": [
     {"domain": "moi-portal.com", "brand_target": "moi", "score": 75},
     {"domain": "emiratesnbd-verify.com", "brand_target": "emiratesnbd", "score": 100},

@@ -2,54 +2,73 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>ScamShield</title>
+  <title>ScamShield Guardian</title>
   <link rel="stylesheet" href="ui.css">
   <style>
-    body { width: 380px; padding: 14px; }
-    #lang { min-height: 30px; padding: 4px 12px; font-size: 12px; }
-    .site { margin: 12px 0 10px; display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 12px;
-            background: var(--surface-2); border: 1px solid var(--line); font-weight: 700; word-break: break-all; }
-    .site svg { width: 16px; height: 16px; color: var(--muted); flex: none; }
-    .hero { padding: 16px; display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
-    .hero.FRAUD-bg { border-color: var(--fraud-line); box-shadow: 0 0 0 1px var(--fraud-line), 0 0 30px -12px rgba(255, 122, 122, .6); }
-    .hero.SUSPICIOUS-bg { border-color: var(--review-line); }
-    .hero.LEGIT-bg { border-color: var(--safe-line); }
-    h1 { font-size: 18px; line-height: 1.3; margin: 8px 0 0; letter-spacing: -0.01em; }
-    .ring { width: 64px; height: 64px; position: relative; }
-    .ring svg { width: 64px; height: 64px; transform: rotate(-90deg); }
-    .ring span { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 800; font-size: 20px; }
-    .ring small { position: absolute; bottom: -16px; inset-inline: 0; text-align: center; font-size: 10px; color: var(--muted); }
-    section.block { margin-top: 10px; padding: 12px 14px; }
-    section.block strong { display: block; font-size: 12px; color: var(--muted); font-weight: 700; margin-bottom: 4px; }
-    .reasons { list-style: none; padding: 0; margin: 0; }
-    .reasons li { display: grid; grid-template-columns: 36px 1fr; gap: 8px; align-items: baseline; padding: 4px 0; }
-    .w { font-weight: 800; font-size: 12px; color: var(--fraud); direction: ltr; text-align: center; }
-    .todo { margin: 0; padding: 0; list-style: none; counter-reset: s; }
-    .todo li { counter-increment: s; display: grid; grid-template-columns: 22px 1fr; gap: 8px; padding: 3px 0; }
-    .todo li::before { content: counter(s); width: 20px; height: 20px; border-radius: 999px; display: grid; place-items: center;
-                       background: var(--primary-soft); color: var(--primary); font-weight: 800; font-size: 11px; }
-    .state { padding: 22px 16px; text-align: center; color: var(--muted); }
-    .scan { width: 44px; height: 44px; margin: 0 auto 10px; border-radius: 999px; border: 2px solid var(--line-2);
-            border-top-color: var(--primary); animation: spin 0.9s linear infinite; }
+    body { width: 340px; padding: 16px 16px 14px; }
+    header { position: relative; }
+    #menu-btn { width: 32px; height: 32px; min-height: 32px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--ink-2); }
+    #menu-btn:hover { background: var(--surface-2); }
+    #menu-btn svg { width: 18px; height: 18px; }
+    .menu { position: absolute; top: 36px; inset-inline-end: 0; z-index: 5; min-width: 196px; padding: 6px; background: var(--surface);
+            border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 32px -12px rgba(23, 21, 28, 0.35); }
+    .menu button, .menu a { width: 100%; justify-content: flex-start; border: 0; border-radius: 8px; min-height: 34px;
+                            padding: 6px 10px; font-weight: 600; font-size: 13px; background: transparent; color: var(--ink); }
+    .menu button:hover, .menu a:hover { background: var(--primary-soft); }
+
+    .banner { margin: 14px 0 12px; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;
+              font-size: 20px; font-weight: 800; letter-spacing: -0.01em; animation: rise 0.25s ease-out; }
+    .banner svg { width: 28px; height: 28px; flex: none; }
+    @keyframes rise { from { opacity: 0; transform: translateY(4px); } }
+
+    .rows { display: grid; gap: 10px; padding: 0 2px; }
+    .row { display: grid; grid-template-columns: 22px 1fr; gap: 12px; align-items: start; color: var(--ink); font-size: 15px; }
+    .row > svg { width: 20px; height: 20px; color: var(--primary); margin-top: 2px; }
+    .row b { font-weight: 800; word-break: break-all; }
+    .row .sub { display: block; font-size: 13px; color: var(--ink-2); margin-top: 1px; }
+    .score.FRAUD, .score.SUSPICIOUS, .score.LEGIT, .score.UNKNOWN { background: none; }
+
+    details { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 8px; }
+    summary { cursor: pointer; font-weight: 700; font-size: 13px; color: var(--ink-2); list-style: none; display: flex; justify-content: space-between; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; font-weight: 800; color: var(--muted); }
+    details[open] summary::after { content: "–"; }
+    .reasons { list-style: none; padding: 0; margin: 6px 0 0; display: grid; gap: 6px; font-size: 13px; color: var(--ink-2); }
+    .reasons li { display: grid; grid-template-columns: 34px 1fr; gap: 8px; align-items: baseline; }
+    .w { font-weight: 800; font-size: 12px; color: var(--fraud); direction: ltr; text-align: center;
+         background: var(--fraud-soft); border-radius: 6px; padding: 0 4px; }
+    .w.neg { color: var(--safe); background: var(--safe-soft); }
+
+    .state { padding: 26px 8px 18px; text-align: center; color: var(--muted); }
+    .scan { width: 56px; height: 56px; margin: 0 auto 12px; border-radius: 999px; position: relative; border: 2px solid var(--line);
+            background: conic-gradient(from 0deg, rgba(69, 36, 181, 0.35), transparent 30%); animation: spin 1.2s linear infinite; }
+    .scan::after { content: ""; position: absolute; inset: 22px; border-radius: 999px; background: var(--primary); }
     @keyframes spin { to { transform: rotate(360deg); } }
-    footer { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
-    footer .grow { flex: 1; }
-    .settings { margin-top: 10px; display: block; text-align: center; font-size: 12px; color: var(--muted); }
+
+    #details { width: 100%; margin-top: 14px; min-height: 42px; font-size: 15px; border-radius: 12px; }
+    #details svg { width: 18px; height: 18px; }
+    [dir="rtl"] #details svg { transform: scaleX(-1); }
+    .foot { margin-top: 10px; text-align: center; font-size: 12px; color: var(--muted); }
+    .foot a { color: var(--muted); }
   </style>
 </head>
 <body>
   <header>
     <img src="icons/icon-32.png" alt="">
-    <span class="name">ScamShield <small>Guardian</small></span>
-    <button id="lang" type="button">العربية</button>
+    <span class="name">ScamShield Guardian</span>
+    <button id="menu-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+    </button>
+    <div class="menu" id="menu" role="menu" hidden>
+      <button type="button" id="lang" role="menuitem">العربية</button>
+      <button type="button" id="recheck" role="menuitem">Check again</button>
+      <a id="report" role="menuitem" href="https://www.adpolice.gov.ae/" target="_blank" rel="noreferrer">Report a scam: Aman 8002626</a>
+      <a id="settings" role="menuitem" href="options.html" target="_blank">Settings</a>
+    </div>
   </header>
-  <p class="site ltr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg><span id="site"></span></p>
-  <div id="result" aria-live="polite"><div class="panel state"><div class="scan"></div><span id="status">Checking…</span></div></div>
-  <footer>
-    <button id="recheck" type="button" class="primary grow">Check again</button>
-    <a class="button grow" id="report" href="https://www.adpolice.gov.ae/" target="_blank" rel="noreferrer">Report: Aman 8002626</a>
-  </footer>
-  <a class="settings" href="options.html" target="_blank">Settings</a>
+  <div id="result" aria-live="polite"><div class="state"><div class="scan"></div><span>Checking…</span></div></div>
+  <button id="details" type="button" class="primary" hidden></button>
+  <p class="foot" id="foot"></p>
   <script src="popup.js"></script>
 </body>
 </html>

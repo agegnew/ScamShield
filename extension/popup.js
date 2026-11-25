@@ -1,24 +1,86 @@
-// Popup: check the current tab with ScamShield (POST /api/check) and explain the verdict in English or Arabic.
-// This check is started by the user, so the full address is sent: the path helps the URL model.
+// Popup: the verdict for the current tab, in the card layout (banner, risk score, domain, View details).
+// - On a normal page it asks ScamShield (POST /api/check) with the full address: the user started this check.
+// - On the block page it shows the blocked site straight from the synced blocklist, then adds the reasons.
 
 const TEXT = {
-  en: { checking: "Checking…", nothing: "Nothing to check on this page.", offline: "Can't reach the ScamShield server. Check Settings.", score: "Risk score", why: "Why", todo: "What to do", lang: "العربية", recheck: "Check again", report: "Report: Aman 8002626", settings: "Settings",
-        FRAUD: "Scam", SUSPICIOUS: "Suspicious", LEGIT: "No warning signs", UNKNOWN: "Unknown" },
-  ar: { checking: "جارٍ الفحص…", nothing: "لا يوجد ما يُفحص في هذه الصفحة.", offline: "تعذّر الوصول إلى خادم ScamShield. راجع الإعدادات.", score: "درجة الخطورة", why: "الأسباب", todo: "ماذا تفعل", lang: "English", recheck: "افحص مجددًا", report: "بلّغ: أمان 8002626", settings: "الإعدادات",
-        FRAUD: "احتيال", SUSPICIOUS: "مشبوه", LEGIT: "لا توجد مؤشرات خطر", UNKNOWN: "غير معروف" },
+  en: {
+    checking: "Checking…", nothing: "Nothing to check on this page.", offline: "Can't reach the ScamShield server. Open Settings.",
+    score: "Risk score", domain: "Domain", why: "Why ScamShield says this", todo: "What to do", details: "View details",
+    lang: "العربية", recheck: "Check again", report: "Report a scam: Aman 8002626", settings: "Settings",
+    FRAUD: "Scam detected", SUSPICIOUS: "Looks suspicious", LEGIT: "No warning signs", UNKNOWN: "Not enough information",
+    impersonates: (n) => `Impersonates ${n}`, mayImitate: (n) => `May imitate ${n}: don't enter your details`, official: (n) => `Official ${n} website`,
+    confirmed: "confirmed scam", flagged: "flagged by ScamShield", blockedNote: "Blocked before it loaded: nothing reached your browser.",
+    protecting: (n) => `Guarding against ${n} known scam sites`,
+  },
+  ar: {
+    checking: "جارٍ الفحص…", nothing: "لا يوجد ما يُفحص في هذه الصفحة.", offline: "تعذّر الوصول إلى خادم ScamShield. افتح الإعدادات.",
+    score: "درجة الخطورة", domain: "النطاق", why: "لماذا هذا الحكم", todo: "ماذا تفعل", details: "عرض التفاصيل",
+    lang: "English", recheck: "افحص مجددًا", report: "بلّغ عن احتيال: أمان 8002626", settings: "الإعدادات",
+    FRAUD: "تم اكتشاف احتيال", SUSPICIOUS: "يبدو مشبوهًا", LEGIT: "لا توجد مؤشرات خطر", UNKNOWN: "معلومات غير كافية",
+    impersonates: (n) => `ينتحل صفة ${n}`, mayImitate: (n) => `قد ينتحل صفة ${n}: لا تُدخل بياناتك`, official: (n) => `الموقع الرسمي لـ ${n}`,
+    confirmed: "احتيال مؤكد", flagged: "صنّفه ScamShield", blockedNote: "تم الحظر قبل التحميل: لم يصل شيء إلى متصفحك.",
+    protecting: (n) => `حماية من ${n} موقعًا احتياليًا معروفًا`,
+  },
 };
 
+// Lucide icons, constant markup only (never API text).
+const SVG = (d, w = 2) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const ICON = {
+  FRAUD: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10.3 3.4a2 2 0 0 1 3.4 0l8.6 14.9A2 2 0 0 1 20.6 21H3.4a2 2 0 0 1-1.7-2.7z"/><path d="M12 9v4.5M12 17h.01" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>`,
+  SUSPICIOUS: SVG('<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>', 2.5),
+  LEGIT: SVG('<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>', 2.5),
+  UNKNOWN: SVG('<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>', 2.5),
+  shield: SVG('<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>'),
+  link: SVG('<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>'),
+  arrow: SVG('<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>', 2.5),
+};
+
+const DEFAULT_API = "http://localhost:8000";
+const DEFAULT_SITE = "http://localhost:3001";
+
 let lang = chrome.i18n.getUILanguage().startsWith("ar") ? "ar" : "en";
-let result = null;
-let tabUrl = null;
+let target = null; // the address being judged
+let host = "";
+let blocked = null; // blocklist entry when the tab is our block page
+let result = null; // /api/check answer, null while loading, Error when offline
+let brands = [];
+let listed = 0;
 
 const $ = (id) => document.getElementById(id);
 
 function el(tag, attrs = {}, ...children) {
   const node = document.createElement(tag);
   Object.entries(attrs).forEach(([k, v]) => (k === "class" ? (node.className = v) : node.setAttribute(k, v)));
-  children.flat().forEach((c) => node.append(c));
+  children.flat().forEach((c) => c != null && c !== "" && node.append(c));
   return node;
+}
+
+function icon(name, cls) {
+  const span = el("span", cls ? { class: cls } : {});
+  span.innerHTML = ICON[name]; // constant markup
+  return span.firstElementChild;
+}
+
+const brandById = (id) => brands.find((b) => b.id === id);
+const shortName = (b) => (lang === "ar" ? b.name_ar : b.name_en.split(" (")[0]);
+const ownedBy = (b) => b.official_domains.some((d) => host === d || host.endsWith(`.${d}`));
+
+function verdictNow() {
+  if (blocked) return { verdict: "FRAUD", score: blocked.score, brand_target: blocked.brand_target };
+  return result && !(result instanceof Error) ? result : null;
+}
+
+function brandLine(v, t) {
+  const official = brands.find(ownedBy);
+  if (official && v.verdict === "LEGIT") return t.official(shortName(official));
+  const brand = v.brand_target && brandById(v.brand_target);
+  if (!brand) return lang === "ar" ? v.headline_ar : v.headline_en;
+  if (v.verdict === "FRAUD") {
+    const how = blocked ? (blocked.confirmed ? t.confirmed : t.flagged) : t.flagged;
+    return `${t.impersonates(shortName(brand))} (${how})`;
+  }
+  if (v.verdict === "SUSPICIOUS") return t.mayImitate(shortName(brand));
+  return lang === "ar" ? v.headline_ar : v.headline_en;
 }
 
 function render() {
@@ -28,66 +90,72 @@ function render() {
   $("lang").textContent = t.lang;
   $("recheck").textContent = t.recheck;
   $("report").textContent = t.report;
-  document.querySelector('a[href="options.html"]').textContent = t.settings;
+  $("settings").textContent = t.settings;
+  $("foot").textContent = blocked ? t.blockedNote : listed ? t.protecting(listed) : "";
 
   const box = $("result");
   box.replaceChildren();
-  const state = (text, spinning) => el("div", { class: "panel state" }, spinning ? el("div", { class: "scan" }) : "", text);
-  if (!tabUrl) return box.append(state(t.nothing, false));
-  if (result === null) return box.append(state(t.checking, true));
-  if (result instanceof Error) return box.append(state(t.offline, false));
+  const details = $("details");
+  const state = (text, spinning) => el("div", { class: "state" }, spinning ? el("div", { class: "scan" }) : null, el("span", {}, text));
 
-  const v = result.verdict;
-  const reasons = (result.reasons || []).filter((r) => r.weight > 0).sort((a, b) => b.weight - a.weight);
-  const chip = el("span", { class: `chip ${v}` });
-  chip.innerHTML = ICONS[v] || ICONS.UNKNOWN; // constant markup, never API text
-  chip.append(t[v] || v);
-
-  const hero = el("div", { class: `panel hero ${v}-bg` },
-    el("div", {}, chip, el("h1", {}, lang === "ar" ? result.headline_ar : result.headline_en)),
-    result.score != null ? ring(result.score, v, t.score) : "");
-  box.append(hero);
-
-  if (reasons.length) {
-    box.append(el("section", { class: "panel block" }, el("strong", {}, t.why),
-      el("ul", { class: "reasons" }, reasons.map((r) =>
-        el("li", {}, el("span", { class: "w" }, `+${r.weight}`), el("span", {}, lang === "ar" ? r.text_ar : r.text_en))))));
+  if (!target) {
+    details.hidden = true;
+    return box.append(state(t.nothing, false));
   }
-  const advice = lang === "ar" ? result.advice_ar : result.advice_en;
-  if (advice && advice.length) {
-    box.append(el("section", { class: "panel block" }, el("strong", {}, t.todo), el("ol", { class: "todo" }, advice.map((a) => el("li", {}, el("span", {}, a))))));
+  const v = verdictNow();
+  if (!v) {
+    details.hidden = true;
+    return box.append(state(result instanceof Error ? t.offline : t.checking, !(result instanceof Error)));
   }
+
+  const banner = el("div", { class: `banner ${v.verdict}`, role: "status" }, icon(v.verdict), el("span", {}, t[v.verdict] || v.verdict));
+  const scoreText = v.score != null ? `${v.score}/100` : "–";
+  const rows = el("div", { class: "rows" },
+    el("div", { class: "row" }, icon("shield"), el("span", {}, `${t.score}: `, el("b", { class: `score ${v.verdict}`, style: "background:none" }, scoreText))),
+    el("div", { class: "row" }, icon("link"), el("span", {},
+      `${t.domain}: `, el("b", { class: "ltr" }, host),
+      el("span", { class: "sub" }, brandLine(v, t) || ""))));
+  box.append(banner, rows);
+
+  const full = result && !(result instanceof Error) ? result : null;
+  const reasons = (full?.reasons || []).filter((r) => r.weight !== 0).sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight)).slice(0, 5);
+  const advice = full ? (lang === "ar" ? full.advice_ar : full.advice_en) || [] : [];
+  if (reasons.length || advice.length) {
+    const more = el("details", {}, el("summary", {}, reasons.length ? t.why : t.todo));
+    if (reasons.length) {
+      more.append(el("ul", { class: "reasons" }, reasons.map((r) =>
+        el("li", {}, el("span", { class: r.weight > 0 ? "w" : "w neg" }, `${r.weight > 0 ? "+" : ""}${r.weight}`),
+          el("span", {}, lang === "ar" ? r.text_ar : r.text_en)))));
+    }
+    if (advice.length) {
+      more.append(el("p", { style: "margin:10px 0 2px;font-weight:700;font-size:13px" }, t.todo),
+        el("ol", { class: "reasons", style: "list-style:decimal;padding-inline-start:18px" }, advice.slice(0, 3).map((a) => el("li", { style: "display:list-item" }, a))));
+    }
+    box.append(more);
+  }
+
+  details.hidden = false;
+  details.replaceChildren(el("span", {}, t.details), icon("arrow"));
 }
 
-// Verdict icons (lucide: ban, triangle-alert, shield-check, circle-help). Constant strings only.
-const SVG = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
-const ICONS = {
-  FRAUD: SVG('<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>'),
-  SUSPICIOUS: SVG('<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>'),
-  LEGIT: SVG('<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>'),
-  UNKNOWN: SVG('<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>'),
-};
-const RING_COLOR = { FRAUD: "#ff7a7a", SUSPICIOUS: "#fbbf24", LEGIT: "#86efac", UNKNOWN: "#b7b2ad" };
-
-function ring(score, verdict, label) {
-  const r = 26, c = 2 * Math.PI * r, s = Math.max(0, Math.min(100, score));
-  const wrap = el("div", { class: "ring", role: "img", "aria-label": `${label}: ${score}/100` });
-  const color = RING_COLOR[verdict] || RING_COLOR.UNKNOWN;
-  wrap.innerHTML = `<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="${r}" fill="none" stroke="#26402f" stroke-width="6"/>` +
-    `<circle cx="32" cy="32" r="${r}" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - s / 100)}" style="filter:drop-shadow(0 0 6px ${color})"/></svg>`;
-  wrap.append(el("span", { style: `color:${color}` }, String(score)), el("small", {}, label));
-  return wrap;
+async function settings() {
+  const { apiBase, siteBase } = await chrome.storage.local.get(["apiBase", "siteBase"]);
+  return {
+    api: (apiBase || DEFAULT_API).replace(/\/+$/, ""),
+    site: (siteBase || DEFAULT_SITE).replace(/\/+$/, ""),
+  };
 }
 
 async function check() {
+  if (!target) return render();
   result = null;
   render();
-  const { apiBase } = await chrome.storage.local.get("apiBase");
   try {
-    const res = await fetch(`${(apiBase || "http://localhost:8000").replace(/\/+$/, "")}/api/check`, {
+    const { api } = await settings();
+    const res = await fetch(`${api}/api/check`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ input: tabUrl }),
+      body: JSON.stringify({ input: target }),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     result = await res.json();
@@ -97,16 +165,59 @@ async function check() {
   render();
 }
 
+function toggleMenu(open) {
+  const menu = $("menu");
+  const show = open ?? menu.hidden;
+  menu.hidden = !show;
+  $("menu-btn").setAttribute("aria-expanded", String(show));
+}
+
+$("menu-btn").addEventListener("click", (e) => {
+  e.stopPropagation();
+  toggleMenu();
+});
+document.addEventListener("click", (e) => {
+  if (!$("menu").contains(e.target)) toggleMenu(false);
+});
+document.addEventListener("keydown", (e) => e.key === "Escape" && toggleMenu(false));
 $("lang").addEventListener("click", () => {
   lang = lang === "ar" ? "en" : "ar";
+  toggleMenu(false);
   render();
 });
-$("recheck").addEventListener("click", check);
-
-chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
-  const url = tab && tab.url;
-  tabUrl = url && /^https?:/.test(url) ? url : null;
-  $("site").textContent = tabUrl ? new URL(tabUrl).hostname : "";
-  if (tabUrl) check();
-  else render();
+$("recheck").addEventListener("click", () => {
+  toggleMenu(false);
+  check();
 });
+$("details").addEventListener("click", async () => {
+  const { site } = await settings();
+  chrome.tabs.create({ url: `${site}/check?q=${encodeURIComponent(target)}&lang=${lang}` });
+});
+
+(async () => {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const url = (tab && tab.url) || "";
+  const blockPage = chrome.runtime.getURL("blocked.html");
+  const stored = await chrome.storage.local.get(["brands", "blocklist"]);
+  brands = stored.brands || [];
+  listed = Object.keys(stored.blocklist || {}).length;
+
+  if (url.startsWith(blockPage)) {
+    target = new URL(url).searchParams.get("u");
+  } else if (/^https?:/.test(url)) {
+    target = url;
+  }
+  if (target) {
+    try {
+      host = new URL(target).hostname.toLowerCase();
+    } catch {
+      target = null;
+    }
+  }
+  if (target && url.startsWith(blockPage)) {
+    const bare = host.replace(/^www\./, "");
+    blocked = (stored.blocklist || {})[bare] || (stored.blocklist || {})[host] ||
+      Object.values(stored.blocklist || {}).find((e) => host.endsWith(`.${e.domain}`)) || { score: 100, brand_target: null, confirmed: false };
+  }
+  check();
+})();

@@ -128,7 +128,9 @@ chrome.runtime.onMessage.addListener((message, sender, reply) => {
     if (message.type === "brands") return reply((await chrome.storage.local.get("brands")).brands || []);
     if (message.type === "blocked-info") {
       const { blocklist = {} } = await chrome.storage.local.get("blocklist");
-      return reply(blocklist[message.domain] || null);
+      const host = String(message.domain || "").toLowerCase().replace(/^www\./, "");
+      const entry = blocklist[host] || Object.values(blocklist).find((e) => host.endsWith(`.${e.domain}`));
+      return reply(entry || null);
     }
     if (message.type === "allow-once") {
       // Let the user through to a blocked domain for this browser session only.

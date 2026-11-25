@@ -120,6 +120,16 @@ export default function CheckPage() {
     if (result) resultRef.current?.focus();
   }, [result]);
 
+  // Opened from the browser extension's "View details": /check?q=<address> checks it straight away.
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("q");
+    if (q) {
+      setInput(q);
+      run(q);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function stopSpeaking() {
     if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
     setSpeaking(false);

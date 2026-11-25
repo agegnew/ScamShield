@@ -3,51 +3,51 @@
 <head>
   <meta charset="utf-8">
   <title>Blocked by ScamShield</title>
+  <link rel="icon" href="icons/icon-32.png">
   <link rel="stylesheet" href="ui.css">
   <style>
-    body { min-height: 100vh; display: grid; place-items: center; padding: 24px;
-           background:
-             radial-gradient(700px 380px at 50% 0%, rgba(255, 122, 122, 0.16), transparent 70%),
-             linear-gradient(rgba(46, 229, 157, 0.035) 1px, transparent 1px) 0 0 / 40px 40px,
-             linear-gradient(90deg, rgba(46, 229, 157, 0.035) 1px, transparent 1px) 0 0 / 40px 40px,
-             var(--bg); }
-    main { max-width: 640px; width: 100%; padding: 32px; border-color: var(--fraud-line);
-           box-shadow: 0 0 0 1px var(--fraud-line), 0 0 60px -20px rgba(255, 122, 122, 0.55); }
-    .stop { width: 64px; height: 64px; border-radius: 18px; display: grid; place-items: center; margin: 22px 0 6px;
-            background: var(--fraud-soft); color: var(--fraud); border: 1px solid var(--fraud-line); }
-    .stop svg { width: 36px; height: 36px; }
-    h1 { color: var(--fraud); font-size: 26px; line-height: 1.25; margin: 10px 0 8px; letter-spacing: -0.01em; }
-    .domain { display: inline-block; font-size: 16px; font-weight: 800; word-break: break-all; padding: 6px 12px;
-              border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line); }
-    p { color: var(--ink-2); }
-    .ar { direction: rtl; text-align: right; border-top: 1px solid var(--line); margin-top: 20px; padding-top: 16px;
-          font-family: "Segoe UI", Tahoma, sans-serif; }
-    .ar h1 { font-size: 22px; }
-    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
-    .actions .button, .actions button { min-height: 44px; padding: 10px 18px; font-size: 14px; }
-    .continue { background: transparent; border: 0; color: var(--muted); text-decoration: underline; min-height: 44px; }
-    .continue:hover { background: transparent; color: var(--ink-2); }
-    .note { margin-top: 18px; font-size: 12px; color: var(--muted); }
+    body { min-height: 100vh; display: grid; place-items: center; padding: 32px 20px; background: var(--bg); }
+    main { max-width: 680px; width: 100%; padding: 40px 36px 32px; background: var(--surface); border: 2px solid var(--fraud-line);
+           border-radius: 20px; box-shadow: 0 30px 60px -30px rgba(155, 28, 28, 0.35); animation: rise 0.3s ease-out; }
+    @keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+    header img { width: 30px; height: 30px; }
+    header .name { font-size: 17px; }
+    h1 { color: var(--fraud-ink); font-size: 30px; line-height: 1.3; margin: 22px 0 18px; letter-spacing: -0.015em; font-weight: 800; }
+    .domain { font-size: 20px; font-weight: 800; margin: 0 0 10px; word-break: break-all; }
+    p { color: var(--ink-2); font-size: 16px; margin: 0; }
+    hr { border: 0; border-top: 1px solid var(--line); margin: 26px 0; }
+    .ar { direction: rtl; text-align: right; font-family: "Segoe UI", Tahoma, sans-serif; }
+    .ar h1 { font-size: 28px; margin: 0 0 12px; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 30px; }
+    .actions .button, .actions button { min-height: 44px; padding: 10px 20px; font-size: 15px; }
+    .continue { flex-basis: 100%; justify-content: flex-start; background: transparent !important; border: 0 !important; color: var(--muted);
+                text-decoration: underline; text-underline-offset: 3px; font-weight: 600; padding-inline: 16px !important; box-shadow: none; }
+    .continue:hover { color: var(--ink-2); }
+    .note { margin-top: 22px; padding: 12px 14px; border-radius: 12px; background: var(--surface-2); font-size: 13px; color: var(--ink-2); }
+    .note p { font-size: 13px; }
+    .note p + p { margin-top: 4px; }
   </style>
 </head>
 <body>
-  <main class="panel" role="alert">
-    <header><img src="icons/icon-48.png" alt="" width="32" height="32"><span class="name">ScamShield <small>Guardian</small></span></header>
-    <div class="stop" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg></div>
-    <h1>This website was blocked: it is a confirmed scam</h1>
+  <main role="alert">
+    <header><img src="icons/icon-48.png" alt=""><span class="name">ScamShield</span></header>
+    <h1 id="title">This website was blocked: it is a confirmed scam</h1>
     <p class="domain ltr" id="domain"></p>
-    <p id="detail">ScamShield analysts confirmed it imitates an official UAE service to steal payment or login details. Nothing was loaded from it.</p>
+    <p id="detail">It imitates an official UAE service to steal payment or login details. Nothing was loaded from it.</p>
+    <hr>
     <div class="ar" lang="ar">
-      <h1>تم حظر هذا الموقع: موقع احتيالي مؤكد</h1>
-      <p id="detail-ar">أكّد محللو ScamShield أنه ينتحل خدمة رسمية في الإمارات لسرقة بيانات الدفع أو الدخول. لم يتم تحميل أي شيء منه.</p>
+      <h1 id="title-ar">تم حظر هذا الموقع: موقع احتيالي مؤكد</h1>
+      <p id="detail-ar">ينتحل صفة جهة رسمية في الإمارات لسرقة بيانات الدفع أو الدخول. لم يتم تحميل أي شيء منه.</p>
     </div>
     <div class="actions">
       <a class="button primary" id="official" hidden></a>
-      <button type="button" id="back">Go back · رجوع</button>
-      <button type="button" class="continue" id="continue">Continue anyway (not recommended) · المتابعة على مسؤوليتي</button>
+      <button type="button" id="back">Go back - رجوع</button>
+      <button type="button" class="continue" id="continue">Continue anyway (not recommended) - المتابعة على مسؤوليتك</button>
     </div>
-    <p class="note">If you already entered card details or a code, call your bank now, then report it to Abu Dhabi Police (Aman <span class="ltr">8002626</span>).</p>
-    <p class="note" dir="rtl" lang="ar">إذا أدخلت بيانات بطاقتك أو رمزًا، اتصل ببنكك فورًا ثم أبلغ شرطة أبوظبي (أمان <span class="ltr">8002626</span>).</p>
+    <div class="note">
+      <p>Already entered card details or a code? Call your bank now, then report it to Abu Dhabi Police (Aman <span class="ltr">8002626</span>).</p>
+      <p dir="rtl" lang="ar">إذا أدخلت بيانات بطاقتك أو رمزًا، اتصل ببنكك فورًا ثم أبلغ شرطة أبوظبي (أمان <span class="ltr">8002626</span>).</p>
+    </div>
   </main>
   <script src="blocked.js"></script>
 </body>

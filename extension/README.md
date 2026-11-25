@@ -6,15 +6,15 @@ Brings ScamShield into the browser. Works in Chrome, Edge and Brave on desktop (
 
 | Part | When | What the user sees |
 | --- | --- | --- |
-| Block known scams | Opening a domain ScamShield confirmed as FRAUD | A full-page warning instead of the site, with the brand it imitates, a link to the real site, *Go back* and *Continue anyway* |
-| Check this site | Clicking the toolbar icon | Verdict, risk score, reasons and what to do, in English or Arabic. The icon badge turns red (`!`) or amber (`?`) on its own while browsing |
+| Block scam sites | Opening a domain ScamShield rated FRAUD or an analyst confirmed | A full-page warning instead of the site (English and Arabic): the domain, the brand it imitates and its risk score, *Go to the real {brand}*, *Go back* and *Continue anyway (not recommended)*. Says "confirmed scam" only when an analyst confirmed it |
+| Check this site | Clicking the toolbar icon | A card: *Scam detected* / *Looks suspicious* / *No warning signs*, the risk score, the domain and the brand it impersonates (or "Official Emirates NBD website"), the reasons on demand, and *View details* (opens the citizen checker with the address filled in). Menu: Arabic/English, check again, report (Aman 8002626), settings. The icon badge turns red (`!`) or amber (`?`) on its own while browsing |
 | Form warning | A page asks for a card, OTP, password or Emirates ID | A red bar above the page when the page names a UAE brand on a domain the brand doesn't own, or ScamShield already flags the site. Works on brand-new scams nobody has reported yet |
 
 ## Install (developer mode)
 
 1. Start the backend (see the main README).
 2. Open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked** and choose this `extension/` folder.
-3. In the extension's **Settings**, set the ScamShield server (default `http://localhost:8000`) and click **Save and sync**.
+3. In the extension's **Settings**, set the ScamShield server (default `http://localhost:8000`) and the website for *View details* (default `http://localhost:3001`), then click **Save and sync**.
 
 ## How it talks to the backend
 
@@ -22,7 +22,15 @@ Brings ScamShield into the browser. Works in Chrome, Edge and Brave on desktop (
 | --- | --- |
 | `POST /api/check` | Popup (full address of the current tab, started by the user) and badge (site origin only, cached 30 min) |
 | `GET /api/brands` | Brand names and official domains for the form warning (cached; works offline) |
-| `GET /api/blocklist` | Confirmed scam domains, synced every 10 minutes into Chrome's blocking rules. Expected shape: `{"domains": [{"domain": "moi-portal.com", "brand_target": "moi", "score": 75}]}`. Until the endpoint exists, the extension uses the demo list in `mock-blocklist.json` (Settings says so); the first answer from the server replaces it for good |
+| `GET /api/blocklist` | Scam domains, synced every 10 minutes into Chrome's blocking rules: `{"generated_at": ..., "count": 25, "domains": [{"domain": "aramexdelivery.live", "brand_target": "aramex", "score": 100, "confirmed": false, "case_id": "c-0b8e1a9f"}]}`. Lists analyst-confirmed cases and FRAUD cases nobody dismissed, never official, government or popular sites or shared hosts like `sites.google.com` (a scam *on* a platform, `tamm-pay.pages.dev`, is listed), at most 1,000 (Chrome's limit for these rules). If the server can't be reached on the first run, the demo list in `mock-blocklist.json` is used; the first answer from the server replaces it for good |
+
+## Rebuild the download
+
+The website offers this folder as `frontend/public/scamshield-guardian.zip`. After changing a file here, rebuild it from the repository root:
+
+```bash
+python -c "import pathlib,zipfile; z=zipfile.ZipFile('frontend/public/scamshield-guardian.zip','w',zipfile.ZIP_DEFLATED); [z.write(p, 'scamshield-guardian/'+p.relative_to('extension').as_posix()) for p in sorted(pathlib.Path('extension').rglob('*')) if p.is_file()]"
+```
 
 ## Privacy
 
