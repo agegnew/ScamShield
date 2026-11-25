@@ -111,12 +111,10 @@ async function syncBlocklist() {
   try {
     const data = await api("/api/blocklist");
     await applyBlocklist(data.domains || [], "server");
-  } catch {
-    // No /api/blocklist yet: use the bundled demo list, but never replace a list that came from the server.
-    const { blocklistSource } = await chrome.storage.local.get("blocklistSource");
-    if (blocklistSource === "server") return;
-    const mock = await (await fetch(chrome.runtime.getURL("mock-blocklist.json"))).json();
-    await applyBlocklist(mock.domains, "demo");
+    await chrome.storage.local.set({ blocklistError: null });
+  } catch (error) {
+    // Server unreachable: keep blocking with the last list it sent (Chrome keeps the rules) and say so in Settings.
+    await chrome.storage.local.set({ blocklistError: String(error && error.message ? error.message : error) });
   }
 }
 

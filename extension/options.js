@@ -3,12 +3,13 @@ const site = document.getElementById("site");
 const status = document.getElementById("status");
 
 async function showSync() {
-  const { blocklist = {}, blocklistAt, blocklistSource, brands = [] } =
-    await chrome.storage.local.get(["blocklist", "blocklistAt", "blocklistSource", "brands"]);
-  const source = blocklistSource === "demo" ? " (demo list: the server could not be reached)" : "";
-  document.getElementById("sync").textContent = blocklistAt
-    ? `${Object.keys(blocklist).length} blocked scam domains${source} and ${brands.length} UAE brands, synced ${new Date(blocklistAt).toLocaleString()}.`
-    : `${brands.length} UAE brands loaded. Blocklist not synced yet.`;
+  const { blocklist = {}, blocklistAt, blocklistError, brands = [] } =
+    await chrome.storage.local.get(["blocklist", "blocklistAt", "blocklistError", "brands"]);
+  const synced = blocklistAt
+    ? `${Object.keys(blocklist).length} scam domains blocked and ${brands.length} UAE brands, last synced ${new Date(blocklistAt).toLocaleString()}.`
+    : `${brands.length} UAE brands loaded. The scam list has not been synced yet.`;
+  const problem = blocklistError ? ` Could not reach the server just now (${blocklistError}); the last list stays active.` : "";
+  document.getElementById("sync").textContent = synced + problem;
 }
 
 chrome.storage.local.get(["apiBase", "siteBase"]).then(({ apiBase, siteBase }) => {

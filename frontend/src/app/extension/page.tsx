@@ -135,7 +135,7 @@ export default function ExtensionPage() {
                   {tr("manual")}
                 </a>
               )}
-              <span className="ltr text-sm text-muted">v0.1 · 60 KB</span>
+              <span className="ltr text-sm text-muted">v0.2 · 65 KB</span>
             </div>
           </div>
 

@@ -22,7 +22,7 @@ Brings ScamShield into the browser. Works in Chrome, Edge and Brave on desktop (
 | --- | --- |
 | `POST /api/check` | Popup (full address of the current tab, started by the user) and badge (site origin only, cached 30 min) |
 | `GET /api/brands` | Brand names and official domains for the form warning (cached; works offline) |
-| `GET /api/blocklist` | Scam domains, synced every 10 minutes into Chrome's blocking rules: `{"generated_at": ..., "count": 25, "domains": [{"domain": "aramexdelivery.live", "brand_target": "aramex", "score": 100, "confirmed": false, "case_id": "c-0b8e1a9f"}]}`. Lists analyst-confirmed cases and FRAUD cases nobody dismissed, never official, government or popular sites or shared hosts like `sites.google.com` (a scam *on* a platform, `tamm-pay.pages.dev`, is listed), at most 1,000 (Chrome's limit for these rules). If the server can't be reached on the first run, the demo list in `mock-blocklist.json` is used; the first answer from the server replaces it for good |
+| `GET /api/blocklist` | Scam domains, synced every 10 minutes into Chrome's blocking rules: `{"generated_at": ..., "count": 25, "domains": [{"domain": "aramexdelivery.live", "brand_target": "aramex", "score": 100, "confirmed": false, "case_id": "c-0b8e1a9f"}]}`. Lists analyst-confirmed cases and FRAUD cases nobody dismissed, never official, government or popular sites or shared hosts like `sites.google.com` (a scam *on* a platform, `tamm-pay.pages.dev`, is listed), at most 1,000 (Chrome's limit for these rules). If the server can't be reached, the last list it sent stays active and Settings says so. There is no built-in demo list: everything blocked comes from the server |
 
 ## Rebuild the download
 
