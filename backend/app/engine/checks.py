@@ -103,14 +103,24 @@ def _is_official(brand: Brand, host: str) -> bool:
     return any(host == d or host.endswith("." + d) for d in brand.official_domains)
 
 
+COUNTRY_SUFFIX = re.compile(r"(?:com|co|net|org|gov)\.[a-z]{2}|[a-z]{2}")
+# Endings used as typos of .com (netflix.co, paypal.cm) or handed out free: never a brand's country site.
+TYPO_OR_FREE_SUFFIXES = {"co", "cm", "om", "cc", "ws", "tk", "ml", "ga", "cf", "gq"}
+
+
 def _global_brand_in(ctx: Ctx) -> tuple[str, str] | None:
     """A worldwide brand name inside a domain that isn't the brand's or a popular site."""
     popular = top_domains()
     for host, domain in dict.fromkeys(((ctx.host, ctx.domain), (ctx.final_host, ctx.final_domain))):
         if not domain or (domain in popular and not ctx.platform):
             continue
+        label, _, suffix = domain.partition(".")
         for token, officials in GLOBAL_BRANDS.items():
             if domain in officials:
+                continue
+            # The brand's own country site: exactly its name on a country ending (citibank.ae,
+            # microsoft.ae, hsbc.com.eg). A scam needs more words (citibank-ae.com, paypal-verify.ae).
+            if label == token and COUNTRY_SUFFIX.fullmatch(suffix) and suffix not in TYPO_OR_FREE_SUFFIXES:
                 continue
             bounded = re.search(rf"(^|[^a-z]){token}([^a-z]|$)", host)
             if bounded or (len(token) >= 7 and token in host):

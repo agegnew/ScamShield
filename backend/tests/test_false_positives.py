@@ -289,3 +289,18 @@ def test_a_shared_host_does_not_inherit_another_links_verdict(session):
     assert repo.find_by_url("https://bit.ly") is None
     assert repo.find_by_url("https://www.google.com") is None
     assert repo.find_by_url("http://flydubau.com/login") is not None  # same lookalike host still matches
+
+
+# ---- real banks on their own country domains ---------------------------------------------
+
+
+def test_a_global_brand_on_its_own_country_domain_is_not_a_lookalike():
+    assert "lookalike_domain" not in codes(engine.score("https://citibank.ae/"))
+    assert "lookalike_domain" not in codes(engine.score("https://www.microsoft.ae/"))
+    assert "lookalike_domain" in codes(engine.score("https://paypal-verify.ae/"))
+    assert "lookalike_domain" in codes(engine.score("https://citibank-ae.com/"))
+    assert "lookalike_domain" in codes(engine.score("https://netflix.co/"))  # .co, .cm, .om: typos of .com
+
+
+def test_emirates_nbd_egypt_is_official():
+    assert engine.score("https://www.emiratesnbd.com.eg/").verdict == Label.LEGIT
