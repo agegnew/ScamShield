@@ -22,8 +22,8 @@ def run_fetch(session: Session, url: str) -> None:
     fetch_error for offline or blocked sites; enrichment still adds WHOIS/DNS for offline ones.
     """
     repo = CaseRepo(session)
-    case = repo.find_by_url(url)
-    if case is None or case.candidate.url != url:
+    case = repo.find_exact(url)
+    if case is None:
         log.warning("fetch job for unknown URL %s, skipping", url)
         return
 

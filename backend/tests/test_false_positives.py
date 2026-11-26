@@ -291,6 +291,95 @@ def test_a_shared_host_does_not_inherit_another_links_verdict(session):
     assert repo.find_by_url("http://flydubau.com/login") is not None  # same lookalike host still matches
 
 
+def test_a_confirmed_case_wins_over_a_later_unreviewed_duplicate_of_the_same_site(session):
+    """moi-portal.com: an analyst confirmed https://moi-portal.com/ (page opened, FRAUD 75); a later
+    radar run found http://moi-portal.com/ again and scored the address alone (SUSPICIOUS 35). Every
+    way of typing the site must get the analyst's answer, as the extension's block page does."""
+    from app.repo import CaseRepo
+
+    repo = CaseRepo(session)
+    url = "https://moi-portal.com/"
+    confirmed = repo.add(
+        Candidate(url=url, source=Source.CITIZEN, discovered_at=NOW - timedelta(days=1)),
+        Verdict(url=url, verdict=Label.FRAUD, score=75, reasons=[], model_version="t", scored_at=NOW),
+        evidence=Evidence(url=url, final_url=url, fetched_at=NOW, title="Ministry of Interior"),
+    )
+    repo.decide(confirmed.id, "confirm", "fake MOI portal", "analyst")
+    repo.add(
+        Candidate(url="http://moi-portal.com/", source=Source.LOOKALIKE, discovered_at=NOW),
+        Verdict(url="http://moi-portal.com/", verdict=Label.SUSPICIOUS, score=35, reasons=[],
+                model_version="t", scored_at=NOW),
+    )
+    for typed in ("http://moi-portal.com", "http://moi-portal.com/", "https://moi-portal.com",
+                  "https://www.moi-portal.com/", "http://moi-portal.com/login"):
+        found = repo.find_by_url(typed)
+        assert found is not None and found.id == confirmed.id, typed
+
+
+def test_the_fetch_worker_saves_on_the_case_at_its_own_url(session, monkeypatch):
+    """The checker's 'which case answers' must not redirect the worker: the duplicate's page is still
+    opened and its evidence saved on the duplicate, not dropped because a confirmed case answers."""
+    from app.repo import CaseRepo
+    from app.workers import pipeline
+
+    repo = CaseRepo(session)
+    confirmed = repo.add(
+        Candidate(url="https://moi-portal.com/", source=Source.CITIZEN, discovered_at=NOW - timedelta(days=1)),
+        Verdict(url="https://moi-portal.com/", verdict=Label.FRAUD, score=75, reasons=[], model_version="t",
+                scored_at=NOW),
+    )
+    repo.decide(confirmed.id, "confirm", "fake MOI portal", "analyst")
+    dup = repo.add(
+        Candidate(url="http://moi-portal.com/", source=Source.LOOKALIKE, discovered_at=NOW),
+        Verdict(url="http://moi-portal.com/", verdict=Label.SUSPICIOUS, score=35, reasons=[],
+                model_version="t", scored_at=NOW),
+    )
+    monkeypatch.setattr(pipeline.collector, "collect",
+                        lambda url: Evidence(url=url, final_url="https://moi-portal.com/", fetched_at=NOW))
+    pipeline.run_fetch(session, "http://moi-portal.com/")
+    assert repo.get(dup.id).evidence is not None
+    assert repo.get(confirmed.id).evidence is None  # the confirmed case was not overwritten
+
+
+def test_a_dismissal_wins_over_a_later_unreviewed_duplicate(session):
+    from app.repo import CaseRepo
+
+    repo = CaseRepo(session)
+    url = "https://podium.aevsoft.cc/HackathonMngtWebApp/index.php"
+    dismissed = repo.add(
+        Candidate(url=url, source=Source.CITIZEN, discovered_at=NOW - timedelta(days=1)),
+        Verdict(url=url, verdict=Label.FRAUD, score=95, reasons=[], model_version="t", scored_at=NOW),
+    )
+    repo.decide(dismissed.id, "dismiss", "the hackathon's own site", "analyst")
+    repo.add(
+        Candidate(url="http://podium.aevsoft.cc/", source=Source.SEARCH, discovered_at=NOW),
+        Verdict(url="http://podium.aevsoft.cc/", verdict=Label.SUSPICIOUS, score=40, reasons=[],
+                model_version="t", scored_at=NOW),
+    )
+    assert repo.find_by_url("https://podium.aevsoft.cc").id == dismissed.id
+    assert repo.find_by_url("http://podium.aevsoft.cc/").id == dismissed.id  # exact URL of the duplicate too
+
+
+def test_a_cleared_homepage_does_not_hide_a_scam_page_on_the_same_hacked_site(session):
+    from app.repo import CaseRepo
+
+    repo = CaseRepo(session)
+    home, kit = "https://bakery-example.ae/", "https://bakery-example.ae/wp-includes/emiratesnbd/login.php"
+    cleared = repo.add(
+        Candidate(url=home, source=Source.CITIZEN, discovered_at=NOW),
+        Verdict(url=home, verdict=Label.LEGIT, score=5, reasons=[], model_version="t", scored_at=NOW),
+        evidence=Evidence(url=home, final_url=home, fetched_at=NOW, title="Fresh bread"),
+    )
+    repo.decide(cleared.id, "dismiss", "a real bakery", "analyst")
+    scam = repo.add(
+        Candidate(url=kit, source=Source.CITIZEN, discovered_at=NOW - timedelta(hours=1)),
+        Verdict(url=kit, verdict=Label.FRAUD, score=95, reasons=[], model_version="t", scored_at=NOW),
+        evidence=Evidence(url=kit, final_url=kit, fetched_at=NOW, title="Emirates NBD Online Banking"),
+    )
+    assert repo.find_by_url(kit).id == scam.id
+    assert repo.find_by_url(home).id == cleared.id
+
+
 # ---- real banks on their own country domains ---------------------------------------------
 
 

@@ -2,6 +2,7 @@
 
 import secrets
 from datetime import datetime, timezone
+from urllib.parse import urlsplit
 
 from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
@@ -31,6 +32,33 @@ def _utc(dt: datetime) -> datetime:
 
 def new_case_id() -> str:
     return f"c-{secrets.token_hex(4)}"
+
+
+def _same_page(a: str, b: str) -> bool:
+    """http/https, www. and a trailing slash do not make another page."""
+    def key(url: str) -> tuple[str, str, str]:
+        parts = urlsplit(url)
+        return ((parts.hostname or "").removeprefix("www."), parts.path.rstrip("/"), parts.query)
+
+    try:
+        return key(a) == key(b)
+    except ValueError:
+        return False
+
+
+def _rank(row: CaseRow, url: str) -> tuple:
+    """Which of a site's cases answers for `url`, best first:
+    1. an analyst's decision on this very page;
+    2. a confirmed scam anywhere on the site (the extension blocks the whole domain for it);
+    3. this page's own case once its page was opened (a hacked site's kit stays FRAUD even if an
+       analyst cleared the homepage);
+    4. an analyst's dismissal of another page of the site (over an unopened, address-only guess);
+    5. this page's own case, then a case whose page was opened, then the newest."""
+    same = _same_page(row.url, url)
+    decided = row.status in ("confirmed", "dismissed")
+    opened = row.evidence_json is not None
+    return (same and decided, row.status == "confirmed", same and opened, row.status == "dismissed",
+            same, opened, _utc(row.discovered_at))
 
 
 class CaseRepo:
@@ -68,23 +96,36 @@ class CaseRepo:
             stmt = stmt.limit(limit)
         return [self._to_case(r) for r in self.s.scalars(stmt)]
 
-    def find_by_url(self, url: str) -> Case | None:
-        """Exact URL first, then any case on the same host or redirecting to it.
+    def find_exact(self, url: str) -> Case | None:
+        """The case stored at exactly this URL: where the worker saves that page's evidence."""
+        row = self.s.scalars(self._query().where(CaseRow.url == url)).first()
+        return self._to_case(row) if row else None
 
-        The host fallback is only for a site of its own (aramex-track.info/login matches the case on
+    def find_by_url(self, url: str) -> Case | None:
+        """The case that answers for this address (public checker, batch): the exact URL, and for a site of its own also any
+        case on the same host (with or without www.) or redirecting to it.
+
+        The host match is only for a site of its own (aramex-track.info/login matches the case on
         aramex-track.info). A shared host never inherits one link's verdict: one reported bit.ly
         link or Google Form says nothing about the others, and a lookalike that redirects to
         google.com says nothing about Google.
+
+        One site can have several cases: the radar finds http://moi-portal.com/ again after an
+        analyst confirmed https://moi-portal.com/. The best-informed one answers (_rank), so the
+        checker agrees with the extension's blocklist, which blocks the whole confirmed domain.
         """
-        row = self.s.scalars(self._query().where(CaseRow.url == url)).first()
-        if row is None and blockable(hostname(url)):
-            host = hostname(url)
-            row = self.s.scalars(
-                self._query()
-                .where(or_(CaseRow.domain == host, CaseRow.final_host == host))
-                .order_by(CaseRow.discovered_at.desc())
-            ).first()
-        return self._to_case(row) if row else None
+        rows = {r.id: r for r in self.s.scalars(self._query().where(CaseRow.url == url))}
+        host = hostname(url)
+        if blockable(host):
+            bare = host.removeprefix("www.")
+            hosts = (bare, f"www.{bare}")
+            for r in self.s.scalars(
+                self._query().where(or_(CaseRow.domain.in_(hosts), CaseRow.final_host.in_(hosts)))
+            ):
+                rows[r.id] = r
+        if not rows:
+            return None
+        return self._to_case(max(rows.values(), key=lambda r: _rank(r, url)))
 
     def find_by_phone(self, digits: str) -> Case | None:
         row = self.s.scalars(self._query().where(CaseRow.phone_digits == digits)).first()
